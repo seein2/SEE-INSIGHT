@@ -37,3 +37,6 @@ out/
 .vscode/
 
 .env
+
+# MySQL 데이터 디렉토리 제외
+mysql_data/
