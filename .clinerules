@@ -1,0 +1,26 @@
+# 프로젝트 규칙
+
+## 1. 기술 스택
+- Language: Java 21
+- Framework: Spring Boot 3.5.9
+- Build Tool: Gradle
+- Database: MySQL 8.0 (Docker)
+- Cache: Redis (Docker)
+- ORM: JPA (Hibernate)
+- Docs: SpringDoc (Swagger)
+- Testing: JUnit5, Mockito
+- Security: JWT(Redis)
+- Architecture: Layered Architecture (Controller - Service - Repository)
+
+## 2. 코딩 스타일
+- 클래스명: PascalCase / 변수명: camelCase / 테이블명: snake_case
+- Lombok 사용 시 @Data 대신 @Getter, @RequiredArgsConstructor 사용 권장
+- 모든 API 응답은 GlobalResponseDto 형태로 통일할 것.
+- 주석은 한글로 작성할 것.
+
+## 3. 인프라 및 환경 설정
+- 로컬 개발 환경: docker-compose
+- mysql: 3306 / redis: 6379
+
+## 3. 핵심 목표
+- Perplexity API를 활용한 뉴스 자동 요약 및 이메일 발송 서비스 구현.
