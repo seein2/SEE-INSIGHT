@@ -1,4 +1,4 @@
-# 프로젝트 규칙
+# 프로젝트 규칙 (.clinerules)
 
 ## 1. 기술 스택
 - Language: Java 21
@@ -7,20 +7,37 @@
 - Database: MySQL 8.0 (Docker)
 - Cache: Redis (Docker)
 - ORM: JPA (Hibernate)
-- Docs: SpringDoc (Swagger)
-- Testing: JUnit5, Mockito
-- Security: JWT(Redis)
-- Architecture: Layered Architecture (Controller - Service - Repository)
+- Docs: SpringDoc (Swagger-UI)
+- Testing: JUnit5, Mockito, AssertJ
+- Security: Spring Security + JWT (Refresh Token 저장소: Redis)
 
-## 2. 코딩 스타일
-- 클래스명: PascalCase / 변수명: camelCase / 테이블명: snake_case
-- Lombok 사용 시 @Data 대신 @Getter, @RequiredArgsConstructor 사용 권장
-- 모든 API 응답은 GlobalResponseDto 형태로 통일할 것.
-- 주석은 한글로 작성할 것.
+## 2. 아키텍처 및 패키지 구조
+- Architecture: Layered Architecture
+- Package Structure: `com.seein` 하위에 도메인별로 구성
+    - `global`: 설정, 에러 처리, 공통 DTO
+    - `domain.auth`: 인증/인가 관련
+    - `domain.member`: 회원 관련
+    - `domain.keyword`: 키워드 및 구독 관련
+    - `domain.news`: 뉴스 데이터 및 요약 관련
 
-## 3. 인프라 및 환경 설정
-- 로컬 개발 환경: docker-compose
-- mysql: 3306 / redis: 6379
+## 3. 코딩 스타일 및 컨벤션
+- Naming: 클래스(PascalCase), 변수/메서드(camelCase), DB테이블/컬럼(snake_case)
+- Lombok:
+    - @Data 사용 금지 -> @Getter, @ToString 등 필요한 것만 명시.
+    - Entity에는 @Setter 사용 지양 (별도의 update 메서드 생성).
+- DI (Dependency Injection):
+    - 생성자 주입(Constructor Injection) 원칙.
+    - Lombok의 @RequiredArgsConstructor 사용 시 모든 필드는 `private final`이어야 함.
+- Response:
+    - 성공 응답: `GlobalResponseDto<T>` 형태로 통일.
+    - 에러 응답: `GlobalExceptionHandler`를 통해 `ErrorResponse` 객체 반환.
+- Comment: 클래스 및 복잡한 로직에는 반드시 한글 주석 작성.
 
-## 3. 핵심 목표
+## 4. 인프라 및 환경 설정
+- 로컬 개발: docker-compose.yml 활용 (MySQL, Redis)
+- MySQL Port: 3306 / Redis Port: 6379
+- API Document: `/swagger-ui/index.html` 접근 가능하도록 설정
+
+## 5. 핵심 목표
 - Perplexity API를 활용한 뉴스 자동 요약 및 이메일 발송 서비스 구현.
+- 스케줄링(Spring Scheduler)을 통한 자동 메일 발송.
