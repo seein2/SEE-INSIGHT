@@ -32,6 +32,19 @@
     },
     {
       "group": "Auth (인증/계정)",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "summary": "토큰갱신",
+      "description": "Access Token이 만료되었을 때 Refresh Token으로 새로운 Access Token을 발급받습니다.",
+      "requestBody": {
+        "refreshToken": "string (JWT)"
+      },
+      "response": {
+        "accessToken": "string (JWT)"
+      }
+    },
+    {
+      "group": "Auth (인증/계정)",
       "method": "DELETE",
       "path": "/api/v1/auth/withdraw",
       "summary": "회원 탈퇴",
@@ -87,8 +100,8 @@
       "group": "Contents (콘텐츠)",
       "method": "GET",
       "path": "/api/v1/keywords",
-      "summary": "내 구독 목록 조회",
-      "description": "내가 구독 중인 키워드와 설정(시간, 알림여부)을 조회합니다.",
+      "summary": "키워드 검색/목록",
+      "description": "",
       "queryParams": {
         "page": "number",
         "size": "number"
@@ -113,6 +126,23 @@
         "totalElements": "number",
         "last": "boolean"
       }
+    },
+    {
+      "group": "Contents",
+      "method": "GET",
+      "path": "/api/v1/subscriptions",
+      "summary": "내 구독 키워드 목록",
+      "description": "내가 구독 중인 키워드 목록을 조회합니다.",
+      "requestBody": null,
+      "response": [
+        {
+          "keywordId": 1,
+          "text": "삼성전자",
+          "isActive": true,
+          "notificationAt": "09:00",
+          "createdAt": "2022-01-25T12:34:56.789Z",
+          "updatedAt": "2022-01-25T12:34:56.789Z",
+          "userId": 1
     },
     {
       "group": "Contents (콘텐츠)",
