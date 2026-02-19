@@ -1,7 +1,7 @@
 {
   "apiInfo": {
     "title": "뉴스 요약 서비스 API 명세서",
-    "version": "v1.0",
+    "version": "v1.1",
     "baseUrl": "/api/v1"
   },
   "endpoints": [
@@ -10,7 +10,10 @@
       "method": "POST",
       "path": "/api/v1/auth/{provider}",
       "summary": "소셜 로그인 (Google/Naver)",
-      "description": "소셜 로그인을 처리합니다. (확장성을 위한 membership 등급은 내부적으로만 저장하고 반환하지 않음)",
+      "description": "소셜 로그인을 처리합니다. provider는 'google' 또는 'naver'입니다.",
+      "pathParams": {
+        "provider": "string ('google' | 'naver')"
+      },
       "requestBody": {
         "token": "string (OAuth Access Token)"
       },
@@ -22,19 +25,8 @@
     {
       "group": "Auth (인증/계정)",
       "method": "POST",
-      "path": "/api/v1/auth/logout",
-      "summary": "로그아웃",
-      "description": "Refresh Token을 만료 처리합니다.",
-      "requestBody": {},
-      "response": {
-        "message": "로그아웃 성공"
-      }
-    },
-    {
-      "group": "Auth (인증/계정)",
-      "method": "POST",
       "path": "/api/v1/auth/refresh",
-      "summary": "토큰갱신",
+      "summary": "토큰 갱신",
       "description": "Access Token이 만료되었을 때 Refresh Token으로 새로운 Access Token을 발급받습니다.",
       "requestBody": {
         "refreshToken": "string (JWT)"
@@ -45,147 +37,284 @@
     },
     {
       "group": "Auth (인증/계정)",
+      "method": "POST",
+      "path": "/api/v1/auth/logout",
+      "summary": "로그아웃",
+      "description": "Refresh Token을 만료 처리합니다. (Redis에서 삭제)",
+      "requestBody": {},
+      "response": {
+        "message": "로그아웃 성공"
+      }
+    },
+    {
+      "group": "Auth (인증/계정)",
       "method": "DELETE",
       "path": "/api/v1/auth/withdraw",
       "summary": "회원 탈퇴",
-      "description": "사용자의 계정을 비활성화(is_active=false) 처리합니다.",
+      "description": "사용자의 계정을 비활성화 처리합니다. (deleted_at에 현재 시간 저장)",
       "requestBody": {},
       "response": {
         "message": "회원 탈퇴 완료"
       }
     },
     {
-      "group": "Settings (사용자 설정)",
-      "method": "PATCH",
-      "path": "/api/v1/users/me/settings/nickname",
-      "summary": "닉네임 변경",
-      "description": "사용자의 닉네임을 변경합니다.",
-      "requestBody": {
-        "nickname": "string"
-      },
+      "group": "Users (사용자)",
+      "method": "GET",
+      "path": "/api/v1/users/me",
+      "summary": "내 정보 조회",
+      "description": "현재 로그인한 사용자의 정보를 조회합니다.",
+      "requestBody": null,
       "response": {
-        "updatedNickname": "string"
+        "memberId": "number",
+        "email": "string",
+        "nickname": "string",
+        "membership": "string ('NORMAL' | 'PREMIUM')",
+        "provider": "string ('google' | 'naver')",
+        "createdAt": "string (ISO 8601)"
       }
     },
     {
-      "group": "Contents (콘텐츠)",
+      "group": "Users (사용자)",
+      "method": "PATCH",
+      "path": "/api/v1/users/me/nickname",
+      "summary": "닉네임 변경",
+      "description": "사용자의 닉네임을 변경합니다.",
+      "requestBody": {
+        "nickname": "string (2-20자)"
+      },
+      "response": {
+        "nickname": "string"
+      }
+    },
+    {
+      "group": "Dashboard (대시보드)",
       "method": "GET",
       "path": "/api/v1/dashboard",
-      "summary": "메인 페이지 (대시보드)",
-      "description": "인기 키워드와 사용자의 구독 뉴스 1건을 조회합니다.",
+      "summary": "메인 페이지 데이터",
+      "description": "인기 키워드 목록과 사용자의 최신 구독 뉴스 1건을 조회합니다.",
       "requestBody": null,
       "response": {
-        "bestKeywords": ["주식", "AI", "부동산"],
-        "recentNewsSummary": {
-          "id": 123,
+        "bestKeywords": [
+          {
+            "keywordId": 1,
+            "keyword": "삼성전자",
+            "subscriberCount": 1250
+          }
+        ],
+        "recentNews": {
+          "newsId": 123,
           "keyword": "삼성전자",
-          "title": "오늘의 경제 헤드라인",
-          "summaryText": "코스피가 전일 대비...",
-          "summaryDate": "2026-01-25"
+          "summaryContent": "코스피가 전일 대비 상승하며...",
+          "sourceLink": "https://...",
+          "createdDate": "2026-01-30"
         }
       }
     },
     {
-      "group": "Contents (콘텐츠)",
-      "method": "GET",
-      "path": "/api/v1/keywords/best",
-      "summary": "전체 인기 키워드 조회",
-      "description": "서비스 전체에서 구독 수가 가장 많은 키워드를 반환합니다.",
-      "requestBody": null,
-      "response": {
-        "keywords": ["string"]
-      }
-    },
-    {
-      "group": "Contents (콘텐츠)",
+      "group": "Keywords (키워드 - 전역 리소스)",
       "method": "GET",
       "path": "/api/v1/keywords",
       "summary": "키워드 검색/목록",
-      "description": "",
+      "description": "전체 키워드를 검색하거나 목록을 조회합니다.",
       "queryParams": {
-        "page": "number",
-        "size": "number"
+        "search": "string (Optional - 키워드 검색어)",
+        "page": "number (default: 0)",
+        "size": "number (default: 20)"
       },
       "requestBody": null,
       "response": {
         "content": [
           {
             "keywordId": 1,
-            "text": "삼성전자",
-            "isActive": true,
-            "notificationAt": "09:00"
-          },
-          {
-            "keywordId": 2,
-            "text": "부동산",
-            "isActive": false,
-            "notificationAt": "08:30"
+            "keyword": "삼성전자",
+            "subscriberCount": 1250
           }
         ],
-        "totalPages": "number",
-        "totalElements": "number",
-        "last": "boolean"
+        "page": 0,
+        "size": 20,
+        "totalElements": 150,
+        "totalPages": 8,
+        "last": false
       }
     },
     {
-      "group": "Contents",
+      "group": "Keywords (키워드 - 전역 리소스)",
+      "method": "GET",
+      "path": "/api/v1/keywords/best",
+      "summary": "인기 키워드 TOP N",
+      "description": "서비스 전체에서 구독 수가 가장 많은 키워드를 반환합니다.",
+      "queryParams": {
+        "limit": "number (default: 10, max: 50)"
+      },
+      "requestBody": null,
+      "response": {
+        "keywords": [
+          {
+            "keywordId": 1,
+            "keyword": "삼성전자",
+            "subscriberCount": 1250
+          }
+        ]
+      }
+    },
+    {
+      "group": "Subscriptions (구독 - 개인 리소스)",
       "method": "GET",
       "path": "/api/v1/subscriptions",
-      "summary": "내 구독 키워드 목록",
-      "description": "내가 구독 중인 키워드 목록을 조회합니다.",
+      "summary": "내 구독 목록 조회",
+      "description": "현재 사용자가 구독 중인 키워드 목록과 알림 설정을 조회합니다.",
+      "queryParams": {
+        "page": "number (default: 0)",
+        "size": "number (default: 20)"
+      },
       "requestBody": null,
-      "response": [
-        {
-          "keywordId": 1,
-          "text": "삼성전자",
-          "isActive": true,
-          "notificationAt": "09:00",
-          "createdAt": "2022-01-25T12:34:56.789Z",
-          "updatedAt": "2022-01-25T12:34:56.789Z",
-          "userId": 1
+      "response": {
+        "content": [
+          {
+            "subscriptionId": 1,
+            "keywordId": 10,
+            "keyword": "삼성전자",
+            "isActive": true,
+            "notificationTime": "09:00",
+            "createdAt": "2026-01-25T12:34:56"
+          }
+        ],
+        "page": 0,
+        "size": 20,
+        "totalElements": 5,
+        "totalPages": 1,
+        "last": true
+      }
     },
     {
-      "group": "Contents (콘텐츠)",
+      "group": "Subscriptions (구독 - 개인 리소스)",
       "method": "POST",
-      "path": "/api/v1/keywords",
-      "summary": "키워드 구독 추가",
-      "description": "새로운 키워드를 구독합니다. (Keyword 테이블 확인 후 Subscription 테이블에 Insert)",
+      "path": "/api/v1/subscriptions",
+      "summary": "키워드 구독",
+      "description": "새로운 키워드를 구독합니다. 키워드가 keyword 테이블에 없으면 자동 생성됩니다.",
       "requestBody": {
-        "keyword": "string",
-        "notificationAt": "string (HH:mm format, Optional, Default: 09:00)"
+        "keyword": "string (구독할 키워드)",
+        "notificationTime": "string (HH:mm, Optional, Default: '09:00')"
       },
       "response": {
-        "id": "number (keywordId)",
+        "subscriptionId": "number",
+        "keywordId": "number",
         "keyword": "string",
-        "notificationAt": "string"
-      }
+        "isActive": true,
+        "notificationTime": "string",
+        "createdAt": "string (ISO 8601)"
+      },
+      "errors": [
+        { "code": 409, "message": "이미 구독 중인 키워드입니다." }
+      ]
     },
     {
-      "group": "Contents (콘텐츠)",
-      "method": "DELETE",
-      "path": "/api/v1/keywords/{keywordId}",
-      "summary": "구독 취소 (삭제)",
-      "description": "내 구독 목록에서 해당 키워드를 완전히 삭제합니다. (DELETE FROM subscription WHERE user_id=? AND keyword_id=?)",
+      "group": "Subscriptions (구독 - 개인 리소스)",
+      "method": "GET",
+      "path": "/api/v1/subscriptions/{subscriptionId}",
+      "summary": "구독 상세 조회",
+      "description": "특정 구독의 상세 정보를 조회합니다.",
+      "pathParams": { "subscriptionId": "number" },
       "requestBody": null,
       "response": {
-        "message": "구독 취소(삭제) 성공"
+        "subscriptionId": "number",
+        "keywordId": "number",
+        "keyword": "string",
+        "isActive": "boolean",
+        "notificationTime": "string (HH:mm)",
+        "createdAt": "string (ISO 8601)",
+        "updatedAt": "string (ISO 8601)"
+      },
+      "errors": [
+        { "code": 404, "message": "구독 정보를 찾을 수 없습니다." }
+      ]
+    },
+    {
+      "group": "Subscriptions (구독 - 개인 리소스)",
+      "method": "PATCH",
+      "path": "/api/v1/subscriptions/{subscriptionId}",
+      "summary": "구독 설정 변경",
+      "description": "구독의 알림 시간 또는 활성화 상태를 변경합니다.",
+      "pathParams": { "subscriptionId": "number" },
+      "requestBody": {
+        "isActive": "boolean (Optional)",
+        "notificationTime": "string (HH:mm, Optional)"
+      },
+      "response": {
+        "subscriptionId": "number",
+        "keywordId": "number",
+        "keyword": "string",
+        "isActive": "boolean",
+        "notificationTime": "string",
+        "updatedAt": "string (ISO 8601)"
+      },
+      "errors": [
+        { "code": 404, "message": "구독 정보를 찾을 수 없습니다." }
+      ]
+    },
+    {
+      "group": "Subscriptions (구독 - 개인 리소스)",
+      "method": "DELETE",
+      "path": "/api/v1/subscriptions/{subscriptionId}",
+      "summary": "구독 취소",
+      "description": "해당 키워드 구독을 삭제합니다.",
+      "pathParams": { "subscriptionId": "number" },
+      "requestBody": null,
+      "response": { "message": "구독이 취소되었습니다." },
+      "errors": [
+        { "code": 404, "message": "구독 정보를 찾을 수 없습니다." }
+      ]
+    },
+    {
+      "group": "News (뉴스)",
+      "method": "GET",
+      "path": "/api/v1/news",
+      "summary": "뉴스 목록 조회",
+      "description": "키워드 또는 날짜 기준으로 뉴스 요약을 조회합니다.",
+      "queryParams": {
+        "keywordId": "number (Optional)",
+        "date": "string (Optional - YYYY-MM-DD)",
+        "page": "number (default: 0)",
+        "size": "number (default: 10)"
+      },
+      "requestBody": null,
+      "response": {
+        "content": [
+          {
+            "newsId": 123,
+            "keywordId": 1,
+            "keyword": "삼성전자",
+            "summaryContent": "삼성전자가 신규 반도체 라인 투자를 발표...",
+            "sourceLink": "https://news.example.com/article/123",
+            "createdDate": "2026-01-30"
+          }
+        ],
+        "page": 0,
+        "size": 10,
+        "totalElements": 45,
+        "totalPages": 5,
+        "last": false
       }
     },
     {
-      "group": "Notification (알림)",
-      "method": "PATCH",
-      "path": "/api/v1/subscriptions/{keywordId}",
-      "summary": "알림 설정 변경 (통합)",
-      "description": "특정 키워드의 '알림 시간'과 'ON/OFF 상태'를 동시에 변경합니다.",
-      "requestBody": {
-        "isActive": "boolean (Optional - 보낼 때만 수정됨)",
-        "notificationAt": "string (HH:mm format, Optional - 보낼 때만 수정됨)"
-      },
+      "group": "News (뉴스)",
+      "method": "GET",
+      "path": "/api/v1/news/{newsId}",
+      "summary": "뉴스 상세 조회",
+      "description": "특정 뉴스의 상세 정보를 조회합니다.",
+      "pathParams": { "newsId": "number" },
+      "requestBody": null,
       "response": {
+        "newsId": "number",
         "keywordId": "number",
-        "isActive": "boolean",
-        "notificationAt": "string"
-      }
+        "keyword": "string",
+        "summaryContent": "string",
+        "sourceLink": "string",
+        "createdDate": "string (YYYY-MM-DD)"
+      },
+      "errors": [
+        { "code": 404, "message": "뉴스를 찾을 수 없습니다." }
+      ]
     }
   ]
 }
