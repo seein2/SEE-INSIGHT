@@ -1,11 +1,8 @@
 spring:
   application:
     name: SEE-INSIGHT
-  datasource:
-    url: jdbc:mysql://localhost:3306/see_insight
-    username: ${MYSQL_USER}
-    password: ${MYSQL_PASSWORD}
-  data:
-    redis:
-      host: localhost
-      port: 6379
+  profiles:
+    active: local
+
+server:
+  port: 8080
