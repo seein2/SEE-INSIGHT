@@ -29,4 +29,13 @@ public class ErrorResponse {
     public static ErrorResponse of(int status, String error, String message, String path) {
         return new ErrorResponse(status, error, message, path);
     }
+
+    public static ErrorResponse of(com.seein.global.exception.ErrorCode errorCode) {
+        return new ErrorResponse(
+                errorCode.getStatus().value(),
+                errorCode.getStatus().getReasonPhrase(),
+                errorCode.getMessage(),
+                null
+        );
+    }
 }
