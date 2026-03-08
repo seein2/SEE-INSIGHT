@@ -56,6 +56,9 @@ public class SecurityConfig {
                         // 인증 없이 접근 가능한 경로
                         .requestMatchers(
                                 "/api/v1/auth/**",
+                                "/api/v1/dashboard",
+                                "/api/v1/keywords/**",
+                                "/api/v1/news/**",
                                 "/login/oauth2/**",
                                 "/oauth2/**",
                                 "/swagger-ui/**",
