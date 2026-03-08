@@ -26,7 +26,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    @Value("${spring.security.oauth2.redirect-uri:http://localhost:3000/auth/callback}")
+    @Value("${spring.security.oauth2.client.registration.google.redirect-uri:http://localhost:8080/login/oauth2/code/google}")
     private String redirectUri;
 
     @Override
