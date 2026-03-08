@@ -3,7 +3,7 @@ package com.seein.SEE_INSIGHT;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.seein")
 public class SeeInsightApplication {
 
 	public static void main(String[] args) {
