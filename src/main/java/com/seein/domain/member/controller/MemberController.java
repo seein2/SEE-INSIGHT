@@ -6,6 +6,8 @@ import com.seein.domain.member.service.MemberService;
 import com.seein.global.dto.GlobalResponseDto;
 import com.seein.global.security.jwt.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,10 @@ public class MemberController {
      * 내 정보 조회
      */
     @Operation(summary = "내 정보 조회", description = "현재 로그인한 사용자의 정보를 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "401", description = "인증 필요")
+    })
     @GetMapping("/me")
     public GlobalResponseDto<MemberResponse> getMe(
             @AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -41,6 +47,10 @@ public class MemberController {
      * 닉네임 변경
      */
     @Operation(summary = "닉네임 변경", description = "사용자의 닉네임을 변경합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "변경 성공"),
+            @ApiResponse(responseCode = "401", description = "인증 필요")
+    })
     @PatchMapping("/me/nickname")
     public GlobalResponseDto<Map<String, String>> updateNickname(
             @AuthenticationPrincipal CustomUserDetails userDetails,
