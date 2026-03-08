@@ -1,0 +1,51 @@
+package com.seein.domain.keyword.controller;
+
+import com.seein.domain.keyword.dto.KeywordResponse;
+import com.seein.domain.keyword.service.KeywordService;
+import com.seein.global.dto.GlobalResponseDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 키워드 API 컨트롤러
+ * 키워드 검색/목록 조회, 인기 키워드 조회
+ */
+@Tag(name = "Keywords", description = "키워드 API")
+@RestController
+@RequestMapping("/api/v1/keywords")
+@RequiredArgsConstructor
+public class KeywordController {
+
+    private final KeywordService keywordService;
+
+    /**
+     * 키워드 검색/목록 조회
+     */
+    @Operation(summary = "키워드 검색/목록", description = "전체 키워드를 검색하거나 목록을 조회합니다.")
+    @GetMapping
+    public GlobalResponseDto<Page<KeywordResponse>> searchKeywords(
+            @RequestParam(required = false) String search,
+            @PageableDefault(size = 20) Pageable pageable) {
+        Page<KeywordResponse> response = keywordService.searchKeywords(search, pageable);
+        return GlobalResponseDto.success(response);
+    }
+
+    /**
+     * 인기 키워드 TOP N 조회
+     */
+    @Operation(summary = "인기 키워드 TOP N", description = "구독 수가 가장 많은 키워드를 반환합니다.")
+    @GetMapping("/best")
+    public GlobalResponseDto<Map<String, List<KeywordResponse>>> getTopKeywords(
+            @RequestParam(defaultValue = "10") int limit) {
+        List<KeywordResponse> keywords = keywordService.getTopKeywords(limit);
+        return GlobalResponseDto.success(Map.of("keywords", keywords));
+    }
+}
