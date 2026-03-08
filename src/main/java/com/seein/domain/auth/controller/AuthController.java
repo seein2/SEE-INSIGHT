@@ -1,6 +1,7 @@
 package com.seein.domain.auth.controller;
 
 import com.seein.domain.auth.dto.TokenResponse;
+import com.seein.domain.member.service.MemberService;
 import com.seein.global.dto.GlobalResponseDto;
 import com.seein.global.security.jwt.CustomUserDetails;
 import com.seein.global.security.jwt.JwtTokenProvider;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  * 인증 API 컨트롤러
- * 로그인, 로그아웃, 토큰 재발급 등 인증 관련 API 제공
+ * 로그인, 로그아웃, 토큰 재발급, 회원 탈퇴 등 인증 관련 API 제공
  */
 @Tag(name = "Auth", description = "인증 API")
 @RestController
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final MemberService memberService;
 
     /**
      * OAuth2 로그인 페이지로 리다이렉트
@@ -72,5 +74,15 @@ public class AuthController {
     @GetMapping("/me")
     public GlobalResponseDto<CustomUserDetails> me(@AuthenticationPrincipal CustomUserDetails userDetails) {
         return GlobalResponseDto.success(userDetails);
+    }
+
+    /**
+     * 회원 탈퇴 (소프트 삭제)
+     */
+    @Operation(summary = "회원 탈퇴", description = "사용자의 계정을 비활성화 처리합니다.")
+    @DeleteMapping("/withdraw")
+    public GlobalResponseDto<String> withdraw(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        memberService.withdraw(userDetails.getMemberId());
+        return GlobalResponseDto.success("회원 탈퇴 완료");
     }
 }
