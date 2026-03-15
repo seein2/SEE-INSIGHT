@@ -2,6 +2,7 @@ package com.seein.global.security.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
+    private static final String ACCESS_TOKEN_COOKIE_NAME = "access_token";
 
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -47,9 +49,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     /**
-     * 요청 헤더에서 토큰 정보 추출
+     * 요청 쿠키 또는 헤더에서 토큰 정보 추출
      */
     private String resolveToken(HttpServletRequest request) {
+        // 쿠키에서 토큰 추출(웹)
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (ACCESS_TOKEN_COOKIE_NAME.equals(cookie.getName())
+                        && StringUtils.hasText(cookie.getValue())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+
+        // bearer에서 토큰 추출(웹)
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
             return bearerToken.substring(BEARER_PREFIX.length());
