@@ -1,4 +1,4 @@
-package com.seein.SEE_INSIGHT;
+package com.seein;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
