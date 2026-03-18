@@ -2,6 +2,7 @@ package com.seein.global.security.oauth2;
 
 import com.seein.domain.member.entity.Member;
 import com.seein.domain.member.repository.MemberRepository;
+import com.seein.global.security.jwt.MemberPrincipal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -20,7 +21,7 @@ import java.util.Map;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CustomOAuth2UserService extends DefaultOAuth2UserService {
+public class OAuth2MemberService extends DefaultOAuth2UserService {
 
     private final MemberRepository memberRepository;
 
@@ -46,7 +47,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     return memberRepository.save(newMember);
                 });
 
-        return new CustomOAuth2User(
+        return new MemberPrincipal(
                 member.getMemberId(),
                 member.getEmail(),
                 member.getNickname(),

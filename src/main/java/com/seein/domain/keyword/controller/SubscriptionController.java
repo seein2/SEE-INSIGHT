@@ -5,7 +5,7 @@ import com.seein.domain.keyword.dto.SubscriptionResponse;
 import com.seein.domain.keyword.dto.SubscriptionUpdateRequest;
 import com.seein.domain.keyword.service.SubscriptionService;
 import com.seein.global.dto.GlobalResponseDto;
-import com.seein.global.security.jwt.CustomUserDetails;
+import com.seein.global.security.jwt.MemberPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -41,7 +41,7 @@ public class SubscriptionController {
     })
     @GetMapping
     public GlobalResponseDto<Page<SubscriptionResponse>> getSubscriptions(
-            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @AuthenticationPrincipal MemberPrincipal userDetails,
             @PageableDefault(size = 20) Pageable pageable) {
         Page<SubscriptionResponse> response = subscriptionService.getSubscriptions(
                 userDetails.getMemberId(), pageable);
@@ -59,7 +59,7 @@ public class SubscriptionController {
     })
     @PostMapping
     public GlobalResponseDto<SubscriptionResponse> subscribe(
-            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @AuthenticationPrincipal MemberPrincipal userDetails,
             @Valid @RequestBody SubscriptionCreateRequest request) {
         SubscriptionResponse response = subscriptionService.subscribe(
                 userDetails.getMemberId(), request);

@@ -10,6 +10,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+
 /**
  * Spring Security UserDetailsService 구현체
  * JWT 토큰에서 추출한 이메일로 사용자 로드
@@ -25,10 +27,12 @@ public class CustomUserDetailsService implements UserDetailsService {
         Member member = memberRepository.findByEmailAndDeletedAtIsNull(email)
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
 
-        return new CustomUserDetails(
+        return new MemberPrincipal(
                 member.getMemberId(),
                 member.getEmail(),
-                member.getMembership().name()
+                member.getNickname(),
+                member.getMembership().name(),
+                Collections.emptyMap()
         );
     }
 }

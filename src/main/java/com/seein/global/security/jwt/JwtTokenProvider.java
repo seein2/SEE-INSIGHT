@@ -97,7 +97,7 @@ public class JwtTokenProvider {
     }
 
     /**
-     * JWT 토큰으로부터 인증 객체 생성
+     * JWT 토큰으로부터 인증 객체 생성 (이메일 -> 회원 정보)
      */
     public Authentication getAuthentication(String token) {
         String email = getEmailFromToken(token);

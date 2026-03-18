@@ -2,7 +2,7 @@ package com.seein.global.security.handler;
 
 import com.seein.global.security.jwt.JwtProperties;
 import com.seein.global.security.jwt.JwtTokenProvider;
-import com.seein.global.security.oauth2.CustomOAuth2User;
+import com.seein.global.security.jwt.MemberPrincipal;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -36,7 +36,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+        MemberPrincipal oAuth2User = (MemberPrincipal) authentication.getPrincipal();
         String email = oAuth2User.getEmail();
 
         // JWT 토큰 생성

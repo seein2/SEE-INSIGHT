@@ -3,8 +3,8 @@ package com.seein.domain.auth.controller;
 import com.seein.domain.auth.dto.TokenResponse;
 import com.seein.domain.member.service.MemberService;
 import com.seein.global.dto.GlobalResponseDto;
-import com.seein.global.security.jwt.CustomUserDetails;
 import com.seein.global.security.jwt.JwtTokenProvider;
+import com.seein.global.security.jwt.MemberPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -87,7 +87,7 @@ public class AuthController {
             @ApiResponse(responseCode = "401", description = "인증 필요")
     })
     @GetMapping("/me")
-    public GlobalResponseDto<CustomUserDetails> me(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public GlobalResponseDto<MemberPrincipal> me(@AuthenticationPrincipal MemberPrincipal userDetails) {
         return GlobalResponseDto.success(userDetails);
     }
 
@@ -101,7 +101,7 @@ public class AuthController {
             @ApiResponse(responseCode = "404", description = "회원을 찾을 수 없음")
     })
     @DeleteMapping("/withdraw")
-    public GlobalResponseDto<String> withdraw(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public GlobalResponseDto<String> withdraw(@AuthenticationPrincipal MemberPrincipal userDetails) {
         memberService.withdraw(userDetails.getMemberId());
         return GlobalResponseDto.success("회원 탈퇴 완료");
     }

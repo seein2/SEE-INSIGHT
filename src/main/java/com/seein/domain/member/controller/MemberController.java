@@ -4,7 +4,7 @@ import com.seein.domain.member.dto.MemberResponse;
 import com.seein.domain.member.dto.NicknameUpdateRequest;
 import com.seein.domain.member.service.MemberService;
 import com.seein.global.dto.GlobalResponseDto;
-import com.seein.global.security.jwt.CustomUserDetails;
+import com.seein.global.security.jwt.MemberPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -38,7 +38,7 @@ public class MemberController {
     })
     @GetMapping("/me")
     public GlobalResponseDto<MemberResponse> getMe(
-            @AuthenticationPrincipal CustomUserDetails userDetails) {
+            @AuthenticationPrincipal MemberPrincipal userDetails) {
         MemberResponse response = memberService.getMember(userDetails.getMemberId());
         return GlobalResponseDto.success(response);
     }
@@ -53,7 +53,7 @@ public class MemberController {
     })
     @PatchMapping("/me/nickname")
     public GlobalResponseDto<Map<String, String>> updateNickname(
-            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @AuthenticationPrincipal MemberPrincipal userDetails,
             @Valid @RequestBody NicknameUpdateRequest request) {
         String nickname = memberService.updateNickname(userDetails.getMemberId(), request.getNickname());
         return GlobalResponseDto.success(Map.of("nickname", nickname));
