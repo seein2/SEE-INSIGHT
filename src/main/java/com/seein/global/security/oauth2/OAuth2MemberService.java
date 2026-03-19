@@ -33,9 +33,20 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
         String provider = userRequest.getClientRegistration().getRegistrationId();
         Map<String, Object> attributes = oAuth2User.getAttributes();
 
-        // Google OAuth2 속성 추출
-        String email = (String) attributes.get("email");
-        String name = (String) attributes.get("name");
+        String email;
+        String name;
+
+        // OAuth2 속성 추출
+        if("naver".equals(provider)){
+            Map<String, Object> response = (Map<String, Object>) attributes.get("response");
+            email = (String) response.get("email");
+            name = (String) response.get("name");
+        } else if("google".equals(provider)){
+            email = (String) attributes.get("email");
+            name = (String) attributes.get("name");
+        } else {
+            throw new OAuth2AuthenticationException("Unsupported provider: " + provider);
+        }
 
         log.info("OAuth2 로그인 시도: provider={}, email={}", provider, email);
 
