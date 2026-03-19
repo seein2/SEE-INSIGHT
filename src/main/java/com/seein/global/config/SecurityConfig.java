@@ -79,6 +79,13 @@ public class SecurityConfig {
                         .failureHandler(oAuth2FailureHandler)
                 )
 
+                // 로그아웃
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .deleteCookies("access_token", "refresh_token")
+                        .logoutSuccessUrl("/")
+                )
+
                 // 예외 처리
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint)

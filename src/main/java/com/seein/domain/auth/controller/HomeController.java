@@ -23,7 +23,7 @@ public class HomeController {
         model.addAttribute("isAuthenticated", authenticated);
         model.addAttribute("googleLoginUrl", "/oauth2/authorization/google");
         model.addAttribute("naverLoginUrl", "/oauth2/authorization/naver");
-        model.addAttribute("profileUrl", "/api/v1/users/me");
+        model.addAttribute("profileUrl", "/me");
         return "home";
     }
 }

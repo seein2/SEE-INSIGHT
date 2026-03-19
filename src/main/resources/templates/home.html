@@ -85,6 +85,21 @@
             box-shadow: 0 8px 24px rgba(24, 36, 45, 0.08);
         }
 
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logout-form {
+            margin: 0;
+        }
+
+        .top-button.logout {
+            cursor: pointer;
+            font-family: inherit;
+        }
+
         .home-card {
             width: min(520px, 100%);
             padding: 44px 34px;
@@ -182,8 +197,13 @@
 <main class="home-shell">
     <header class="home-topbar">
         <div class="brand-mark">SEE-INSIGHT</div>
-        <a class="top-button" th:if="${!isAuthenticated}" href="#login-section">로그인</a>
-        <a class="top-button" th:if="${isAuthenticated}" th:href="${profileUrl}">내 정보</a>
+        <div class="top-actions">
+            <a class="top-button" th:if="${!isAuthenticated}" href="#login-section">로그인</a>
+            <a class="top-button" th:if="${isAuthenticated}" th:href="${profileUrl}">내 정보</a>
+            <form class="logout-form" th:if="${isAuthenticated}" th:action="@{/logout}" method="post">
+                <button class="top-button logout" type="submit">로그아웃</button>
+            </form>
+        </div>
     </header>
 
     <section class="home-card">
