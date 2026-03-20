@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SEE-INSIGHT 로그인</title>
+    <title>SEE-INSIGHT</title>
     <style>
         :root {
             color-scheme: light;
@@ -13,10 +13,9 @@
             --text: #18242d;
             --muted: #61707b;
             --border: rgba(24, 36, 45, 0.1);
-            --google: #ffffff;
-            --naver: #03c75a;
             --ink: #20303b;
             --accent: #d96f32;
+            --hero: rgba(255, 255, 255, 0.64);
         }
 
         * {
@@ -101,8 +100,8 @@
         }
 
         .home-card {
-            width: min(520px, 100%);
-            padding: 44px 34px;
+            width: min(820px, 100%);
+            padding: 54px 42px;
             border: 1px solid var(--border);
             border-radius: 28px;
             background: var(--panel);
@@ -110,74 +109,40 @@
             backdrop-filter: blur(14px);
         }
 
-        .eyebrow {
-            margin: 0 0 12px;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 0.16em;
-            color: var(--muted);
-        }
-
-        h1 {
-            margin: 0;
-            font-size: 32px;
-            line-height: 1.2;
-        }
-
-        p {
-            margin: 14px 0 28px;
-            line-height: 1.6;
-            color: var(--muted);
-        }
-
-        .auth-actions {
+        .hero {
             display: grid;
-            gap: 12px;
+            gap: 24px;
+            min-height: 420px;
+            align-content: center;
+            padding: 26px 0 12px;
         }
 
-        .login-button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 56px;
-            border-radius: 16px;
-            font-size: 16px;
-            font-weight: 700;
-            text-decoration: none;
-            transition: transform 0.18s ease, box-shadow 0.18s ease;
-        }
-
-        .login-button:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 10px 24px rgba(31, 41, 55, 0.12);
-        }
-
-        .login-button.google {
-            color: #202124;
-            background: var(--google);
-            border: 1px solid #dadce0;
-        }
-
-        .login-button.naver {
-            color: #ffffff;
-            background: var(--naver);
-            border: 1px solid transparent;
-        }
-
-        .notice {
-            margin-top: 18px;
-            font-size: 13px;
+        .eyebrow {
+            margin: 0;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.18em;
             color: var(--muted);
+            text-transform: uppercase;
         }
 
-        .logged-in-box {
-            margin-top: 10px;
-            padding: 18px 18px;
+        .hero-title {
+            margin: 0;
+            font-size: clamp(46px, 10vw, 110px);
+            line-height: 0.94;
+            letter-spacing: -0.05em;
+            color: var(--ink);
+        }
+
+        .hero-copy {
+            width: min(460px, 100%);
+            margin: 0;
+            padding: 18px 20px;
+            border-radius: 20px;
+            background: var(--hero);
+            color: var(--muted);
+            line-height: 1.7;
             border: 1px solid rgba(24, 36, 45, 0.08);
-            border-radius: 18px;
-            background: rgba(255, 255, 255, 0.7);
-            color: var(--muted);
-            line-height: 1.6;
         }
 
         @media (max-width: 640px) {
@@ -198,7 +163,7 @@
     <header class="home-topbar">
         <div class="brand-mark">SEE-INSIGHT</div>
         <div class="top-actions">
-            <a class="top-button" th:if="${!isAuthenticated}" href="#login-section">로그인</a>
+            <a class="top-button" th:if="${!isAuthenticated}" th:href="${loginPageUrl}">로그인</a>
             <a class="top-button" th:if="${isAuthenticated}" th:href="${profileUrl}">내 정보</a>
             <form class="logout-form" th:if="${isAuthenticated}" th:action="@{/logout}" method="post">
                 <button class="top-button logout" type="submit">로그아웃</button>
@@ -207,20 +172,12 @@
     </header>
 
     <section class="home-card">
-        <p class="eyebrow">SEE-INSIGHT</p>
-        <h1 th:if="${!isAuthenticated}">소셜 로그인으로 시작하세요.</h1>
-        <h1 th:if="${isAuthenticated}">뉴스 인사이트를 바로 확인하세요.</h1>
-        <p th:if="${!isAuthenticated}">관심 키워드 기반 뉴스 요약과 구독 알림을 이용하려면 로그인하세요.</p>
-        <p th:if="${isAuthenticated}">로그인이 완료되었습니다. 상단의 내 정보 버튼으로 현재 계정 정보를 확인할 수 있습니다.</p>
-
-        <section id="login-section" class="auth-actions" th:if="${!isAuthenticated}">
-            <a class="login-button google" th:href="${googleLoginUrl}">구글 로그인</a>
-            <a class="login-button naver" th:href="${naverLoginUrl}">네이버 로그인</a>
+        <section class="hero">
+            <h1 class="hero-title">SEE-<br>INSIGHT</h1>
+            <p class="hero-copy">
+                관심 키워드 중심으로 뉴스 흐름을 정리하고, 더 빠르게 핵심 인사이트를 확인하세요!
+            </p>
         </section>
-
-        <div class="logged-in-box" th:if="${isAuthenticated}">
-            로그인 상태에서는 브라우저 쿠키의 JWT로 인증이 유지됩니다.
-        </div>
     </section>
 </main>
 </body>

@@ -56,6 +56,7 @@ public class SecurityConfig {
                         // 인증 없이 접근 가능한 경로
                         .requestMatchers(
                                 "/",
+                                "/login",
                                 "/api/v1/auth/**",
                                 "/api/v1/dashboard",
                                 "/api/v1/keywords/**",

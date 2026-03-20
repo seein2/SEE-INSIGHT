@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인 / 회원가입</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg-start: #f4efe3;
+            --bg-end: #d8e7ef;
+            --panel: rgba(255, 255, 255, 0.9);
+            --text: #18242d;
+            --muted: #61707b;
+            --border: rgba(24, 36, 45, 0.1);
+            --google: #ffffff;
+            --naver: #03c75a;
+            --ink: #20303b;
+            --accent: #d96f32;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top, rgba(255, 255, 255, 0.7), transparent 36%),
+                linear-gradient(135deg, var(--bg-start), var(--bg-end));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .page {
+            width: min(460px, 100%);
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+            padding: 0 4px;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--ink);
+        }
+
+        .brand::before {
+            content: "";
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), #f2bb67);
+            box-shadow: 0 0 0 8px rgba(217, 111, 50, 0.08);
+        }
+
+        .back-link {
+            color: var(--muted);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .card {
+            padding: 40px 32px;
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            background: var(--panel);
+            box-shadow: 0 20px 60px rgba(31, 41, 55, 0.12);
+            backdrop-filter: blur(14px);
+        }
+
+        .eyebrow {
+            margin: 0 0 12px;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.16em;
+            color: var(--muted);
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 34px;
+            line-height: 1.15;
+        }
+
+        p {
+            margin: 14px 0 28px;
+            line-height: 1.6;
+            color: var(--muted);
+        }
+
+        .login-actions {
+            display: grid;
+            gap: 12px;
+        }
+
+        .login-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 56px;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .login-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 24px rgba(31, 41, 55, 0.12);
+        }
+
+        .login-button.google {
+            color: #202124;
+            background: var(--google);
+            border: 1px solid #dadce0;
+        }
+
+        .login-button.naver {
+            color: #ffffff;
+            background: var(--naver);
+            border: 1px solid transparent;
+        }
+    </style>
+</head>
+<body>
+<main class="page">
+    <header class="topbar">
+        <div class="brand">SEE-INSIGHT</div>
+        <a class="back-link" th:href="@{/}">홈으로</a>
+    </header>
+
+    <section class="card">
+        <p class="eyebrow">Login / Sign Up</p>
+        <h1>로그인하여 시작하세요.</h1>
+
+        <section class="login-actions">
+            <a class="login-button google" th:href="${googleLoginUrl}">구글 로그인</a>
+            <a class="login-button naver" th:href="${naverLoginUrl}">네이버 로그인</a>
+        </section>
+    </section>
+</main>
+</body>
+</html>

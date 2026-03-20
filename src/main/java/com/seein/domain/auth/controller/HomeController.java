@@ -21,9 +21,18 @@ public class HomeController {
         boolean authenticated = authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken);
 
         model.addAttribute("isAuthenticated", authenticated);
-        model.addAttribute("googleLoginUrl", "/oauth2/authorization/google");
-        model.addAttribute("naverLoginUrl", "/oauth2/authorization/naver");
+        model.addAttribute("loginPageUrl", "/login");
         model.addAttribute("profileUrl", "/me");
         return "home";
+    }
+
+    /**
+     * 로그인/회원가입 페이지
+     */
+    @GetMapping("/login")
+    public String login(Model model) {
+        model.addAttribute("googleLoginUrl", "/oauth2/authorization/google");
+        model.addAttribute("naverLoginUrl", "/oauth2/authorization/naver");
+        return "login";
     }
 }
