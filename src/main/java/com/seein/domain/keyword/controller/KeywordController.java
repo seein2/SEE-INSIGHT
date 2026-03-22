@@ -13,8 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
 
 /**
  * 키워드 API 컨트롤러
@@ -42,16 +40,4 @@ public class KeywordController {
         return GlobalResponseDto.success(response);
     }
 
-    /**
-     * 인기 키워드 TOP N 조회
-     */
-    @Operation(summary = "인기 키워드 TOP N", description = "구독 수가 가장 많은 키워드를 반환합니다.")
-    @ApiResponse(responseCode = "200", description = "조회 성공")
-    @GetMapping("/best")
-    public GlobalResponseDto<Map<String, List<KeywordResponse>>> getTopKeywords(
-            @Parameter(description = "조회할 키워드 수 (기본값: 10, 최대: 50)")
-            @RequestParam(defaultValue = "10") int limit) {
-        List<KeywordResponse> keywords = keywordService.getTopKeywords(limit);
-        return GlobalResponseDto.success(Map.of("keywords", keywords));
-    }
 }

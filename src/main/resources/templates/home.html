@@ -51,21 +51,18 @@
         .brand-mark {
             display: inline-flex;
             align-items: center;
-            gap: 12px;
-            font-size: 15px;
+            gap: 10px;
+            font-size: 16px;
             font-weight: 800;
-            letter-spacing: 0.08em;
+            letter-spacing: 0.06em;
             text-transform: uppercase;
             color: var(--ink);
+            text-decoration: none;
+            transition: opacity 0.2s ease;
         }
-
-        .brand-mark::before {
-            content: "";
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--accent), #f2bb67);
-            box-shadow: 0 0 0 8px rgba(217, 111, 50, 0.08);
+        
+        .brand-mark:hover {
+            opacity: 0.8;
         }
 
         .top-button {
@@ -82,6 +79,12 @@
             font-weight: 700;
             text-decoration: none;
             box-shadow: 0 8px 24px rgba(24, 36, 45, 0.08);
+            transition: all 0.2s ease;
+        }
+        
+        .top-button:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: translateY(-1px);
         }
 
         .top-actions {
@@ -100,49 +103,116 @@
         }
 
         .home-card {
-            width: min(820px, 100%);
-            padding: 54px 42px;
+            width: min(920px, 100%);
+            padding: 42px;
             border: 1px solid var(--border);
             border-radius: 28px;
             background: var(--panel);
             box-shadow: 0 20px 60px rgba(31, 41, 55, 0.12);
             backdrop-filter: blur(14px);
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
         }
 
-        .hero {
-            display: grid;
-            gap: 24px;
-            min-height: 420px;
-            align-content: center;
-            padding: 26px 0 12px;
+        .section-header {
+            margin-bottom: 16px;
         }
 
-        .eyebrow {
+        .section-title {
             margin: 0;
-            font-size: 12px;
+            font-size: 20px;
             font-weight: 800;
-            letter-spacing: 0.18em;
-            color: var(--muted);
-            text-transform: uppercase;
-        }
-
-        .hero-title {
-            margin: 0;
-            font-size: clamp(46px, 10vw, 110px);
-            line-height: 0.94;
-            letter-spacing: -0.05em;
             color: var(--ink);
+            letter-spacing: -0.02em;
         }
 
-        .hero-copy {
-            width: min(460px, 100%);
-            margin: 0;
-            padding: 18px 20px;
-            border-radius: 20px;
+        .popular-keywords-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 16px;
+            width: 100%;
+        }
+
+        .keyword-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 16px;
             background: var(--hero);
-            color: var(--muted);
-            line-height: 1.7;
             border: 1px solid rgba(24, 36, 45, 0.08);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: var(--text);
+        }
+
+        .keyword-card:hover {
+            background: rgba(217, 111, 50, 0.08);
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(217, 111, 50, 0.12);
+        }
+
+        .keyword-card-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 8px;
+            letter-spacing: -0.01em;
+        }
+
+        .keyword-card-count {
+            font-size: 14px;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .cta-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 32px 24px;
+            background: linear-gradient(135deg, rgba(217, 111, 50, 0.08) 0%, rgba(217, 111, 50, 0.04) 100%);
+            border: 1.5px solid var(--accent);
+            border-radius: 20px;
+            text-align: center;
+            gap: 20px;
+        }
+
+        .cta-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--ink);
+            letter-spacing: -0.01em;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 28px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 999px;
+            font-size: 15px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 8px 20px rgba(217, 111, 50, 0.24);
+        }
+
+        .cta-button:hover {
+            background: #c85a1f;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(217, 111, 50, 0.32);
         }
 
         @media (max-width: 640px) {
@@ -155,15 +225,25 @@
             .home-card {
                 padding: 34px 24px;
             }
+
+            .popular-keywords-grid {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            }
         }
     </style>
 </head>
 <body>
 <main class="home-shell">
     <header class="home-topbar">
-        <div class="brand-mark">SEE-INSIGHT</div>
+        <a href="/" class="brand-mark">
+            <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16 10C10 10 5 16 5 16C5 16 10 22 16 22C22 22 27 16 27 16C27 16 22 10 16 10Z" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="16" cy="16" r="3.5" fill="var(--accent)"/>
+            </svg>
+            <span>SEE-INSIGHT</span>
+        </a>
         <div class="top-actions">
-            <a class="top-button" th:if="${!isAuthenticated}" th:href="${loginPageUrl}">로그인</a>
+            <a class="top-button" th:if="${!isAuthenticated}" th:href="${loginPageUrl}">시작하기</a>
             <a class="top-button" th:if="${isAuthenticated}" th:href="${profileUrl}">내 정보</a>
             <form class="logout-form" th:if="${isAuthenticated}" th:action="@{/logout}" method="post">
                 <button class="top-button logout" type="submit">로그아웃</button>
@@ -172,13 +252,56 @@
     </header>
 
     <section class="home-card">
-        <section class="hero">
-            <h1 class="hero-title">SEE-<br>INSIGHT</h1>
-            <p class="hero-copy">
-                관심 키워드 중심으로 뉴스 흐름을 정리하고, 더 빠르게 핵심 인사이트를 확인하세요!
-            </p>
+        <section class="chart-section">
+            <header class="section-header">
+                <h2 class="section-title">인기 키워드</h2>
+            </header>
+            <div class="popular-keywords-grid">
+                <a href="/news?keywordId=1" class="keyword-card">
+                    <div class="keyword-card-name">AI</div>
+                    <div class="keyword-card-count">128명</div>
+                </a>
+                <a href="/news?keywordId=2" class="keyword-card">
+                    <div class="keyword-card-name">반도체</div>
+                    <div class="keyword-card-count">95명</div>
+                </a>
+                <a href="/news?keywordId=3" class="keyword-card">
+                    <div class="keyword-card-name">경제</div>
+                    <div class="keyword-card-count">82명</div>
+                </a>
+                <a href="/news?keywordId=4" class="keyword-card">
+                    <div class="keyword-card-name">부동산</div>
+                    <div class="keyword-card-count">76명</div>
+                </a>
+                <a href="/news?keywordId=5" class="keyword-card">
+                    <div class="keyword-card-name">주식</div>
+                    <div class="keyword-card-count">71명</div>
+                </a>
+                <a href="/news?keywordId=6" class="keyword-card">
+                    <div class="keyword-card-name">세연</div>
+                    <div class="keyword-card-count">1명</div>
+                </a>
+                <a href="/news?keywordId=7" class="keyword-card">
+                    <div class="keyword-card-name">캠핑</div>
+                    <div class="keyword-card-count">1명</div>
+                </a>
+            </div>
+         </section>
+
+        <section class="cta-section">
+            <p class="cta-text">📬 관심 키워드를 구독하고 매일 원하는 시간에 뉴스 요약을 받아보세요!</p>
+            <a href="/subscriptions" class="cta-button">키워드 구독하러 가기</a>
         </section>
+
     </section>
 </main>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    document.addEventListener("DOMContentLoaded", function() {
+        const isAuthenticated = /*[[${isAuthenticated}]]*/ false;
+    });
+    /*]]>*/
+</script>
 </body>
 </html>
