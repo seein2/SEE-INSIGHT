@@ -4,7 +4,6 @@ import com.seein.domain.dashboard.dto.DashboardResponse;
 import com.seein.domain.keyword.dto.KeywordResponse;
 import com.seein.domain.keyword.service.KeywordService;
 import com.seein.domain.news.dto.NewsResponse;
-import com.seein.domain.news.entity.NewsCard;
 import com.seein.domain.news.repository.NewsCardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
