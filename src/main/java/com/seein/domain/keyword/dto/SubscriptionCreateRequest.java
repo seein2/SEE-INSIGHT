@@ -13,6 +13,4 @@ public class SubscriptionCreateRequest {
 
     @NotBlank(message = "키워드는 필수 입력입니다.")
     private String keyword;
-
-    private String notificationTime;
 }

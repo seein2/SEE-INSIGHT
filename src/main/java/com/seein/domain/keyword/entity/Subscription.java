@@ -49,11 +49,11 @@ public class Subscription extends BaseTimeEntity {
     /**
      * 구독 생성 (정적 팩토리 메서드)
      */
-    public static Subscription create(Member member, Keyword keyword, String notificationTime) {
+    public static Subscription create(Member member, Keyword keyword) {
         Subscription subscription = new Subscription();
         subscription.member = member;
         subscription.keyword = keyword;
-        subscription.notificationTime = notificationTime;
+        subscription.notificationTime = "09:00"; // 기본 알림 시간
         subscription.isActive = true;
         return subscription;
     }

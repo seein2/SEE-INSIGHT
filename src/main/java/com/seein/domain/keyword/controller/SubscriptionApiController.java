@@ -38,11 +38,8 @@ public class SubscriptionApiController {
             @ApiResponse(responseCode = "409", description = "이미 구독 중인 키워드")
     })
     @PostMapping
-    public GlobalResponseDto<SubscriptionResponse> subscribe(
-            @AuthenticationPrincipal MemberPrincipal userDetails,
-            @Valid @RequestBody SubscriptionCreateRequest request) {
-        SubscriptionResponse response = subscriptionService.subscribe(
-                userDetails.getMemberId(), request);
+    public GlobalResponseDto<SubscriptionResponse> subscribe(@AuthenticationPrincipal MemberPrincipal principal, @Valid @RequestBody SubscriptionCreateRequest request) {
+        SubscriptionResponse response = subscriptionService.subscribe(principal.getMemberId(), request);
         return GlobalResponseDto.success(response);
     }
 

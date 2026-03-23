@@ -34,8 +34,7 @@ public class SubscriptionService {
      * 내 구독 목록 조회 (페이징)
      */
     public Page<SubscriptionResponse> getSubscriptions(Integer memberId, Pageable pageable) {
-        Member member = findMemberById(memberId);
-        Page<Subscription> subscriptions = subscriptionRepository.findByMember(member, pageable);
+        Page<Subscription> subscriptions = subscriptionRepository.findByMemberId(memberId, pageable);
         return subscriptions.map(SubscriptionResponse::from);
     }
 
@@ -57,13 +56,7 @@ public class SubscriptionService {
             throw new BusinessException(ErrorCode.SUBSCRIPTION_ALREADY_EXISTS);
         }
 
-        // 알림 시간 기본값 처리
-        String notificationTime = request.getNotificationTime();
-        if (notificationTime == null || notificationTime.isBlank()) {
-            notificationTime = "09:00";
-        }
-
-        Subscription subscription = Subscription.create(member, keyword, notificationTime);
+        Subscription subscription = Subscription.create(member, keyword);
         subscriptionRepository.save(subscription);
 
         return SubscriptionResponse.from(subscription);
