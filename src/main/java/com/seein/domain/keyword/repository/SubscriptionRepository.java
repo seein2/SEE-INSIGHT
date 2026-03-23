@@ -19,7 +19,7 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Inte
     /**
      * 회원의 구독 목록 조회 (페이징)
      */
-    Page<Subscription> findByMemberId(Integer memberId, Pageable pageable);
+    Page<Subscription> findByMemberMemberId(Integer memberId, Pageable pageable);
 
     /**
      * 회원 + 키워드로 구독 조회 (중복 방지)

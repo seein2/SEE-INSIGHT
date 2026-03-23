@@ -34,7 +34,7 @@ public class SubscriptionService {
      * 내 구독 목록 조회 (페이징)
      */
     public Page<SubscriptionResponse> getSubscriptions(Integer memberId, Pageable pageable) {
-        Page<Subscription> subscriptions = subscriptionRepository.findByMemberId(memberId, pageable);
+        Page<Subscription> subscriptions = subscriptionRepository.findByMemberMemberId(memberId, pageable);
         return subscriptions.map(SubscriptionResponse::from);
     }
 
