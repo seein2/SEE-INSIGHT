@@ -28,28 +28,6 @@ public class AuthController {
     private final MemberService memberService;
 
     /**
-     * OAuth2 로그인 페이지로 리다이렉트
-     * 실제 로그인은 /oauth2/authorization/google 로 처리됨
-     */
-    @Operation(summary = "Google OAuth2 로그인", description = "Google OAuth2 로그인 페이지로 리다이렉트")
-    @ApiResponse(responseCode = "200", description = "로그인 안내 메시지 반환")
-    @GetMapping("/login")
-    public GlobalResponseDto<String> login() {
-        return GlobalResponseDto.success("OAuth2 로그인은 /oauth2/authorization/google 으로 접속하세요.");
-    }
-
-    /**
-     * 로그아웃
-     * 클라이언트에서 토큰 삭제 처리
-     */
-    @Operation(summary = "로그아웃", description = "로그아웃 처리 (클라이언트에서 토큰 삭제)")
-    @ApiResponse(responseCode = "200", description = "로그아웃 성공")
-    @PostMapping("/logout")
-    public GlobalResponseDto<String> logout() {
-        return GlobalResponseDto.success("로그아웃되었습니다.");
-    }
-
-    /**
      * Access Token 재발급
      * Refresh Token을 검증하여 새로운 Access Token 발급
      */
