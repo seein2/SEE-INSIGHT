@@ -29,21 +29,6 @@ public class MemberController {
     private final MemberService memberService;
 
     /**
-     * 내 정보 조회
-     */
-    @Operation(summary = "내 정보 조회", description = "현재 로그인한 사용자의 정보를 조회합니다.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "조회 성공"),
-            @ApiResponse(responseCode = "401", description = "인증 필요")
-    })
-    @GetMapping("/me")
-    public GlobalResponseDto<MemberResponse> getMe(
-            @AuthenticationPrincipal MemberPrincipal userDetails) {
-        MemberResponse response = memberService.getMember(userDetails.getMemberId());
-        return GlobalResponseDto.success(response);
-    }
-
-    /**
      * 닉네임 변경
      */
     @Operation(summary = "닉네임 변경", description = "사용자의 닉네임을 변경합니다.")
