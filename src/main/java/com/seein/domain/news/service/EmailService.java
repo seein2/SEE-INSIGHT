@@ -1,6 +1,6 @@
 package com.seein.domain.news.service;
 
-import com.seein.domain.keyword.entity.Subscription;
+import com.seein.domain.subscription.entity.Subscription;
 import com.seein.domain.news.entity.NewsCard;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

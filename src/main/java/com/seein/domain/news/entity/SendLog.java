@@ -1,6 +1,6 @@
 package com.seein.domain.news.entity;
 
-import com.seein.domain.keyword.entity.Subscription;
+import com.seein.domain.subscription.entity.Subscription;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

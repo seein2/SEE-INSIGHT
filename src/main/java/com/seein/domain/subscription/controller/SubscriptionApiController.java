@@ -1,9 +1,9 @@
-package com.seein.domain.keyword.controller;
+package com.seein.domain.subscription.controller;
 
-import com.seein.domain.keyword.dto.SubscriptionCreateRequest;
-import com.seein.domain.keyword.dto.SubscriptionResponse;
-import com.seein.domain.keyword.dto.SubscriptionUpdateRequest;
-import com.seein.domain.keyword.service.SubscriptionService;
+import com.seein.domain.subscription.service.SubscriptionService;
+import com.seein.domain.subscription.dto.SubscriptionCreateRequest;
+import com.seein.domain.subscription.dto.SubscriptionResponse;
+import com.seein.domain.subscription.dto.SubscriptionUpdateRequest;
 import com.seein.global.dto.GlobalResponseDto;
 import com.seein.global.security.jwt.MemberPrincipal;
 import io.swagger.v3.oas.annotations.Operation;

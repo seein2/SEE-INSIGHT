@@ -1,6 +1,6 @@
-package com.seein.domain.keyword.dto;
+package com.seein.domain.subscription.dto;
 
-import com.seein.domain.keyword.entity.Subscription;
+import com.seein.domain.subscription.entity.Subscription;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

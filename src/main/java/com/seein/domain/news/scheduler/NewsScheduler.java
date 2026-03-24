@@ -1,8 +1,8 @@
 package com.seein.domain.news.scheduler;
 
 import com.seein.domain.keyword.entity.Keyword;
-import com.seein.domain.keyword.entity.Subscription;
-import com.seein.domain.keyword.repository.SubscriptionRepository;
+import com.seein.domain.subscription.entity.Subscription;
+import com.seein.domain.subscription.repository.SubscriptionRepository;
 import com.seein.domain.news.entity.NewsCard;
 import com.seein.domain.news.entity.SendLog;
 import com.seein.domain.news.repository.SendLogRepository;

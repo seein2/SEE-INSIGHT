@@ -1,7 +1,6 @@
-package com.seein.domain.keyword.repository;
+package com.seein.domain.subscription.repository;
 
-import com.seein.domain.keyword.entity.Subscription;
-import com.seein.domain.member.entity.Member;
+import com.seein.domain.subscription.entity.Subscription;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,12 +1,12 @@
-package com.seein.domain.keyword.service;
+package com.seein.domain.subscription.service;
 
-import com.seein.domain.keyword.dto.SubscriptionCreateRequest;
-import com.seein.domain.keyword.dto.SubscriptionResponse;
-import com.seein.domain.keyword.dto.SubscriptionUpdateRequest;
+import com.seein.domain.subscription.dto.SubscriptionCreateRequest;
+import com.seein.domain.subscription.dto.SubscriptionResponse;
+import com.seein.domain.subscription.dto.SubscriptionUpdateRequest;
 import com.seein.domain.keyword.entity.Keyword;
-import com.seein.domain.keyword.entity.Subscription;
+import com.seein.domain.subscription.entity.Subscription;
 import com.seein.domain.keyword.repository.KeywordRepository;
-import com.seein.domain.keyword.repository.SubscriptionRepository;
+import com.seein.domain.subscription.repository.SubscriptionRepository;
 import com.seein.domain.member.entity.Member;
 import com.seein.domain.member.repository.MemberRepository;
 import com.seein.global.exception.BusinessException;

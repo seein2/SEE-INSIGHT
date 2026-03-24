@@ -1,5 +1,6 @@
-package com.seein.domain.keyword.entity;
+package com.seein.domain.subscription.entity;
 
+import com.seein.domain.keyword.entity.Keyword;
 import com.seein.domain.member.entity.Member;
 import com.seein.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;

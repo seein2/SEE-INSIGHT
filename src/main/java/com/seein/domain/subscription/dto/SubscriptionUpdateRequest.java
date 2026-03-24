@@ -1,4 +1,4 @@
-package com.seein.domain.keyword.dto;
+package com.seein.domain.subscription.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

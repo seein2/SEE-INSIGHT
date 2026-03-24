@@ -3,7 +3,7 @@ package com.seein.domain.keyword.service;
 import com.seein.domain.keyword.dto.KeywordResponse;
 import com.seein.domain.keyword.entity.Keyword;
 import com.seein.domain.keyword.repository.KeywordRepository;
-import com.seein.domain.keyword.repository.SubscriptionRepository;
+import com.seein.domain.subscription.repository.SubscriptionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
