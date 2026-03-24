@@ -33,6 +33,6 @@ public class SubscriptionPageController {
         Page<SubscriptionResponse> subscriptions = subscriptionService.getSubscriptions(principal.getMemberId(), pageable);
 
         model.addAttribute("subscriptions", subscriptions);
-        return "subscriptions/keywords";
+        return "subscriptions/list";
     }
 }
