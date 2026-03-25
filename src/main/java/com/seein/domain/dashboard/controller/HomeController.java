@@ -1,5 +1,6 @@
-package com.seein.domain.auth.controller;
+package com.seein.domain.dashboard.controller;
 
+import com.seein.domain.dashboard.dto.DashboardResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -23,7 +24,7 @@ public class HomeController {
     private final DashboardService dashboardService;
 
     /**
-     * 루트 시작 페이지
+     * 시작(메인) 페이지
      */
     @GetMapping("/")
     public String home(Model model, Authentication authentication) {
@@ -34,10 +35,10 @@ public class HomeController {
         model.addAttribute("profileUrl", "/me");
 
         try {
-            var dashboard = dashboardService.getDashboard();
-            model.addAttribute("bestKeywords", dashboard.getBestKeywords());
+            DashboardResponse dashboard = dashboardService.getDashboard();
+            model.addAttribute("dashboard", dashboard);
         } catch (Exception e) {
-            model.addAttribute("bestKeywords", Collections.emptyList());
+            model.addAttribute("dashboard", new DashboardResponse(Collections.emptyList(), null));
         }
 
         return "home";
