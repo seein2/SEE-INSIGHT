@@ -49,4 +49,9 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Inte
      * 활성 구독 목록 조회 (스케줄러용)
      */
     List<Subscription> findByIsActiveTrue();
+
+    /**
+     * 구독 ID + 회원 ID로 구독 조회 (상세 조회 및 설정 변경 검증)
+     */
+    Optional<Subscription> findByMemberMemberIdAndSubscriptionId(Integer memberId, Integer subscriptionId);
 }

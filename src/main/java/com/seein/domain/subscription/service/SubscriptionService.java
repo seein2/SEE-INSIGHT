@@ -65,8 +65,8 @@ public class SubscriptionService {
     /**
      * 구독 상세 조회
      */
-    public SubscriptionResponse getSubscription(Integer subscriptionId) {
-        Subscription subscription = findSubscriptionById(subscriptionId);
+    public SubscriptionResponse getSubscription(Integer memberId, Integer subscriptionId) {
+        Subscription subscription = findOwnedSubscription(memberId, subscriptionId);
         return SubscriptionResponse.from(subscription);
     }
 
@@ -74,8 +74,8 @@ public class SubscriptionService {
      * 구독 설정 변경 (활성화 상태, 알림 시간)
      */
     @Transactional
-    public SubscriptionResponse updateSubscription(Integer subscriptionId, SubscriptionUpdateRequest request) {
-        Subscription subscription = findSubscriptionById(subscriptionId);
+    public SubscriptionResponse updateSubscription(Integer memberId, Integer subscriptionId, SubscriptionUpdateRequest request) {
+        Subscription subscription = findOwnedSubscription(memberId, subscriptionId);
 
         if (request.getIsActive() != null) {
             if (request.getIsActive()) {
@@ -96,16 +96,16 @@ public class SubscriptionService {
      * 구독 취소 (삭제)
      */
     @Transactional
-    public void unsubscribe(Integer subscriptionId) {
-        Subscription subscription = findSubscriptionById(subscriptionId);
+    public void unsubscribe(Integer memberId, Integer subscriptionId) {
+        Subscription subscription = findOwnedSubscription(memberId, subscriptionId);
         subscriptionRepository.delete(subscription);
     }
 
     /**
      * 구독 ID로 엔티티 조회 (내부 헬퍼)
      */
-    private Subscription findSubscriptionById(Integer subscriptionId) {
-        return subscriptionRepository.findById(subscriptionId)
+    private Subscription findOwnedSubscription(Integer memberId, Integer subscriptionId) {
+        return subscriptionRepository.findByMemberMemberIdAndSubscriptionId(memberId, subscriptionId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.SUBSCRIPTION_NOT_FOUND));
     }
 
