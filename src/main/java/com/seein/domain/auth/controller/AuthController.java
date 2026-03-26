@@ -1,9 +1,9 @@
 package com.seein.domain.auth.controller;
 
 import com.seein.domain.auth.dto.TokenResponse;
+import com.seein.domain.auth.service.AuthTokenService;
 import com.seein.domain.member.service.MemberService;
 import com.seein.global.dto.GlobalResponseDto;
-import com.seein.global.security.jwt.JwtTokenProvider;
 import com.seein.global.security.jwt.MemberPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private final AuthTokenService authTokenService;
     private final MemberService memberService;
 
     /**
@@ -40,33 +40,8 @@ public class AuthController {
     public GlobalResponseDto<TokenResponse> refresh(
             @Parameter(description = "Bearer {Refresh Token}", required = true)
             @RequestHeader("Authorization") String refreshToken) {
-        // Bearer 접두사 제거
-        String token = refreshToken.replace("Bearer ", "");
-
-        // Refresh Token 검증
-        if (!jwtTokenProvider.validateToken(token)) {
-            throw new IllegalArgumentException("Invalid refresh token");
-        }
-
-        // 새로운 Access Token 발급
-        String email = jwtTokenProvider.getEmailFromToken(token);
-        String newAccessToken = jwtTokenProvider.createAccessToken(email);
-
-        TokenResponse response = TokenResponse.of(newAccessToken, token);
+        TokenResponse response = authTokenService.refresh(refreshToken);
         return GlobalResponseDto.success(response);
-    }
-
-    /**
-     * 현재 로그인한 사용자 정보 조회
-     */
-    @Operation(summary = "내 정보 조회", description = "현재 로그인한 사용자 정보 조회")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "조회 성공"),
-            @ApiResponse(responseCode = "401", description = "인증 필요")
-    })
-    @GetMapping("/me")
-    public GlobalResponseDto<MemberPrincipal> me(@AuthenticationPrincipal MemberPrincipal userDetails) {
-        return GlobalResponseDto.success(userDetails);
     }
 
     /**

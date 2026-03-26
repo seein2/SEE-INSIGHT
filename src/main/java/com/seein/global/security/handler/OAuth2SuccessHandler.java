@@ -1,7 +1,8 @@
 package com.seein.global.security.handler;
 
+import com.seein.domain.auth.dto.AuthTokens;
+import com.seein.domain.auth.service.AuthTokenService;
 import com.seein.global.security.jwt.JwtProperties;
-import com.seein.global.security.jwt.JwtTokenProvider;
 import com.seein.global.security.jwt.MemberPrincipal;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,7 +30,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private static final String ACCESS_TOKEN_COOKIE_NAME = "access_token";
     private static final String REFRESH_TOKEN_COOKIE_NAME = "refresh_token";
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private final AuthTokenService authTokenService;
     private final JwtProperties jwtProperties;
 
     private final String redirectUri = "/";
@@ -39,15 +40,13 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         MemberPrincipal oAuth2User = (MemberPrincipal) authentication.getPrincipal();
         String email = oAuth2User.getEmail();
 
-        // JWT 토큰 생성
-        String accessToken = jwtTokenProvider.createAccessToken(email);
-        String refreshToken = jwtTokenProvider.createRefreshToken(email);
+        AuthTokens authTokens = authTokenService.issueTokens(email);
 
         log.info("OAuth2 로그인 성공: email={}, memberId={}", email, oAuth2User.getMemberId());
 
         // JWT를 HttpOnly 쿠키로 내려 브라우저가 이후 요청마다 자동 전송하도록 처리
-        addTokenCookie(response, ACCESS_TOKEN_COOKIE_NAME, accessToken, jwtProperties.getAccessExpiration(), request.isSecure());
-        addTokenCookie(response, REFRESH_TOKEN_COOKIE_NAME, refreshToken, jwtProperties.getRefreshExpiration(), request.isSecure());
+        addTokenCookie(response, ACCESS_TOKEN_COOKIE_NAME, authTokens.getAccessToken(), jwtProperties.getAccessExpiration(), request.isSecure());
+        addTokenCookie(response, REFRESH_TOKEN_COOKIE_NAME, authTokens.getRefreshToken(), jwtProperties.getRefreshExpiration(), request.isSecure());
 
         getRedirectStrategy().sendRedirect(request, response, redirectUri);
     }
