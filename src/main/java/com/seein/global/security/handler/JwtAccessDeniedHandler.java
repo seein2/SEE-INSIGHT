@@ -30,16 +30,14 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
                        AccessDeniedException accessDeniedException) throws IOException, ServletException {
         log.error("Forbidden error: {}", accessDeniedException.getMessage());
 
-        // Content Negotiation: 브라우저 vs API 요청 구분
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("text/html")) {
-            // 브라우저 요청: HTML 에러 페이지로 forward
-            request.getRequestDispatcher("/error/403.html").forward(request, response);
+            // 브라우저 요청 → Spring Boot 기본 에러 핸들링으로 위임
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
         } else {
-            // API 요청: JSON 응답
+            // API 요청 → JSON 응답
             response.setContentType("application/json;charset=UTF-8");
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-
             ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.FORBIDDEN);
             response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
         }

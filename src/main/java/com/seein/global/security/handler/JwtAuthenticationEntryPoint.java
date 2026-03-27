@@ -30,16 +30,14 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
                          AuthenticationException authException) throws IOException, ServletException {
         log.error("Unauthorized error: {}", authException.getMessage());
 
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-
-        // Content Negotiation: Accept 헤더 기반 HTML/JSON 분기
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("text/html")) {
-            // 브라우저 요청 → HTML 페이지 반환
-            request.getRequestDispatcher("/error/401.html").forward(request, response);
+            // 브라우저 요청 → Spring Boot 기본 에러 핸들링으로 위임
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         } else {
             // API 요청 → JSON 응답
             response.setContentType("application/json;charset=UTF-8");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.UNAUTHORIZED);
             response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
         }

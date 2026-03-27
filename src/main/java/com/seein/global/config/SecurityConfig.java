@@ -20,6 +20,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import jakarta.servlet.DispatcherType;
 import java.util.List;
 
 /**
@@ -55,6 +56,8 @@ public class SecurityConfig {
 
                 // 인증/인가 설정
                 .authorizeHttpRequests(auth -> auth
+                        // ERROR 디스패치 타입은 인증 없이 허용 (에러 페이지 렌더링용)
+                        .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                         // 인증 없이 접근 가능한 경로
                         .requestMatchers(
                                 "/",
@@ -64,7 +67,8 @@ public class SecurityConfig {
                                 "/login/oauth2/**",
                                 "/oauth2/**",
                                 "/swagger-ui/**",
-                                "/v3/api-docs/**"
+                                "/v3/api-docs/**",
+                                "/error/**"
                         ).permitAll()
                         // 나머지는 인증 필요
                         .anyRequest().authenticated()
