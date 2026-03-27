@@ -1,15 +1,16 @@
 package com.seein.domain.auth.controller;
 
-import com.seein.domain.auth.dto.TokenResponse;
 import com.seein.domain.auth.service.AuthTokenService;
 import com.seein.domain.member.service.MemberService;
 import com.seein.global.dto.GlobalResponseDto;
+import com.seein.global.security.cookie.AuthCookieService;
 import com.seein.global.security.jwt.MemberPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -25,23 +26,22 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthTokenService authTokenService;
+    private final AuthCookieService authCookieService;
     private final MemberService memberService;
 
     /**
      * Access Token 재발급
      * Refresh Token을 검증하여 새로운 Access Token 발급
      */
-    @Operation(summary = "토큰 재발급", description = "Refresh Token을 사용하여 새로운 Access Token 발급")
+    @Operation(summary = "토큰 재발급", description = "refresh_token 쿠키를 사용하여 Access Token과 Refresh Token을 재발급합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "토큰 재발급 성공"),
             @ApiResponse(responseCode = "401", description = "유효하지 않은 Refresh Token")
     })
     @PostMapping("/refresh")
-    public GlobalResponseDto<TokenResponse> refresh(
-            @Parameter(description = "Bearer {Refresh Token}", required = true)
-            @RequestHeader("Authorization") String refreshToken) {
-        TokenResponse response = authTokenService.refresh(refreshToken);
-        return GlobalResponseDto.success(response);
+    public GlobalResponseDto<String> refresh(@CookieValue(name = AuthCookieService.REFRESH_TOKEN_COOKIE_NAME, required = false) String refreshToken, HttpServletRequest request, HttpServletResponse response) {
+        authCookieService.addAuthCookies(response, authTokenService.refresh(refreshToken), request.isSecure());
+        return GlobalResponseDto.success("토큰이 재발급되었습니다.");
     }
 
     /**

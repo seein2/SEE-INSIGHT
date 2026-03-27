@@ -13,8 +13,9 @@ public class AuthTokens {
 
     private final String accessToken;
     private final String refreshToken;
+    private final String refreshTokenId;
 
-    public static AuthTokens of(String accessToken, String refreshToken) {
-        return new AuthTokens(accessToken, refreshToken);
+    public static AuthTokens of(String accessToken, String refreshToken, String refreshTokenId) {
+        return new AuthTokens(accessToken, refreshToken, refreshTokenId);
     }
 }

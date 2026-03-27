@@ -4,6 +4,7 @@ import com.seein.global.security.handler.JwtAccessDeniedHandler;
 import com.seein.global.security.handler.JwtAuthenticationEntryPoint;
 import com.seein.global.security.handler.OAuth2FailureHandler;
 import com.seein.global.security.handler.OAuth2SuccessHandler;
+import com.seein.global.security.handler.RefreshTokenLogoutHandler;
 import com.seein.global.security.jwt.JwtAuthenticationFilter;
 import com.seein.global.security.oauth2.OAuth2MemberService;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,7 @@ public class SecurityConfig {
     private final OAuth2MemberService oAuth2MemberService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final OAuth2FailureHandler oAuth2FailureHandler;
+    private final RefreshTokenLogoutHandler refreshTokenLogoutHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -57,15 +59,12 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/",
                                 "/login",
-                                "/api/v1/auth/**",
-                                "/api/v1/dashboard",
-                                "/api/v1/keywords/**",
+                                "/api/v1/auth/refresh",
                                 "/api/v1/news/**",
                                 "/login/oauth2/**",
                                 "/oauth2/**",
                                 "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/actuator/health"
+                                "/v3/api-docs/**"
                         ).permitAll()
                         // 나머지는 인증 필요
                         .anyRequest().authenticated()
@@ -83,6 +82,7 @@ public class SecurityConfig {
                 // 로그아웃
                 .logout(logout -> logout
                         .logoutUrl("/logout")
+                        .addLogoutHandler(refreshTokenLogoutHandler)
                         .deleteCookies("access_token", "refresh_token")
                         .logoutSuccessUrl("/")
                 )

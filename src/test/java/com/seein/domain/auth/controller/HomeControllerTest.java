@@ -14,6 +14,7 @@ import com.seein.global.security.handler.JwtAccessDeniedHandler;
 import com.seein.global.security.handler.JwtAuthenticationEntryPoint;
 import com.seein.global.security.handler.OAuth2FailureHandler;
 import com.seein.global.security.handler.OAuth2SuccessHandler;
+import com.seein.global.security.handler.RefreshTokenLogoutHandler;
 import com.seein.global.security.jwt.JwtAuthenticationFilter;
 import com.seein.global.security.jwt.JwtTokenProvider;
 import com.seein.global.security.oauth2.OAuth2MemberService;
@@ -47,6 +48,9 @@ class HomeControllerTest {
 
     @MockBean
     private OAuth2FailureHandler oAuth2FailureHandler;
+
+    @MockBean
+    private RefreshTokenLogoutHandler refreshTokenLogoutHandler;
 
     @MockBean
     private DashboardService dashboardService;
