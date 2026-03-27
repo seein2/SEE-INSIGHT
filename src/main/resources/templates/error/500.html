@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>500 - 서버 오류 | SEE-INSIGHT</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg-start: #f4efe3;
+            --bg-end: #d8e7ef;
+            --panel: rgba(255, 255, 255, 0.88);
+            --text: #18242d;
+            --muted: #61707b;
+            --border: rgba(24, 36, 45, 0.1);
+            --ink: #20303b;
+            --accent: #d96f32;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top, rgba(255, 255, 255, 0.7), transparent 36%),
+                linear-gradient(135deg, var(--bg-start), var(--bg-end));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .error-shell {
+            width: min(600px, 100%);
+        }
+
+        .error-card {
+            padding: 64px 42px;
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            background: var(--panel);
+            box-shadow: 0 20px 60px rgba(31, 41, 55, 0.12);
+            backdrop-filter: blur(14px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 24px;
+        }
+
+        .error-icon {
+            color: var(--accent);
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .error-code {
+            font-size: 84px;
+            font-weight: 800;
+            line-height: 1;
+            margin: 0;
+            color: var(--ink);
+            letter-spacing: -0.04em;
+        }
+
+        .error-message {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--muted);
+            margin: 0 0 16px 0;
+        }
+
+        .home-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px;
+            padding: 0 32px;
+            border-radius: 999px;
+            border: none;
+            background: var(--ink);
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 8px 24px rgba(24, 36, 45, 0.16);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .home-button:hover {
+            background: #141c22;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(24, 36, 45, 0.24);
+        }
+    </style>
+</head>
+<body>
+    <main class="error-shell">
+        <section class="error-card">
+            <svg class="error-icon" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+            <h1 class="error-code">500</h1>
+            <p class="error-message">서버 오류가 발생했습니다</p>
+            <a href="/" class="home-button">홈으로 돌아가기</a>
+        </section>
+    </main>
+</body>
+</html>

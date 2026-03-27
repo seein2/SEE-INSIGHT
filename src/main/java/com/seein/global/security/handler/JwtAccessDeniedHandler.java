@@ -30,10 +30,18 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
                        AccessDeniedException accessDeniedException) throws IOException, ServletException {
         log.error("Forbidden error: {}", accessDeniedException.getMessage());
 
-        response.setContentType("application/json;charset=UTF-8");
-        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        // Content Negotiation: 브라우저 vs API 요청 구분
+        String accept = request.getHeader("Accept");
+        if (accept != null && accept.contains("text/html")) {
+            // 브라우저 요청: HTML 에러 페이지로 forward
+            request.getRequestDispatcher("/error/403.html").forward(request, response);
+        } else {
+            // API 요청: JSON 응답
+            response.setContentType("application/json;charset=UTF-8");
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 
-        ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.FORBIDDEN);
-        response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+            ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.FORBIDDEN);
+            response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+        }
     }
 }

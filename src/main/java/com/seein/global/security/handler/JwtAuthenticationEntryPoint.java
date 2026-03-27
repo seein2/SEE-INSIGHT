@@ -30,10 +30,18 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
                          AuthenticationException authException) throws IOException, ServletException {
         log.error("Unauthorized error: {}", authException.getMessage());
 
-        response.setContentType("application/json;charset=UTF-8");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-        ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.UNAUTHORIZED);
-        response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+        // Content Negotiation: Accept 헤더 기반 HTML/JSON 분기
+        String accept = request.getHeader("Accept");
+        if (accept != null && accept.contains("text/html")) {
+            // 브라우저 요청 → HTML 페이지 반환
+            request.getRequestDispatcher("/error/401.html").forward(request, response);
+        } else {
+            // API 요청 → JSON 응답
+            response.setContentType("application/json;charset=UTF-8");
+            ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.UNAUTHORIZED);
+            response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+        }
     }
 }
