@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.UUID;
 
 /**
  * JWT 토큰 생성 및 검증 담당
@@ -43,10 +42,6 @@ public class JwtTokenProvider {
     /**
      * Access Token 생성
      */
-    public String createAccessToken(String email) {
-        return createAccessToken(null, email);
-    }
-
     public String createAccessToken(Integer memberId, String email) {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + jwtProperties.getAccessExpiration());
@@ -67,10 +62,6 @@ public class JwtTokenProvider {
     /**
      * Refresh Token 생성
      */
-    public String createRefreshToken(String email) {
-        return createRefreshToken(null, email, UUID.randomUUID().toString());
-    }
-
     public String createRefreshToken(Integer memberId, String email, String tokenId) {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + jwtProperties.getRefreshExpiration());
