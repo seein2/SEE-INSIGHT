@@ -170,6 +170,18 @@
             font-weight: 600;
         }
 
+        .keyword-empty {
+            grid-column: 1 / -1;
+            padding: 28px 20px;
+            border-radius: 16px;
+            border: 1px dashed rgba(24, 36, 45, 0.18);
+            background: rgba(255, 255, 255, 0.45);
+            text-align: center;
+            color: var(--muted);
+            font-size: 15px;
+            font-weight: 600;
+        }
+
         .cta-section {
             display: flex;
             flex-direction: column;
@@ -257,34 +269,15 @@
                 <h2 class="section-title">인기 키워드</h2>
             </header>
             <div class="popular-keywords-grid">
-                <a href="/news?keywordId=1" class="keyword-card">
-                    <div class="keyword-card-name">AI</div>
-                    <div class="keyword-card-count">128명</div>
+                <a th:each="keyword : ${dashboard.bestKeywords}"
+                   th:href="@{/news(keywordId=${keyword.keywordId})}"
+                   class="keyword-card">
+                    <div class="keyword-card-name" th:text="${keyword.keyword}">키워드</div>
+                    <div class="keyword-card-count" th:text="${keyword.subscriberCount + '명'}">0명</div>
                 </a>
-                <a href="/news?keywordId=2" class="keyword-card">
-                    <div class="keyword-card-name">반도체</div>
-                    <div class="keyword-card-count">95명</div>
-                </a>
-                <a href="/news?keywordId=3" class="keyword-card">
-                    <div class="keyword-card-name">경제</div>
-                    <div class="keyword-card-count">82명</div>
-                </a>
-                <a href="/news?keywordId=4" class="keyword-card">
-                    <div class="keyword-card-name">부동산</div>
-                    <div class="keyword-card-count">76명</div>
-                </a>
-                <a href="/news?keywordId=5" class="keyword-card">
-                    <div class="keyword-card-name">주식</div>
-                    <div class="keyword-card-count">71명</div>
-                </a>
-                <a href="/news?keywordId=6" class="keyword-card">
-                    <div class="keyword-card-name">세연</div>
-                    <div class="keyword-card-count">1명</div>
-                </a>
-                <a href="/news?keywordId=7" class="keyword-card">
-                    <div class="keyword-card-name">캠핑</div>
-                    <div class="keyword-card-count">1명</div>
-                </a>
+                <div class="keyword-empty" th:if="${#lists.isEmpty(dashboard.bestKeywords)}">
+                    아직 집계된 인기 키워드가 없습니다.
+                </div>
             </div>
          </section>
 
