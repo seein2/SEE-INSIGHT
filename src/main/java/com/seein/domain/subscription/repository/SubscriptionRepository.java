@@ -51,6 +51,11 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Inte
     List<Subscription> findByIsActiveTrue();
 
     /**
+     * 특정 알림 시간에 발송 대상인 활성 구독 목록 조회
+     */
+    List<Subscription> findByIsActiveTrueAndNotificationTime(String notificationTime);
+
+    /**
      * 구독 ID + 회원 ID로 구독 조회 (상세 조회 및 설정 변경 검증)
      */
     Optional<Subscription> findByMemberMemberIdAndSubscriptionId(Integer memberId, Integer subscriptionId);

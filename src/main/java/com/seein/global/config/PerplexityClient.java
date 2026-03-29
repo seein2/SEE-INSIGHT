@@ -34,51 +34,9 @@ public class PerplexityClient {
 
     /**
      * 키워드 기반 뉴스 요약 생성
-     *
-     * @param keyword 검색할 키워드
-     * @return AI가 생성한 뉴스 요약 텍스트
-     */
-    public String generateNewsSummary(String keyword) {
-        String systemPrompt = "당신은 한국어 뉴스 요약 전문가입니다. "
-                + "주어진 키워드에 대한 오늘의 최신 뉴스를 검색하여 핵심 내용을 3~5문장으로 요약해주세요. "
-                + "출처가 있다면 함께 제공해주세요.";
-
-        String userPrompt = "'" + keyword + "' 키워드에 대한 오늘의 최신 뉴스를 요약해주세요.";
-
-        Map<String, Object> requestBody = Map.of(
-                "model", "sonar",
-                "messages", List.of(
-                        Map.of("role", "system", "content", systemPrompt),
-                        Map.of("role", "user", "content", userPrompt)
-                ),
-                "temperature", 0.2,
-                "max_tokens", 1024
-        );
-
-        try {
-            String responseJson = restClient.post()
-                    .uri("/chat/completions")
-                    .body(requestBody)
-                    .retrieve()
-                    .body(String.class);
-
-            return extractContent(responseJson);
-        } catch (Exception e) {
-            log.error("Perplexity API 호출 실패 - keyword: {}, error: {}", keyword, e.getMessage());
-            throw new BusinessException(ErrorCode.EXTERNAL_API_ERROR,
-                    "Perplexity API 호출 실패: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Perplexity API 응답에서 citations(출처 URL) 추출
-     *
-     * @param keyword 검색할 키워드
-     * @return 첫 번째 출처 URL (없으면 null)
      */
     public String generateNewsWithSource(String keyword) {
-        String systemPrompt = "당신은 한국어 뉴스 요약 전문가입니다. "
-                + "주어진 키워드에 대한 오늘의 최신 뉴스를 검색하여 핵심 내용을 3~5문장으로 요약해주세요.";
+        String systemPrompt = "당신은 한국어 뉴스 요약 전문가입니다. 주어진 키워드에 대한 오늘의 최신 뉴스를 검색하여 핵심 내용을 3~5문장으로 요약해주세요. 출처를 반드시 함께 제공해주세요.";
 
         String userPrompt = "'" + keyword + "' 키워드에 대한 오늘의 최신 뉴스를 요약해주세요.";
 
@@ -89,12 +47,15 @@ public class PerplexityClient {
                         Map.of("role", "user", "content", userPrompt)
                 ),
                 "temperature", 0.2,
-                "max_tokens", 1024
+                "max_tokens", 1024,
+                "search_recency_filter", "day",
+                "search_language_filter", List.of("ko"),
+                "language_preference", "ko"
         );
 
         try {
             String responseJson = restClient.post()
-                    .uri("/chat/completions")
+                    .uri("/v1/sonar")
                     .body(requestBody)
                     .retrieve()
                     .body(String.class);
@@ -102,8 +63,7 @@ public class PerplexityClient {
             return responseJson;
         } catch (Exception e) {
             log.error("Perplexity API 호출 실패 - keyword: {}, error: {}", keyword, e.getMessage());
-            throw new BusinessException(ErrorCode.EXTERNAL_API_ERROR,
-                    "Perplexity API 호출 실패: " + e.getMessage());
+            throw new BusinessException(ErrorCode.EXTERNAL_API_ERROR, "Perplexity API 호출 실패: " + e.getMessage());
         }
     }
 
@@ -117,8 +77,7 @@ public class PerplexityClient {
             return root.path("choices").get(0).path("message").path("content").asText();
         } catch (Exception e) {
             log.error("Perplexity API 응답 파싱 실패: {}", e.getMessage());
-            throw new BusinessException(ErrorCode.EXTERNAL_API_ERROR,
-                    "API 응답 파싱 실패: " + e.getMessage());
+            throw new BusinessException(ErrorCode.EXTERNAL_API_ERROR, "API 응답 파싱 실패: " + e.getMessage());
         }
     }
 
