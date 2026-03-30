@@ -42,7 +42,7 @@ public class NewsScheduler {
      * 뉴스 자동 생성 및 이메일 발송 스케줄러
      * 매분 실행되며 현재 시각과 같은 알림 시간의 활성 구독만 처리
      */
-    @Scheduled(cron = "0 * * * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 0 * * * *", zone = "Asia/Seoul")
     public void sendDailyNews() {
         sendDailyNews(LocalDateTime.now().withSecond(0).withNano(0));
     }
