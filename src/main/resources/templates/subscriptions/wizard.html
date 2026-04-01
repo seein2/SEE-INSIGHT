@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEE-INSIGHT | 이메일 구독</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="page-shell">
+    <header class="topbar">
+        <a href="/" class="brand-link">
+            <span class="brand-kicker">Email Learning</span>
+            <strong>학습 스타일을 그대로 이메일 구독으로 이어갑니다.</strong>
+        </a>
+        <div class="topbar-actions">
+            <a class="ghost-button" href="/">홈</a>
+            <a class="ghost-button" href="/me">마이</a>
+        </div>
+    </header>
+
+    <section class="summary-banner">
+        <div>
+            <p class="eyebrow">Membership</p>
+            <h1>현재 구독 <span th:text="${myPage.currentSubscriptionCount}">0</span>개</h1>
+            <p class="hero-description">
+                <span th:text="${myPage.membershipLabel}">Normal</span> 멤버십으로
+                <strong th:text="${myPage.subscriptionLimitLabel}">1개</strong>까지 설정할 수 있습니다.
+            </p>
+        </div>
+        <a class="ghost-button" href="/me">마이 페이지 보기</a>
+    </section>
+
+    <section class="wizard-layout">
+        <section class="wizard-card"
+                 data-subscription-wizard
+                 data-preview-api="/api/v1/subscriptions/preview"
+                 data-subscriptions-api="/api/v1/subscriptions"
+                 data-completed-prefix="/subscriptions/completed/"
+                 th:attr="data-prefill-study-language=${prefillStudyLanguage},
+                          data-prefill-explanation-language=${prefillExplanationLanguage},
+                          data-prefill-learning-style=${prefillLearningStyle},
+                          data-prefill-difficulty-level=${prefillDifficultyLevel},
+                          data-prefill-delivery-time=${prefillDeliveryTime},
+                          data-edit-subscription-id=${editSubscriptionId}">
+            <div class="wizard-header">
+                <div>
+                    <p class="eyebrow">Step by Step</p>
+                    <h2>이메일 학습 설정</h2>
+                </div>
+                <div class="step-indicator">
+                    <span class="step-dot active" data-step-dot="1">1</span>
+                    <span class="step-dot" data-step-dot="2">2</span>
+                    <span class="step-dot" data-step-dot="3">3</span>
+                    <span class="step-dot" data-step-dot="4">4</span>
+                    <span class="step-dot" data-step-dot="5">5</span>
+                    <span class="step-dot" data-step-dot="6">6</span>
+                </div>
+            </div>
+
+            <p class="inline-message" id="wizardMessage"></p>
+
+            <section class="wizard-step active" data-step="1">
+                <h3>어떤 언어를 공부하고 싶으신가요?</h3>
+                <div class="choice-grid">
+                    <button th:each="language : ${studyLanguages}"
+                            type="button"
+                            class="choice-card"
+                            data-field="studyLanguage"
+                            th:attr="data-value=${language}"
+                            th:text="${language.label}">영어</button>
+                </div>
+            </section>
+
+            <section class="wizard-step" data-step="2">
+                <h3>설명은 어떤 언어로 받을까요?</h3>
+                <div class="choice-grid">
+                    <button th:each="language : ${explanationLanguages}"
+                            type="button"
+                            class="choice-card"
+                            data-field="explanationLanguage"
+                            th:attr="data-value=${language}"
+                            th:text="${language.label}">한국어</button>
+                </div>
+            </section>
+
+            <section class="wizard-step" data-step="3">
+                <h3>어떤 방식으로 공부하고 싶으신가요?</h3>
+                <div class="choice-grid">
+                    <button th:each="style : ${learningStyles}"
+                            type="button"
+                            class="choice-card"
+                            data-field="learningStyle"
+                            th:attr="data-value=${style}">
+                        <strong th:text="${style.label}">실전 읽기</strong>
+                        <span th:text="${style.description}">설명</span>
+                    </button>
+                </div>
+            </section>
+
+            <section class="wizard-step" data-step="4">
+                <h3>난이도를 선택해 주세요</h3>
+                <div class="choice-grid">
+                    <button th:each="difficulty : ${difficultyLevels}"
+                            type="button"
+                            class="choice-card"
+                            data-field="difficultyLevel"
+                            th:attr="data-value=${difficulty}">
+                        <strong th:text="${difficulty.label}">초급</strong>
+                        <span th:text="${difficulty.description}">설명</span>
+                    </button>
+                </div>
+            </section>
+
+            <section class="wizard-step" data-step="5">
+                <h3>언제 이메일을 받고 싶으신가요?</h3>
+                <div class="time-picker">
+                    <button class="choice-card time-option" data-field="deliveryTime" data-value="07:00" type="button">오전 7시</button>
+                    <button class="choice-card time-option" data-field="deliveryTime" data-value="08:00" type="button">오전 8시</button>
+                    <button class="choice-card time-option" data-field="deliveryTime" data-value="19:00" type="button">저녁 7시</button>
+                    <button class="choice-card time-option" data-field="deliveryTime" data-value="21:00" type="button">저녁 9시</button>
+                </div>
+                <p class="helper-text">MVP에서는 매일 발송으로 고정되고 시간만 선택합니다.</p>
+            </section>
+
+            <section class="wizard-step" data-step="6" id="preview">
+                <div class="preview-header">
+                    <div>
+                        <h3>미리보기 확인</h3>
+                        <p class="helper-text">실제 메일에 들어갈 학습 카드 예시를 확인합니다.</p>
+                    </div>
+                    <button class="ghost-button" type="button" id="refreshPreviewButton">미리보기 새로고침</button>
+                </div>
+
+                <dl class="preview-summary">
+                    <div><dt>학습 언어</dt><dd data-summary="studyLanguageLabel">영어</dd></div>
+                    <div><dt>해설 언어</dt><dd data-summary="explanationLanguageLabel">한국어</dd></div>
+                    <div><dt>학습 스타일</dt><dd data-summary="learningStyleLabel">균형형</dd></div>
+                    <div><dt>난이도</dt><dd data-summary="difficultyLevelLabel">초급</dd></div>
+                    <div><dt>수신 시간</dt><dd data-summary="scheduleLabel">매일 08:00</dd></div>
+                </dl>
+
+                <article class="email-preview-card" id="previewCard">
+                    <p class="helper-text">미리보기를 불러오는 중입니다.</p>
+                </article>
+            </section>
+
+            <div class="wizard-footer">
+                <button class="ghost-button" type="button" id="prevStepButton">이전</button>
+                <button class="primary-button" type="button" id="nextStepButton">다음</button>
+                <button class="primary-button hidden" type="button" id="saveSubscriptionButton">구독 저장</button>
+            </div>
+        </section>
+
+        <aside class="settings-panel">
+            <div class="settings-panel-header">
+                <div>
+                    <p class="eyebrow">Current Settings</p>
+                    <h2>내 학습 설정</h2>
+                </div>
+            </div>
+
+            <div class="settings-empty" th:if="${#lists.isEmpty(subscriptions)}">
+                아직 생성한 학습 구독이 없습니다. 홈에서 본 스타일을 바로 이메일로 이어 보세요.
+            </div>
+
+            <div class="subscription-list" th:if="${!#lists.isEmpty(subscriptions)}">
+                <article class="subscription-card"
+                         th:each="subscription : ${subscriptions}"
+                         th:attr="data-subscription-id=${subscription.subscriptionId},
+                                  data-study-language=${subscription.studyLanguage},
+                                  data-explanation-language=${subscription.explanationLanguage},
+                                  data-learning-style=${subscription.learningStyle},
+                                  data-difficulty-level=${subscription.difficultyLevel},
+                                  data-delivery-time=${subscription.deliveryTime},
+                                  data-is-active=${subscription.isActive}">
+                    <div class="card-top">
+                        <span class="tag" th:text="${subscription.studyLanguageLabel}">영어</span>
+                        <span class="tag subtle" th:text="${subscription.learningStyleLabel}">일상 회화</span>
+                    </div>
+                    <h3 th:text="${subscription.learningStyleLabel + ' · ' + subscription.difficultyLevelLabel}">일상 회화 · 초급</h3>
+                    <p class="feed-summary">
+                        해설: <span th:text="${subscription.explanationLanguageLabel}">한국어</span>
+                        · 시간: <span th:text="${subscription.scheduleLabel}">매일 08:00</span>
+                    </p>
+                    <div class="card-actions">
+                        <button class="ghost-button edit-subscription-button" type="button">수정</button>
+                        <button class="ghost-button toggle-subscription-button" type="button"
+                                th:text="${subscription.isActive ? '일시중지' : '다시 시작'}">일시중지</button>
+                        <button class="ghost-button delete-subscription-button" type="button">삭제</button>
+                    </div>
+                </article>
+            </div>
+        </aside>
+    </section>
+</main>
+
+<script th:src="@{/js/subscription-wizard.js}"></script>
+</body>
+</html>

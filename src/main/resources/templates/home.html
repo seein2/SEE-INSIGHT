@@ -3,298 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SEE-INSIGHT</title>
-    <style>
-        :root {
-            color-scheme: light;
-            --bg-start: #f4efe3;
-            --bg-end: #d8e7ef;
-            --panel: rgba(255, 255, 255, 0.88);
-            --text: #18242d;
-            --muted: #61707b;
-            --border: rgba(24, 36, 45, 0.1);
-            --ink: #20303b;
-            --accent: #d96f32;
-            --hero: rgba(255, 255, 255, 0.64);
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            min-height: 100vh;
-            font-family: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-            color: var(--text);
-            background:
-                radial-gradient(circle at top, rgba(255, 255, 255, 0.7), transparent 36%),
-                linear-gradient(135deg, var(--bg-start), var(--bg-end));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-        }
-
-        .home-shell {
-            width: min(920px, 100%);
-        }
-
-        .home-topbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 18px;
-            padding: 0 4px;
-        }
-
-        .brand-mark {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 16px;
-            font-weight: 800;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            color: var(--ink);
-            text-decoration: none;
-            transition: opacity 0.2s ease;
-        }
-        
-        .brand-mark:hover {
-            opacity: 0.8;
-        }
-
-        .top-button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 44px;
-            padding: 0 18px;
-            border-radius: 999px;
-            border: 1px solid rgba(24, 36, 45, 0.12);
-            background: rgba(255, 255, 255, 0.72);
-            color: var(--ink);
-            font-size: 14px;
-            font-weight: 700;
-            text-decoration: none;
-            box-shadow: 0 8px 24px rgba(24, 36, 45, 0.08);
-            transition: all 0.2s ease;
-        }
-        
-        .top-button:hover {
-            background: rgba(255, 255, 255, 0.9);
-            transform: translateY(-1px);
-        }
-
-        .top-actions {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .logout-form {
-            margin: 0;
-        }
-
-        .top-button.logout {
-            cursor: pointer;
-            font-family: inherit;
-        }
-
-        .home-card {
-            width: min(920px, 100%);
-            padding: 42px;
-            border: 1px solid var(--border);
-            border-radius: 28px;
-            background: var(--panel);
-            box-shadow: 0 20px 60px rgba(31, 41, 55, 0.12);
-            backdrop-filter: blur(14px);
-            display: flex;
-            flex-direction: column;
-            gap: 32px;
-        }
-
-        .section-header {
-            margin-bottom: 16px;
-        }
-
-        .section-title {
-            margin: 0;
-            font-size: 20px;
-            font-weight: 800;
-            color: var(--ink);
-            letter-spacing: -0.02em;
-        }
-
-        .popular-keywords-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 16px;
-            width: 100%;
-        }
-
-        .keyword-card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 24px 16px;
-            background: var(--hero);
-            border: 1px solid rgba(24, 36, 45, 0.08);
-            border-radius: 16px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            color: var(--text);
-        }
-
-        .keyword-card:hover {
-            background: rgba(217, 111, 50, 0.08);
-            border-color: var(--accent);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(217, 111, 50, 0.12);
-        }
-
-        .keyword-card-name {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--ink);
-            margin-bottom: 8px;
-            letter-spacing: -0.01em;
-        }
-
-        .keyword-card-count {
-            font-size: 14px;
-            color: var(--accent);
-            font-weight: 600;
-        }
-
-        .keyword-empty {
-            grid-column: 1 / -1;
-            padding: 28px 20px;
-            border-radius: 16px;
-            border: 1px dashed rgba(24, 36, 45, 0.18);
-            background: rgba(255, 255, 255, 0.45);
-            text-align: center;
-            color: var(--muted);
-            font-size: 15px;
-            font-weight: 600;
-        }
-
-        .cta-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 32px 24px;
-            background: linear-gradient(135deg, rgba(217, 111, 50, 0.08) 0%, rgba(217, 111, 50, 0.04) 100%);
-            border: 1.5px solid var(--accent);
-            border-radius: 20px;
-            text-align: center;
-            gap: 20px;
-        }
-
-        .cta-text {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--ink);
-            letter-spacing: -0.01em;
-            line-height: 1.5;
-            margin: 0;
-        }
-
-        .cta-button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 12px 28px;
-            background: var(--accent);
-            color: white;
-            border: none;
-            border-radius: 999px;
-            font-size: 15px;
-            font-weight: 700;
-            text-decoration: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 8px 20px rgba(217, 111, 50, 0.24);
-        }
-
-        .cta-button:hover {
-            background: #c85a1f;
-            transform: translateY(-2px);
-            box-shadow: 0 12px 28px rgba(217, 111, 50, 0.32);
-        }
-
-        @media (max-width: 640px) {
-            .home-topbar {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 14px;
-            }
-
-            .home-card {
-                padding: 34px 24px;
-            }
-
-            .popular-keywords-grid {
-                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            }
-        }
-    </style>
+    <title>SEE-INSIGHT | 학습 피드</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body>
-<main class="home-shell">
-    <header class="home-topbar">
-        <a href="/" class="brand-mark">
-            <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M16 10C10 10 5 16 5 16C5 16 10 22 16 22C22 22 27 16 27 16C27 16 22 10 16 10Z" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="16" cy="16" r="3.5" fill="var(--accent)"/>
-            </svg>
-            <span>SEE-INSIGHT</span>
+<main class="page-shell">
+    <header class="topbar">
+        <a href="/" class="brand-link">
+            <span class="brand-kicker">SEE-INSIGHT</span>
+            <strong>외국어를 매일 읽고, 표현으로 익히는 학습 피드</strong>
         </a>
-        <div class="top-actions">
-            <a class="top-button" th:if="${!isAuthenticated}" th:href="${loginPageUrl}">시작하기</a>
-            <a class="top-button" th:if="${isAuthenticated}" th:href="${profileUrl}">내 정보</a>
-            <form class="logout-form" th:if="${isAuthenticated}" th:action="@{/logout}" method="post">
-                <button class="top-button logout" type="submit">로그아웃</button>
+        <div class="topbar-actions">
+            <a class="ghost-button" th:if="${!isAuthenticated}" th:href="${loginPageUrl}">로그인</a>
+            <a class="ghost-button" th:if="${isAuthenticated}" th:href="${subscriptionsUrl}">이메일 구독</a>
+            <a class="ghost-button" th:if="${isAuthenticated}" th:href="${profileUrl}">마이</a>
+            <form th:if="${isAuthenticated}" th:action="@{/logout}" method="post">
+                <button class="ghost-button" type="submit">로그아웃</button>
             </form>
         </div>
     </header>
 
-    <section class="home-card">
-        <section class="chart-section">
-            <header class="section-header">
-                <h2 class="section-title">인기 키워드</h2>
-            </header>
-            <div class="popular-keywords-grid">
-                <a th:each="keyword : ${dashboard.bestKeywords}"
-                   th:href="@{/news(keywordId=${keyword.keywordId})}"
-                   class="keyword-card">
-                    <div class="keyword-card-name" th:text="${keyword.keyword}">키워드</div>
-                    <div class="keyword-card-count" th:text="${keyword.subscriberCount + '명'}">0명</div>
-                </a>
-                <div class="keyword-empty" th:if="${#lists.isEmpty(dashboard.bestKeywords)}">
-                    아직 집계된 인기 키워드가 없습니다.
-                </div>
+    <section class="hero-panel">
+        <div class="hero-copy">
+            <p class="eyebrow">Daily Learning Feed</p>
+            <h1>뉴스처럼 소비하지 않고, 학습 피드처럼 쌓이게 만듭니다.</h1>
+            <p class="hero-description">
+                언어를 고르고, 스타일을 고르면 바로 읽기와 표현 학습을 시작할 수 있습니다.
+                마음에 드는 스타일은 이메일 학습으로 그대로 이어집니다.
+            </p>
+        </div>
+        <a class="primary-button"
+           th:href="@{/subscriptions(studyLanguage=${feed.selectedStudyLanguage}, learningStyle=${feed.selectedLearningStyle != 'ALL' ? feed.selectedLearningStyle : 'BALANCED'})}">
+            이런 흐름으로 이메일 받기
+        </a>
+    </section>
+
+    <section class="filter-panel">
+        <div class="tab-list">
+            <a th:each="language : ${studyLanguages}"
+               class="tab-pill"
+               th:classappend="${feed.selectedStudyLanguage == language.name()} ? ' active' : ''"
+               th:href="${feed.selectedLearningStyle == 'ALL'} ? @{/(studyLanguage=${language})} : @{/(studyLanguage=${language}, learningStyle=${feed.selectedLearningStyle})}"
+               th:text="${language.label}">영어</a>
+        </div>
+
+        <div class="filter-list">
+            <a class="filter-pill"
+               th:classappend="${feed.selectedLearningStyle == 'ALL'} ? ' active' : ''"
+               th:href="@{/(studyLanguage=${feed.selectedStudyLanguage})}">전체</a>
+            <a th:each="style : ${learningStyles}"
+               class="filter-pill"
+               th:classappend="${feed.selectedLearningStyle == style.name()} ? ' active' : ''"
+               th:href="@{/(studyLanguage=${feed.selectedStudyLanguage}, learningStyle=${style})}"
+               th:text="${style.label}">실전 읽기</a>
+        </div>
+    </section>
+
+    <section class="featured-panel" th:if="${feed.featuredContent != null}">
+        <div class="featured-header">
+            <div>
+                <p class="eyebrow">오늘의 추천</p>
+                <h2 th:text="${feed.featuredContent.title}">오늘의 문장</h2>
             </div>
-         </section>
+            <div class="tag-row">
+                <span class="tag" th:text="${feed.selectedStudyLanguageLabel}">영어</span>
+                <span class="tag subtle" th:text="${feed.featuredContent.learningStyleLabel}">균형형</span>
+            </div>
+        </div>
 
-        <section class="cta-section">
-            <p class="cta-text">📬 관심 키워드를 구독하고 매일 원하는 시간에 뉴스 요약을 받아보세요!</p>
-            <a href="/subscriptions" class="cta-button">키워드 구독하러 가기</a>
-        </section>
+        <p class="featured-summary" th:text="${feed.featuredContent.summary}">짧은 요약</p>
+        <blockquote class="source-quote" th:text="${feed.featuredContent.sourceText}">원문</blockquote>
+        <p class="featured-explanation" th:text="${feed.featuredContent.explanationText}">해설</p>
 
+        <div class="point-list">
+            <span class="point-chip" th:text="${feed.featuredContent.expressionOne}">표현 1</span>
+            <span class="point-chip" th:text="${feed.featuredContent.expressionTwo}">표현 2</span>
+        </div>
+
+        <div class="card-actions">
+            <a class="ghost-button"
+               th:if="${feed.featuredContent.sourceLink != null}"
+               th:href="${feed.featuredContent.sourceLink}"
+               target="_blank" rel="noreferrer">더보기</a>
+            <a class="primary-button"
+               th:href="@{/subscriptions(studyLanguage=${feed.featuredContent.studyLanguage}, learningStyle=${feed.featuredContent.learningStyle})}">
+                이런 스타일 이메일로 받기
+            </a>
+        </div>
+    </section>
+
+    <section class="content-grid">
+        <article class="feed-card" th:each="card : ${feed.feedCards}">
+            <div class="card-top">
+                <span class="tag subtle" th:text="${card.learningStyleLabel}">실전 읽기</span>
+                <span class="tag subtle" th:text="${card.difficultyLevelLabel}">초급</span>
+            </div>
+            <h3 th:text="${card.title}">카드 제목</h3>
+            <p class="feed-summary" th:text="${card.summary}">한 줄 요약</p>
+            <p class="feed-source" th:text="${card.sourceText}">원문</p>
+            <p class="feed-explanation" th:text="${card.explanationText}">해설</p>
+
+            <div class="point-list compact">
+                <span class="point-chip" th:text="${card.expressionOne}">표현 1</span>
+                <span class="point-chip" th:text="${card.expressionTwo}">표현 2</span>
+            </div>
+
+            <div class="card-actions">
+                <a class="ghost-button"
+                   th:if="${card.sourceLink != null}"
+                   th:href="${card.sourceLink}"
+                   target="_blank" rel="noreferrer">더보기</a>
+                <a class="ghost-button"
+                   th:href="@{/subscriptions(studyLanguage=${card.studyLanguage}, learningStyle=${card.learningStyle})}">이런 스타일 이메일로 받기</a>
+            </div>
+        </article>
     </section>
 </main>
-
-<script th:inline="javascript">
-    /*<![CDATA[*/
-    document.addEventListener("DOMContentLoaded", function() {
-        const isAuthenticated = /*[[${isAuthenticated}]]*/ false;
-    });
-    /*]]>*/
-</script>
 </body>
 </html>

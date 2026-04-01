@@ -1,6 +1,6 @@
 package com.seein.domain.member.controller;
 
-import com.seein.domain.member.dto.MemberResponse;
+import com.seein.domain.member.dto.MyPageResponse;
 import com.seein.domain.member.service.MemberService;
 import com.seein.global.security.jwt.MemberPrincipal;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +24,8 @@ public class MemberPageController {
      */
     @GetMapping("/me")
     public String me(@AuthenticationPrincipal MemberPrincipal principal, Model model) {
-        MemberResponse member = memberService.getMember(principal.getMemberId());
-        model.addAttribute("member", member);
-        return "member/profile";
+        MyPageResponse myPage = memberService.getMyPage(principal.getMemberId());
+        model.addAttribute("myPage", myPage);
+        return "my/index";
     }
 }

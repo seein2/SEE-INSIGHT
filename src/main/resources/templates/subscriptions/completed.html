@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEE-INSIGHT | 구독 완료</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="page-shell narrow">
+    <section class="completion-card">
+        <p class="eyebrow">Subscription Saved</p>
+        <h1>학습 이메일 구독이 저장되었습니다.</h1>
+        <p class="hero-description">이제 선택한 스타일에 맞춰 매일 같은 시간에 학습 메일을 받게 됩니다.</p>
+
+        <dl class="preview-summary">
+            <div><dt>학습 언어</dt><dd th:text="${subscription.studyLanguageLabel}">영어</dd></div>
+            <div><dt>해설 언어</dt><dd th:text="${subscription.explanationLanguageLabel}">한국어</dd></div>
+            <div><dt>학습 스타일</dt><dd th:text="${subscription.learningStyleLabel}">일상 회화</dd></div>
+            <div><dt>난이도</dt><dd th:text="${subscription.difficultyLevelLabel}">초급</dd></div>
+            <div><dt>수신 주기</dt><dd th:text="${subscription.scheduleLabel}">매일 08:00</dd></div>
+        </dl>
+
+        <div class="card-actions centered">
+            <a class="ghost-button" th:href="|/subscriptions?editSubscriptionId=${subscription.subscriptionId}|">설정 수정</a>
+            <a class="ghost-button" th:href="|/subscriptions?editSubscriptionId=${subscription.subscriptionId}#preview|">미리보기 다시 보기</a>
+            <a class="primary-button" href="/">홈으로 이동</a>
+        </div>
+    </section>
+</main>
+</body>
+</html>

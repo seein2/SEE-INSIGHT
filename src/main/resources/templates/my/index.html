@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEE-INSIGHT | 마이</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="page-shell narrow">
+    <header class="topbar">
+        <a href="/" class="brand-link">
+            <span class="brand-kicker">My Page</span>
+            <strong>계정과 학습 설정을 한 번에 관리합니다.</strong>
+        </a>
+        <div class="topbar-actions">
+            <a class="ghost-button" href="/">홈</a>
+            <a class="ghost-button" href="/subscriptions">이메일 구독</a>
+        </div>
+    </header>
+
+    <section class="profile-grid">
+        <article class="profile-card">
+            <p class="eyebrow">Account</p>
+            <h1 th:text="${myPage.nickname != null ? myPage.nickname : myPage.email}">사용자</h1>
+            <dl class="profile-list">
+                <div><dt>이메일</dt><dd th:text="${myPage.email}">email@example.com</dd></div>
+                <div><dt>멤버십</dt><dd th:text="${myPage.membershipLabel}">Normal</dd></div>
+                <div><dt>로그인 제공자</dt><dd th:text="${myPage.provider}">google</dd></div>
+                <div><dt>가입일</dt><dd th:text="${#temporals.format(myPage.createdAt, 'yyyy-MM-dd HH:mm')}">2026-04-01</dd></div>
+            </dl>
+        </article>
+
+        <article class="profile-card accent">
+            <p class="eyebrow">Learning Settings</p>
+            <h2>현재 구독 <span th:text="${myPage.currentSubscriptionCount}">0</span>개</h2>
+            <p class="hero-description">
+                설정 가능 수: <strong th:text="${myPage.subscriptionLimitLabel}">1개</strong>
+            </p>
+            <a class="primary-button" href="/subscriptions">구독 관리하기</a>
+        </article>
+    </section>
+
+    <section class="profile-card">
+        <div class="settings-panel-header">
+            <div>
+                <p class="eyebrow">Active Summary</p>
+                <h2>내 학습 구독</h2>
+            </div>
+        </div>
+
+        <div class="settings-empty" th:if="${#lists.isEmpty(myPage.subscriptions)}">
+            아직 생성한 학습 구독이 없습니다.
+        </div>
+
+        <div class="subscription-list" th:if="${!#lists.isEmpty(myPage.subscriptions)}">
+            <article class="subscription-card" th:each="subscription : ${myPage.subscriptions}">
+                <div class="card-top">
+                    <span class="tag" th:text="${subscription.studyLanguageLabel}">영어</span>
+                    <span class="tag subtle" th:text="${subscription.learningStyleLabel}">실전 읽기</span>
+                </div>
+                <h3 th:text="${subscription.learningStyleLabel + ' · ' + subscription.difficultyLevelLabel}">실전 읽기 · 중급</h3>
+                <p class="feed-summary">
+                    해설: <span th:text="${subscription.explanationLanguageLabel}">한국어</span>
+                    · 발송: <span th:text="${subscription.scheduleLabel}">매일 08:00</span>
+                </p>
+            </article>
+        </div>
+    </section>
+</main>
+</body>
+</html>
