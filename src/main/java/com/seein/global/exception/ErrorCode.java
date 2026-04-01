@@ -18,21 +18,19 @@ public enum ErrorCode {
     // 회원 관련 에러
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "회원을 찾을 수 없습니다."),
     MEMBER_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 존재하는 회원입니다."),
-    
-    // 키워드 관련 에러
-    KEYWORD_NOT_FOUND(HttpStatus.NOT_FOUND, "키워드를 찾을 수 없습니다."),
-    
-    // 구독 관련 에러
-    SUBSCRIPTION_NOT_FOUND(HttpStatus.NOT_FOUND, "구독 정보를 찾을 수 없습니다."),
-    SUBSCRIPTION_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 구독 중인 키워드입니다."),
-    
-    // 뉴스 관련 에러
-    NEWS_NOT_FOUND(HttpStatus.NOT_FOUND, "뉴스를 찾을 수 없습니다."),
-    NEWS_GENERATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "뉴스 생성에 실패했습니다."),
-    
+
+    // 학습 구독 관련 에러
+    SUBSCRIPTION_NOT_FOUND(HttpStatus.NOT_FOUND, "학습 구독 정보를 찾을 수 없습니다."),
+    SUBSCRIPTION_ALREADY_EXISTS(HttpStatus.CONFLICT, "동일한 학습 설정이 이미 존재합니다."),
+    SUBSCRIPTION_LIMIT_EXCEEDED(HttpStatus.CONFLICT, "현재 멤버십으로 생성 가능한 구독 수를 초과했습니다."),
+
+    // 학습 콘텐츠 관련 에러
+    LEARNING_CONTENT_NOT_FOUND(HttpStatus.NOT_FOUND, "학습 콘텐츠를 찾을 수 없습니다."),
+    LEARNING_CONTENT_GENERATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "학습 콘텐츠 생성에 실패했습니다."),
+
     // 외부 API 에러
     EXTERNAL_API_ERROR(HttpStatus.BAD_GATEWAY, "외부 API 호출에 실패했습니다."),
-    
+
     // 일반 에러
     INVALID_INPUT(HttpStatus.BAD_REQUEST, "잘못된 입력입니다."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류가 발생했습니다.");

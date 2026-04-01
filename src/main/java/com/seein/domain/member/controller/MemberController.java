@@ -1,6 +1,6 @@
 package com.seein.domain.member.controller;
 
-import com.seein.domain.member.dto.MemberResponse;
+import com.seein.domain.member.dto.MyPageResponse;
 import com.seein.domain.member.dto.NicknameUpdateRequest;
 import com.seein.domain.member.service.MemberService;
 import com.seein.global.dto.GlobalResponseDto;
@@ -27,6 +27,15 @@ import java.util.Map;
 public class MemberController {
 
     private final MemberService memberService;
+
+    /**
+     * 내 정보 조회
+     */
+    @Operation(summary = "내 정보 조회", description = "현재 로그인한 사용자의 마이 페이지 정보를 조회합니다.")
+    @GetMapping("/me")
+    public GlobalResponseDto<MyPageResponse> getMe(@AuthenticationPrincipal MemberPrincipal userDetails) {
+        return GlobalResponseDto.success(memberService.getMyPage(userDetails.getMemberId()));
+    }
 
     /**
      * 닉네임 변경

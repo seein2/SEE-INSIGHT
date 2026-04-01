@@ -1,12 +1,10 @@
 package com.seein.domain.subscription.repository;
 
 import com.seein.domain.subscription.entity.Subscription;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,47 +14,43 @@ import java.util.Optional;
 public interface SubscriptionRepository extends JpaRepository<Subscription, Integer> {
 
     /**
-     * 회원의 구독 목록 조회 (페이징)
+     * 회원의 구독 목록 조회
      */
-    Page<Subscription> findByMemberMemberId(Integer memberId, Pageable pageable);
+    List<Subscription> findByMemberMemberIdOrderByCreatedAtDesc(Integer memberId);
 
     /**
-     * 회원 + 키워드로 구독 조회 (중복 방지)
-     */
-    Optional<Subscription> findByMemberMemberIdAndKeywordKeywordId(Integer memberId, Integer keywordId);
-
-    /**
-     * 회원 + 키워드 구독 존재 여부
-     */
-    boolean existsByMemberMemberIdAndKeywordKeywordId(Integer memberId, Integer keywordId);
-
-    /**
-     * 키워드별 구독자 수 조회
-     */
-    @Query("SELECT COUNT(s) FROM Subscription s WHERE s.keyword.keywordId = :keywordId")
-    Long countByKeywordId(@Param("keywordId") Integer keywordId);
-
-    /**
-     * 인기 키워드 TOP N (구독자 수 기준 내림차순)
-     */
-    @Query("SELECT s.keyword.keywordId, s.keyword.keyword, COUNT(s) as cnt " +
-           "FROM Subscription s " +
-           "GROUP BY s.keyword.keywordId, s.keyword.keyword " +
-           "ORDER BY cnt DESC")
-    List<Object[]> findTopKeywords(Pageable pageable);
-
-    /**
-     * 활성 구독 목록 조회 (스케줄러용)
-     */
-    List<Subscription> findByIsActiveTrue();
-
-    /**
-     * 특정 알림 시간에 발송 대상인 활성 구독 목록 조회
-     */
-    List<Subscription> findByIsActiveTrueAndNotificationTime(String notificationTime);
-
-    /**
-     * 구독 ID + 회원 ID로 구독 조회 (상세 조회 및 설정 변경 검증)
+     * 회원 + 구독 ID로 구독 조회
      */
     Optional<Subscription> findByMemberMemberIdAndSubscriptionId(Integer memberId, Integer subscriptionId);
+
+    /**
+     * 회원의 전체 구독 수
+     */
+    long countByMemberMemberId(Integer memberId);
+
+    /**
+     * 동일 학습 설정 구독 존재 여부
+     */
+    boolean existsByMemberMemberIdAndStudyLanguageAndExplanationLanguageAndLearningStyleAndDifficultyLevelAndDeliveryTime(
+            Integer memberId,
+            com.seein.domain.subscription.entity.StudyLanguage studyLanguage,
+            com.seein.domain.subscription.entity.ExplanationLanguage explanationLanguage,
+            com.seein.domain.subscription.entity.LearningStyle learningStyle,
+            com.seein.domain.subscription.entity.DifficultyLevel difficultyLevel,
+            LocalTime deliveryTime
+    );
+
+    /**
+     * 발송 시각에 맞는 활성 구독 조회
+     */
+    @Query("""
+            SELECT s
+            FROM Subscription s
+            JOIN s.member m
+            WHERE s.isActive = true
+              AND m.deletedAt IS NULL
+              AND s.deliveryTime = :deliveryTime
+            ORDER BY s.subscriptionId ASC
+            """)
+    List<Subscription> findDeliverableSubscriptions(LocalTime deliveryTime);
 }

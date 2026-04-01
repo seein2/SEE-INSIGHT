@@ -12,11 +12,11 @@ import lombok.NoArgsConstructor;
 import java.time.LocalTime;
 
 /**
- * 학습 구독 생성 요청 DTO
+ * 학습 구독 미리보기 요청 DTO
  */
 @Getter
 @NoArgsConstructor
-public class SubscriptionCreateRequest {
+public class SubscriptionPreviewRequest {
 
     @NotNull(message = "학습 언어는 필수입니다.")
     private StudyLanguage studyLanguage;

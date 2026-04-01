@@ -14,7 +14,7 @@ import java.util.Map;
 
 /**
  * Perplexity API 클라이언트
- * Sonar 모델을 사용하여 키워드 기반 뉴스 요약 생성
+ * 학습 피드와 이메일 학습용 콘텐츠 생성을 담당한다.
  */
 @Slf4j
 @Component
@@ -33,36 +33,30 @@ public class PerplexityClient {
     }
 
     /**
-     * 키워드 기반 뉴스 요약 생성
+     * 학습 콘텐츠 생성
      */
-    public String generateNewsWithSource(String keyword) {
-        String systemPrompt = "당신은 한국어 뉴스 요약 전문가입니다. 주어진 키워드에 대한 오늘의 최신 뉴스를 검색하여 핵심 내용을 3~5문장으로 요약해주세요. 출처를 반드시 함께 제공해주세요.";
-
-        String userPrompt = "'" + keyword + "' 키워드에 대한 오늘의 최신 뉴스를 요약해주세요.";
-
+    public String generateLearningContent(String systemPrompt, String userPrompt, String searchLanguageCode) {
         Map<String, Object> requestBody = Map.of(
                 "model", "sonar",
                 "messages", List.of(
                         Map.of("role", "system", "content", systemPrompt),
                         Map.of("role", "user", "content", userPrompt)
                 ),
-                "temperature", 0.2,
-                "max_tokens", 1024,
+                "temperature", 0.3,
+                "max_tokens", 1200,
                 "search_recency_filter", "day",
-                "search_language_filter", List.of("ko"),
-                "language_preference", "ko"
+                "search_language_filter", List.of(searchLanguageCode),
+                "language_preference", searchLanguageCode
         );
 
         try {
-            String responseJson = restClient.post()
+            return restClient.post()
                     .uri("/v1/sonar")
                     .body(requestBody)
                     .retrieve()
                     .body(String.class);
-
-            return responseJson;
         } catch (Exception e) {
-            log.error("Perplexity API 호출 실패 - keyword: {}, error: {}", keyword, e.getMessage());
+            log.error("Perplexity API 호출 실패 - searchLanguageCode: {}, error: {}", searchLanguageCode, e.getMessage());
             throw new BusinessException(ErrorCode.EXTERNAL_API_ERROR, "Perplexity API 호출 실패: " + e.getMessage());
         }
     }
@@ -71,7 +65,7 @@ public class PerplexityClient {
      * API 응답 JSON에서 content 텍스트 추출
      * 경로: choices[0].message.content
      */
-    private String extractContent(String responseJson) {
+    public String extractContentFromResponse(String responseJson) {
         try {
             JsonNode root = objectMapper.readTree(responseJson);
             return root.path("choices").get(0).path("message").path("content").asText();
@@ -83,7 +77,6 @@ public class PerplexityClient {
 
     /**
      * API 응답 JSON에서 첫 번째 citation URL 추출
-     * 경로: citations[0]
      */
     public String extractFirstCitation(String responseJson) {
         try {
@@ -97,12 +90,5 @@ public class PerplexityClient {
             log.warn("Citation 추출 실패: {}", e.getMessage());
             return null;
         }
-    }
-
-    /**
-     * API 응답 JSON에서 content 텍스트 추출 (public)
-     */
-    public String extractContentFromResponse(String responseJson) {
-        return extractContent(responseJson);
     }
 }

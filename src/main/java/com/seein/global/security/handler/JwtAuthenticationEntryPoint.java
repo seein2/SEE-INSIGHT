@@ -32,8 +32,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("text/html")) {
-            // 브라우저 요청 → Spring Boot 기본 에러 핸들링으로 위임
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            response.sendRedirect("/login");
         } else {
             // API 요청 → JSON 응답
             response.setContentType("application/json;charset=UTF-8");

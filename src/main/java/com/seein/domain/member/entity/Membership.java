@@ -7,5 +7,13 @@ package com.seein.domain.member.entity;
  */
 public enum Membership {
     NORMAL,
-    PREMIUM
+    PREMIUM;
+
+    public int getSubscriptionLimit() {
+        return this == PREMIUM ? Integer.MAX_VALUE : 1;
+    }
+
+    public String getLabel() {
+        return this == PREMIUM ? "Premium" : "Normal";
+    }
 }

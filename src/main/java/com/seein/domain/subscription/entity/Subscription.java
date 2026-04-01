@@ -1,6 +1,5 @@
 package com.seein.domain.subscription.entity;
 
-import com.seein.domain.keyword.entity.Keyword;
 import com.seein.domain.member.entity.Member;
 import com.seein.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
@@ -9,22 +8,30 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.time.LocalTime;
+
 /**
- * 구독 엔티티
- * 회원의 키워드 구독 정보 관리
+ * 학습 이메일 구독 엔티티
  */
 @Entity
 @Table(
-    name = "subscription",
-    uniqueConstraints = {
-        @UniqueConstraint(
-            name = "subscription_index_0",
-            columnNames = {"member_id", "keyword_id"}
-        )
-    }
+        name = "learning_subscription",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "learning_subscription_unique_settings",
+                        columnNames = {
+                                "member_id",
+                                "study_language",
+                                "explanation_language",
+                                "learning_style",
+                                "difficulty_level",
+                                "delivery_time"
+                        }
+                )
+        }
 )
 @Getter
-@ToString(exclude = {"member", "keyword"})
+@ToString(exclude = "member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Subscription extends BaseTimeEntity {
 
@@ -37,46 +44,66 @@ public class Subscription extends BaseTimeEntity {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "keyword_id", nullable = false)
-    private Keyword keyword;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "study_language", nullable = false, length = 30)
+    private StudyLanguage studyLanguage;
 
-    @Column(name = "is_active")
+    @Enumerated(EnumType.STRING)
+    @Column(name = "explanation_language", nullable = false, length = 30)
+    private ExplanationLanguage explanationLanguage;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "learning_style", nullable = false, length = 30)
+    private LearningStyle learningStyle;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "difficulty_level", nullable = false, length = 30)
+    private DifficultyLevel difficultyLevel;
+
+    @Column(name = "delivery_time", nullable = false)
+    private LocalTime deliveryTime;
+
+    @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
-    @Column(name = "notification_time")
-    private String notificationTime;
-
-    /**
-     * 구독 생성 (정적 팩토리 메서드)
-     */
-    public static Subscription create(Member member, Keyword keyword) {
+    public static Subscription create(
+            Member member,
+            StudyLanguage studyLanguage,
+            ExplanationLanguage explanationLanguage,
+            LearningStyle learningStyle,
+            DifficultyLevel difficultyLevel,
+            LocalTime deliveryTime
+    ) {
         Subscription subscription = new Subscription();
         subscription.member = member;
-        subscription.keyword = keyword;
-        subscription.notificationTime = "09:00"; // 기본 알림 시간
+        subscription.studyLanguage = studyLanguage;
+        subscription.explanationLanguage = explanationLanguage;
+        subscription.learningStyle = learningStyle;
+        subscription.difficultyLevel = difficultyLevel;
+        subscription.deliveryTime = deliveryTime;
         subscription.isActive = true;
         return subscription;
     }
 
-    /**
-     * 알림 활성화
-     */
+    public void updateSettings(
+            StudyLanguage studyLanguage,
+            ExplanationLanguage explanationLanguage,
+            LearningStyle learningStyle,
+            DifficultyLevel difficultyLevel,
+            LocalTime deliveryTime
+    ) {
+        this.studyLanguage = studyLanguage;
+        this.explanationLanguage = explanationLanguage;
+        this.learningStyle = learningStyle;
+        this.difficultyLevel = difficultyLevel;
+        this.deliveryTime = deliveryTime;
+    }
+
     public void activate() {
         this.isActive = true;
     }
 
-    /**
-     * 알림 비활성화
-     */
     public void deactivate() {
         this.isActive = false;
-    }
-
-    /**
-     * 알림 시간 변경
-     */
-    public void updateNotificationTime(String notificationTime) {
-        this.notificationTime = notificationTime;
     }
 }
