@@ -5,51 +5,63 @@ CREATE TABLE `member` (
     `membership` ENUM('NORMAL', 'PREMIUM') COMMENT '등급',
     `provider` varchar(255) COMMENT 'google/naver',
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    `updated_at`TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `deleted_at` TIMESTAMP COMMENT '탈퇴 시간'
 );
 
-CREATE TABLE `keyword` (
-   `keyword_id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
-   `keyword` varchar(255) UNIQUE NOT NULL COMMENT '키워드 (예: Java, 주식)',
-   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE `subscription` (
+CREATE TABLE `learning_subscription` (
     `subscription_id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
     `member_id` int NOT NULL,
-    `keyword_id` int NOT NULL,
-    `is_active` boolean DEFAULT true COMMENT '알림설정',
-    `notification_time` varchar(255) COMMENT '발송 설정 시간',
+    `study_language` varchar(30) NOT NULL COMMENT '학습 언어',
+    `explanation_language` varchar(30) NOT NULL COMMENT '해설 언어',
+    `learning_style` varchar(30) NOT NULL COMMENT '학습 스타일',
+    `difficulty_level` varchar(30) NOT NULL COMMENT '난이도',
+    `delivery_time` time NOT NULL COMMENT '매일 발송 시간',
+    `is_active` boolean NOT NULL DEFAULT true COMMENT '활성 여부',
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    `updated_at`TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE `news_card` (
-     `news_id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
-     `keyword_id` int NOT NULL,
-     `summary_content` text COMMENT 'AI가 요약한 뉴스 본문',
-     `source_link` varchar(2048) COMMENT '뉴스 원문 링크',
-     `created_date` date NOT NULL COMMENT '파티셔닝 및 조회 기준일'
+CREATE TABLE `learning_content` (
+    `content_id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    `study_language` varchar(30) NOT NULL COMMENT '학습 언어',
+    `explanation_language` varchar(30) NOT NULL COMMENT '해설 언어',
+    `learning_style` varchar(30) NOT NULL COMMENT '학습 스타일',
+    `difficulty_level` varchar(30) NOT NULL COMMENT '난이도',
+    `title` varchar(255) NOT NULL COMMENT '콘텐츠 제목',
+    `summary` text NOT NULL COMMENT '짧은 요약',
+    `source_text` text NOT NULL COMMENT '원문 텍스트',
+    `explanation_text` text NOT NULL COMMENT '학습 해설',
+    `expression_one` varchar(255) COMMENT '핵심 표현 1',
+    `expression_two` varchar(255) COMMENT '핵심 표현 2',
+    `quiz_text` text COMMENT '짧은 복습 문제',
+    `source_link` varchar(2048) COMMENT '원문 링크',
+    `published_date` date NOT NULL COMMENT '발행 기준일',
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE `send_log` (
-    `log_id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    `subscription_id` int NOT NULL COMMENT '구독(키워드) 구분',
+CREATE TABLE `delivery_log` (
+    `delivery_log_id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    `subscription_id` int NOT NULL COMMENT '학습 구독 ID',
+    `content_id` int COMMENT '발송된 학습 콘텐츠 ID',
     `sent_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
     `status` ENUM('SUCCESS', 'FAIL') COMMENT '발송 결과',
-    `issue_date` datetime COMMENT '발행 날짜',
+    `issue_date` date NOT NULL COMMENT '일일 발송 기준일',
     `fail_reason` text COMMENT '실패 시 에러 메시지 저장'
 );
 
-CREATE UNIQUE INDEX `subscription_index_0` ON `subscription` (`member_id`, `keyword_id`);
+CREATE UNIQUE INDEX `learning_subscription_unique_settings`
+    ON `learning_subscription` (`member_id`, `study_language`, `explanation_language`, `learning_style`, `difficulty_level`, `delivery_time`);
 
-CREATE UNIQUE INDEX `news_card_index_1` ON `news_card` (`created_date`, `keyword_id`);
+CREATE UNIQUE INDEX `learning_content_unique_daily_settings`
+    ON `learning_content` (`study_language`, `explanation_language`, `learning_style`, `difficulty_level`, `published_date`);
 
-ALTER TABLE `subscription` ADD FOREIGN KEY (`member_id`) REFERENCES `member` (`member_id`);
+ALTER TABLE `learning_subscription`
+    ADD FOREIGN KEY (`member_id`) REFERENCES `member` (`member_id`);
 
-ALTER TABLE `subscription` ADD FOREIGN KEY (`keyword_id`) REFERENCES `keyword` (`keyword_id`);
+ALTER TABLE `delivery_log`
+    ADD FOREIGN KEY (`subscription_id`) REFERENCES `learning_subscription` (`subscription_id`);
 
-ALTER TABLE `news_card` ADD FOREIGN KEY (`keyword_id`) REFERENCES `keyword` (`keyword_id`);
-
-ALTER TABLE `send_log` ADD FOREIGN KEY (`subscription_id`) REFERENCES `subscription` (`subscription_id`);
+ALTER TABLE `delivery_log`
+    ADD FOREIGN KEY (`content_id`) REFERENCES `learning_content` (`content_id`);
