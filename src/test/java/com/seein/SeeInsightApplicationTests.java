@@ -1,4 +1,4 @@
-package com.seein.SEE_INSIGHT;
+package com.seein;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
