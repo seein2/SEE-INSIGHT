@@ -42,12 +42,12 @@ CREATE TABLE `learning_content` (
 );
 
 CREATE TABLE `delivery_log` (
-    `delivery_log_id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    `log_id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
     `subscription_id` int NOT NULL COMMENT '학습 구독 ID',
     `content_id` int COMMENT '발송된 학습 콘텐츠 ID',
-    `sent_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `sent_at` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '발송 시간',
     `status` ENUM('SUCCESS', 'FAIL') COMMENT '발송 결과',
-    `issue_date` date NOT NULL COMMENT '일일 발송 기준일',
+    `issue_date` date NOT NULL COMMENT '발송 기준일',
     `fail_reason` text COMMENT '실패 시 에러 메시지 저장'
 );
 
