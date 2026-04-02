@@ -20,9 +20,9 @@ import java.util.Map;
  * 사용자 API 컨트롤러
  * 내 정보 조회, 닉네임 변경 기능 제공
  */
-@Tag(name = "Users", description = "사용자 API")
+@Tag(name = "Members", description = "회원 API")
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v1/members")
 @RequiredArgsConstructor
 public class MemberController {
 
