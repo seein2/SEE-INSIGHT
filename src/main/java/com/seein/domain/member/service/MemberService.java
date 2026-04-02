@@ -5,7 +5,7 @@ import com.seein.domain.member.dto.MyPageResponse;
 import com.seein.domain.member.entity.Member;
 import com.seein.domain.member.repository.MemberRepository;
 import com.seein.domain.subscription.dto.SubscriptionResponse;
-import com.seein.domain.subscription.entity.Subscription;
+import com.seein.domain.subscription.entity.LearningSubscription;
 import com.seein.domain.subscription.repository.SubscriptionRepository;
 import com.seein.global.exception.BusinessException;
 import com.seein.global.exception.ErrorCode;
@@ -76,8 +76,8 @@ public class MemberService {
     @Transactional
     public void withdraw(Integer memberId) {
         Member member = findMemberById(memberId);
-        List<Subscription> subscriptions = subscriptionRepository.findByMemberMemberIdOrderByCreatedAtDesc(memberId);
-        subscriptions.forEach(Subscription::deactivate);
+        List<LearningSubscription> subscriptions = subscriptionRepository.findByMemberMemberIdOrderByCreatedAtDesc(memberId);
+        subscriptions.forEach(LearningSubscription::deactivate);
         member.softDelete();
     }
 

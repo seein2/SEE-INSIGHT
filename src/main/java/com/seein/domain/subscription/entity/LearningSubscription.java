@@ -33,7 +33,7 @@ import java.time.LocalTime;
 @Getter
 @ToString(exclude = "member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Subscription extends BaseTimeEntity {
+public class LearningSubscription extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -66,7 +66,7 @@ public class Subscription extends BaseTimeEntity {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
-    public static Subscription create(
+    public static LearningSubscription create(
             Member member,
             StudyLanguage studyLanguage,
             ExplanationLanguage explanationLanguage,
@@ -74,7 +74,7 @@ public class Subscription extends BaseTimeEntity {
             DifficultyLevel difficultyLevel,
             LocalTime deliveryTime
     ) {
-        Subscription subscription = new Subscription();
+        LearningSubscription subscription = new LearningSubscription();
         subscription.member = member;
         subscription.studyLanguage = studyLanguage;
         subscription.explanationLanguage = explanationLanguage;

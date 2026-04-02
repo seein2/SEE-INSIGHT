@@ -11,7 +11,7 @@ import com.seein.domain.subscription.entity.DifficultyLevel;
 import com.seein.domain.subscription.entity.ExplanationLanguage;
 import com.seein.domain.subscription.entity.LearningStyle;
 import com.seein.domain.subscription.entity.StudyLanguage;
-import com.seein.domain.subscription.entity.Subscription;
+import com.seein.domain.subscription.entity.LearningSubscription;
 import com.seein.domain.subscription.repository.SubscriptionRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -55,7 +55,7 @@ class LearningDeliverySchedulerTest {
     void sendDailyLearningDigest_success() throws Exception {
         // given
         LocalDateTime issueDateTime = LocalDateTime.of(2026, 4, 1, 8, 0);
-        Subscription subscription = createSubscription(LocalTime.of(8, 0));
+        LearningSubscription subscription = createSubscription(LocalTime.of(8, 0));
         LearningContent content = LearningContent.create(
                 StudyLanguage.ENGLISH,
                 ExplanationLanguage.KOREAN,
@@ -99,7 +99,7 @@ class LearningDeliverySchedulerTest {
     void sendDailyLearningDigest_skipAlreadySent() throws Exception {
         // given
         LocalDateTime issueDateTime = LocalDateTime.of(2026, 4, 1, 8, 0);
-        Subscription subscription = createSubscription(LocalTime.of(8, 0));
+        LearningSubscription subscription = createSubscription(LocalTime.of(8, 0));
         given(subscriptionRepository.findDeliverableSubscriptions(LocalTime.of(8, 0))).willReturn(List.of(subscription));
         given(deliveryLogRepository.existsBySubscriptionSubscriptionIdAndStatusAndIssueDate(
                 eq(subscription.getSubscriptionId()),
@@ -115,9 +115,9 @@ class LearningDeliverySchedulerTest {
         verify(learningEmailService, never()).sendLearningEmail(any(), any());
     }
 
-    private Subscription createSubscription(LocalTime deliveryTime) {
+    private LearningSubscription createSubscription(LocalTime deliveryTime) {
         Member member = Member.create("test@example.com", "테스터", "google");
-        Subscription subscription = Subscription.create(
+        LearningSubscription subscription = LearningSubscription.create(
                 member,
                 StudyLanguage.ENGLISH,
                 ExplanationLanguage.KOREAN,

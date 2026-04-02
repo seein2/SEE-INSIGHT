@@ -3,7 +3,7 @@ package com.seein.domain.delivery.service;
 import com.seein.domain.content.dto.LearningContentCardResponse;
 import com.seein.domain.content.entity.LearningContent;
 import com.seein.domain.subscription.dto.SubscriptionResponse;
-import com.seein.domain.subscription.entity.Subscription;
+import com.seein.domain.subscription.entity.LearningSubscription;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class LearningEmailService {
     private final JavaMailSender mailSender;
     private final SpringTemplateEngine templateEngine;
 
-    public void sendLearningEmail(Subscription subscription, LearningContent learningContent) throws MessagingException {
+    public void sendLearningEmail(LearningSubscription subscription, LearningContent learningContent) throws MessagingException {
         SubscriptionResponse subscriptionResponse = SubscriptionResponse.from(subscription);
         LearningContentCardResponse contentResponse = LearningContentCardResponse.from(learningContent);
 

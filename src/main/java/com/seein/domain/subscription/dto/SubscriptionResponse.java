@@ -1,6 +1,6 @@
 package com.seein.domain.subscription.dto;
 
-import com.seein.domain.subscription.entity.Subscription;
+import com.seein.domain.subscription.entity.LearningSubscription;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -31,7 +31,7 @@ public class SubscriptionResponse {
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
-    public static SubscriptionResponse from(Subscription subscription) {
+    public static SubscriptionResponse from(LearningSubscription subscription) {
         return new SubscriptionResponse(
                 subscription.getSubscriptionId(),
                 subscription.getStudyLanguage().name(),

@@ -8,7 +8,7 @@ import com.seein.domain.subscription.dto.SubscriptionPreviewRequest;
 import com.seein.domain.subscription.dto.SubscriptionPreviewResponse;
 import com.seein.domain.subscription.dto.SubscriptionResponse;
 import com.seein.domain.subscription.dto.SubscriptionUpdateRequest;
-import com.seein.domain.subscription.entity.Subscription;
+import com.seein.domain.subscription.entity.LearningSubscription;
 import com.seein.domain.subscription.repository.SubscriptionRepository;
 import com.seein.domain.member.entity.Member;
 import com.seein.domain.member.repository.MemberRepository;
@@ -64,7 +64,7 @@ public class SubscriptionService {
                 null
         );
 
-        Subscription subscription = Subscription.create(
+        LearningSubscription subscription = LearningSubscription.create(
                 member,
                 request.getStudyLanguage(),
                 request.getExplanationLanguage(),
@@ -80,7 +80,7 @@ public class SubscriptionService {
      * 구독 상세 조회
      */
     public SubscriptionResponse getSubscription(Integer memberId, Integer subscriptionId) {
-        Subscription subscription = findOwnedSubscription(memberId, subscriptionId);
+        LearningSubscription subscription = findOwnedSubscription(memberId, subscriptionId);
         return SubscriptionResponse.from(subscription);
     }
 
@@ -117,7 +117,7 @@ public class SubscriptionService {
      */
     @Transactional
     public SubscriptionResponse updateSubscription(Integer memberId, Integer subscriptionId, SubscriptionUpdateRequest request) {
-        Subscription subscription = findOwnedSubscription(memberId, subscriptionId);
+        LearningSubscription subscription = findOwnedSubscription(memberId, subscriptionId);
         LocalTime nextDeliveryTime = request.getDeliveryTime() != null ? request.getDeliveryTime() : subscription.getDeliveryTime();
         var nextStudyLanguage = request.getStudyLanguage() != null ? request.getStudyLanguage() : subscription.getStudyLanguage();
         var nextExplanationLanguage = request.getExplanationLanguage() != null ? request.getExplanationLanguage() : subscription.getExplanationLanguage();
@@ -158,14 +158,14 @@ public class SubscriptionService {
      */
     @Transactional
     public void unsubscribe(Integer memberId, Integer subscriptionId) {
-        Subscription subscription = findOwnedSubscription(memberId, subscriptionId);
+        LearningSubscription subscription = findOwnedSubscription(memberId, subscriptionId);
         subscriptionRepository.delete(subscription);
     }
 
     /**
      * 구독 ID로 엔티티 조회 (내부 헬퍼)
      */
-    private Subscription findOwnedSubscription(Integer memberId, Integer subscriptionId) {
+    private LearningSubscription findOwnedSubscription(Integer memberId, Integer subscriptionId) {
         return subscriptionRepository.findByMemberMemberIdAndSubscriptionId(memberId, subscriptionId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.SUBSCRIPTION_NOT_FOUND));
     }

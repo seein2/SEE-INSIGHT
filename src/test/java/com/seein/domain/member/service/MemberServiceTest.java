@@ -4,7 +4,7 @@ import com.seein.domain.member.dto.MemberResponse;
 import com.seein.domain.member.dto.MyPageResponse;
 import com.seein.domain.member.entity.Member;
 import com.seein.domain.member.repository.MemberRepository;
-import com.seein.domain.subscription.entity.Subscription;
+import com.seein.domain.subscription.entity.LearningSubscription;
 import com.seein.domain.subscription.entity.StudyLanguage;
 import com.seein.domain.subscription.entity.ExplanationLanguage;
 import com.seein.domain.subscription.entity.LearningStyle;
@@ -91,7 +91,7 @@ class MemberServiceTest {
     void getMyPage_success() {
         // given
         Member member = Member.create("test@example.com", "테스터", "google");
-        Subscription subscription = Subscription.create(
+        LearningSubscription subscription = LearningSubscription.create(
                 member,
                 StudyLanguage.ENGLISH,
                 ExplanationLanguage.KOREAN,
@@ -116,7 +116,7 @@ class MemberServiceTest {
     void withdraw_success() {
         // given
         Member member = Member.create("test@example.com", "테스터", "google");
-        Subscription subscription = Subscription.create(
+        LearningSubscription subscription = LearningSubscription.create(
                 member,
                 StudyLanguage.ENGLISH,
                 ExplanationLanguage.KOREAN,

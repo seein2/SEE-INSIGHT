@@ -1,7 +1,7 @@
 package com.seein.domain.delivery.entity;
 
 import com.seein.domain.content.entity.LearningContent;
-import com.seein.domain.subscription.entity.Subscription;
+import com.seein.domain.subscription.entity.LearningSubscription;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -23,12 +23,12 @@ public class DeliveryLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "delivery_log_id")
-    private Integer deliveryLogId;
+    @Column(name = "log_id")
+    private Integer logId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_id", nullable = false)
-    private Subscription subscription;
+    private LearningSubscription subscription;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "content_id")
@@ -47,7 +47,7 @@ public class DeliveryLog {
     @Column(name = "fail_reason", columnDefinition = "text")
     private String failReason;
 
-    public static DeliveryLog createSuccess(Subscription subscription, LearningContent learningContent, LocalDate issueDate) {
+    public static DeliveryLog createSuccess(LearningSubscription subscription, LearningContent learningContent, LocalDate issueDate) {
         DeliveryLog log = new DeliveryLog();
         log.subscription = subscription;
         log.learningContent = learningContent;
@@ -57,7 +57,7 @@ public class DeliveryLog {
         return log;
     }
 
-    public static DeliveryLog createFailure(Subscription subscription, LearningContent learningContent, LocalDate issueDate, String failReason) {
+    public static DeliveryLog createFailure(LearningSubscription subscription, LearningContent learningContent, LocalDate issueDate, String failReason) {
         DeliveryLog log = new DeliveryLog();
         log.subscription = subscription;
         log.learningContent = learningContent;

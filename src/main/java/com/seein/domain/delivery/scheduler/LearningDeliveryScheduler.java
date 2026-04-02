@@ -6,7 +6,7 @@ import com.seein.domain.delivery.entity.DeliveryLog;
 import com.seein.domain.delivery.entity.DeliveryStatus;
 import com.seein.domain.delivery.repository.DeliveryLogRepository;
 import com.seein.domain.delivery.service.LearningEmailService;
-import com.seein.domain.subscription.entity.Subscription;
+import com.seein.domain.subscription.entity.LearningSubscription;
 import com.seein.domain.subscription.repository.SubscriptionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,10 +41,10 @@ public class LearningDeliveryScheduler {
     void sendDailyLearningDigest(LocalDateTime issueDateTime) {
         LocalTime deliveryTime = issueDateTime.toLocalTime();
         LocalDate issueDate = issueDateTime.toLocalDate();
-        List<Subscription> dueSubscriptions = subscriptionRepository.findDeliverableSubscriptions(deliveryTime);
+        List<LearningSubscription> dueSubscriptions = subscriptionRepository.findDeliverableSubscriptions(deliveryTime);
         Map<String, LearningContent> contentCache = new HashMap<>();
 
-        for (Subscription subscription : dueSubscriptions) {
+        for (LearningSubscription subscription : dueSubscriptions) {
             try {
                 if (deliveryLogRepository.existsBySubscriptionSubscriptionIdAndStatusAndIssueDate(
                         subscription.getSubscriptionId(),
