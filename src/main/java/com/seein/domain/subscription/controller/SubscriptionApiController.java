@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  * 구독 API 컨트롤러
- * 키워드 구독 CRUD 기능 제공
+ * 학습 이메일 구독 CRUD 기능 제공
  */
-@Tag(name = "Subscriptions", description = "키워드 구독 API")
+@Tag(name = "Subscriptions", description = "학습 이메일 구독 API")
 @RestController
 @RequestMapping("/api/v1/subscriptions")
 @RequiredArgsConstructor
@@ -99,7 +99,7 @@ public class SubscriptionApiController {
     /**
      * 구독 취소
      */
-    @Operation(summary = "구독 취소", description = "해당 키워드 구독을 삭제합니다.")
+    @Operation(summary = "구독 취소", description = "해당 학습 구독을 삭제합니다.")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "취소 성공"), @ApiResponse(responseCode = "404", description = "구독 정보를 찾을 수 없음")})
     @DeleteMapping("/{subscriptionId}")
     public GlobalResponseDto<String> unsubscribe(@AuthenticationPrincipal MemberPrincipal principal, @PathVariable Integer subscriptionId) {

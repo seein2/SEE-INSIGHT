@@ -9,7 +9,7 @@ import com.seein.domain.subscription.entity.ExplanationLanguage;
 import com.seein.domain.subscription.entity.LearningStyle;
 import com.seein.domain.subscription.entity.StudyLanguage;
 import com.seein.global.security.jwt.MemberPrincipal;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * 학습 구독 페이지 컨트롤러
  */
-@Tag(name = "Subscriptions", description = "키워드 구독 페이지")
+@Hidden
 @Controller
 @RequestMapping("/subscriptions")
 @RequiredArgsConstructor

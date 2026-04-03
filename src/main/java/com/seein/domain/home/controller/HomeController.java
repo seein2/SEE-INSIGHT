@@ -4,7 +4,7 @@ import com.seein.domain.home.dto.HomeFeedResponse;
 import com.seein.domain.home.service.HomeFeedService;
 import com.seein.domain.subscription.entity.LearningStyle;
 import com.seein.domain.subscription.entity.StudyLanguage;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * 홈 페이지 컨트롤러
  */
-@Tag(name = "Home", description = "학습 피드 홈")
+@Hidden
 @Controller
 @RequiredArgsConstructor
 public class HomeController {

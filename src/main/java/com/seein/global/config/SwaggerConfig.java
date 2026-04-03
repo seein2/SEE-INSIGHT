@@ -33,7 +33,7 @@ public class SwaggerConfig {
     private Info apiInfo() {
         return new Info()
                 .title("SEE-INSIGHT API")
-                .description("AI 기반 뉴스 요약 및 키워드 구독 서비스 API")
+                .description("외국어 학습 피드 및 이메일 학습 구독 서비스 API")
                 .version("v1.0")
                 .contact(new Contact()
                         .name("SEE-INSIGHT Team")
