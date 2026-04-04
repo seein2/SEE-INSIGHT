@@ -17,12 +17,21 @@ import java.util.Optional;
  */
 public interface LearningContentRepository extends JpaRepository<LearningContent, Integer> {
 
+    /*
+    * 학습 콘텐츠 조회
+        - 언어 설정(학습 언어, 설명 언어)과 학습 스타일을 기준으로 페이징 처리된 콘텐츠 목록을 조회하는 메서드
+        - 학습 스타일이 null인 경우에는 모든 학습 스타일에 해당하는 콘텐츠를 조회
+     */
     Page<LearningContent> findByStudyLanguageAndExplanationLanguage(
             StudyLanguage studyLanguage,
             ExplanationLanguage explanationLanguage,
             Pageable pageable
     );
 
+    /*
+    * 학습 콘텐츠 조회
+        - 언어 설정(학습 언어, 설명 언어)과 학습 스타일을 기준으로 페이징 처리된 콘텐츠 목록을 조회하는 메서드
+     */
     Page<LearningContent> findByStudyLanguageAndExplanationLanguageAndLearningStyle(
             StudyLanguage studyLanguage,
             ExplanationLanguage explanationLanguage,
@@ -30,6 +39,10 @@ public interface LearningContentRepository extends JpaRepository<LearningContent
             Pageable pageable
     );
 
+    /*
+    * 학습 콘텐츠 조회
+        - 언어 설정(학습 언어, 설명 언어), 학습 스타일, 난이도, 그리고 게시 날짜를 기준으로 콘텐츠를 조회하는 메서드
+     */
     Optional<LearningContent> findByStudyLanguageAndExplanationLanguageAndLearningStyleAndDifficultyLevelAndPublishedDate(
             StudyLanguage studyLanguage,
             ExplanationLanguage explanationLanguage,
