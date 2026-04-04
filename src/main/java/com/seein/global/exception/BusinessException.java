@@ -10,11 +10,17 @@ import lombok.Getter;
 public class BusinessException extends RuntimeException {
     private final ErrorCode errorCode;
 
+    /**
+     * 비즈니스 예외 생성
+     */
     public BusinessException(ErrorCode errorCode) {
         super(errorCode.getMessage());
         this.errorCode = errorCode;
     }
 
+    /**
+     * 비즈니스 예외 생성
+     */
     public BusinessException(ErrorCode errorCode, String customMessage) {
         super(customMessage);
         this.errorCode = errorCode;

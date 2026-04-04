@@ -20,6 +20,9 @@ public class RefreshTokenLogoutHandler implements LogoutHandler {
 
     private final AuthTokenService authTokenService;
 
+    /**
+     * 로그아웃 처리
+     */
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         Cookie[] cookies = request.getCookies();

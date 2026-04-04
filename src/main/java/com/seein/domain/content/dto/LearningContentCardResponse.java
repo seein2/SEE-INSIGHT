@@ -32,6 +32,9 @@ public class LearningContentCardResponse {
     private final String difficultyLevelLabel;
     private final LocalDate publishedDate;
 
+    /**
+     * 학습 콘텐츠 카드 응답 변환
+     */
     public static LearningContentCardResponse from(LearningContent content) {
         return new LearningContentCardResponse(
                 content.getContentId(),

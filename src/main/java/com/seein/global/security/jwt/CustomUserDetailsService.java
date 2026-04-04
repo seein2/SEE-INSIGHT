@@ -17,6 +17,9 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private final AuthMemberService authMemberService;
 
+    /**
+     * 이메일로 사용자 정보 조회
+     */
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return authMemberService.loadPrincipalByEmail(email);

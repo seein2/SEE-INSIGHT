@@ -18,6 +18,9 @@ public class ErrorResponse {
     private final String message;
     private final String path;
 
+    /**
+     * 에러 응답 생성
+     */
     private ErrorResponse(int status, String error, String message, String path) {
         this.timestamp = LocalDateTime.now();
         this.status = status;
@@ -26,10 +29,16 @@ public class ErrorResponse {
         this.path = path;
     }
 
+    /**
+     * 에러 응답 생성
+     */
     public static ErrorResponse of(int status, String error, String message, String path) {
         return new ErrorResponse(status, error, message, path);
     }
 
+    /**
+     * 에러 응답 생성
+     */
     public static ErrorResponse of(com.seein.global.exception.ErrorCode errorCode) {
         return new ErrorResponse(
                 errorCode.getStatus().value(),

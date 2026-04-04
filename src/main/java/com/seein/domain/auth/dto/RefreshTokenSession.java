@@ -20,6 +20,9 @@ public class RefreshTokenSession {
     private String tokenHash;
     private LocalDateTime expiresAt;
 
+    /**
+     * 리프레시 토큰 세션 생성
+     */
     public static RefreshTokenSession of(Integer memberId, String tokenId, String tokenHash, LocalDateTime expiresAt) {
         return new RefreshTokenSession(memberId, tokenId, tokenHash, expiresAt);
     }

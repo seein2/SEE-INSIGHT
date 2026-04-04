@@ -16,10 +16,16 @@ public enum StudyLanguage {
         this.searchLanguageCode = searchLanguageCode;
     }
 
+    /**
+     * 라벨 조회
+     */
     public String getLabel() {
         return label;
     }
 
+    /**
+     * 검색 언어 코드 조회
+     */
     public String getSearchLanguageCode() {
         return searchLanguageCode;
     }

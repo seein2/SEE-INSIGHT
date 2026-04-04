@@ -21,6 +21,9 @@ public class HomeFeedService {
 
     private final LearningContentService learningContentService;
 
+    /**
+     * 홈 학습 피드 조회
+     */
     public HomeFeedResponse getHomeFeed(StudyLanguage studyLanguage, LearningStyle learningStyle) {
         StudyLanguage targetLanguage = studyLanguage != null ? studyLanguage : StudyLanguage.ENGLISH;
         List<LearningContentCardResponse> feedCards = learningContentService.getFeedCards(targetLanguage, learningStyle);

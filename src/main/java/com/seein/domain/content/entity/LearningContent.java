@@ -85,6 +85,9 @@ public class LearningContent extends BaseTimeEntity {
     @Column(name = "published_date", nullable = false)
     private LocalDate publishedDate;
 
+    /**
+     * 학습 콘텐츠 생성
+     */
     public static LearningContent create(
             StudyLanguage studyLanguage,
             ExplanationLanguage explanationLanguage,

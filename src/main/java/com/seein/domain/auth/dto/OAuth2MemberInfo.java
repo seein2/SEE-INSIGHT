@@ -17,6 +17,9 @@ public class OAuth2MemberInfo {
     private final String provider;
     private final Map<String, Object> attributes;
 
+    /**
+     * OAuth2 회원 정보 생성
+     */
     public static OAuth2MemberInfo of(String email, String nickname, String provider, Map<String, Object> attributes) {
         return new OAuth2MemberInfo(email, nickname, provider, attributes);
     }

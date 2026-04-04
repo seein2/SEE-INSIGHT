@@ -20,6 +20,9 @@ public class MemberResponse {
     private final String provider;
     private final LocalDateTime createdAt;
 
+    /**
+     * 회원 응답 변환
+     */
     public static MemberResponse from(Member member) {
         return new MemberResponse(
                 member.getMemberId(),

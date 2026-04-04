@@ -56,6 +56,9 @@ public class AuthMemberService {
         return toPrincipal(member, memberInfo.getAttributes());
     }
 
+    /**
+     * OAuth2 회원 정보 추출
+     */
     private OAuth2MemberInfo extractOAuth2MemberInfo(String provider, Map<String, Object> attributes) {
         if ("naver".equals(provider)) {
             Object response = attributes.get("response");
@@ -77,6 +80,9 @@ public class AuthMemberService {
         throw new IllegalArgumentException("Unsupported provider: " + provider);
     }
 
+    /**
+     * 필수 속성값 조회
+     */
     private String getRequiredAttribute(Map<?, ?> source, String key) {
         Object value = source.get(key);
         if (value instanceof String text && StringUtils.hasText(text)) {
@@ -85,6 +91,9 @@ public class AuthMemberService {
         throw new IllegalArgumentException("Missing OAuth2 attribute: " + key);
     }
 
+    /**
+     * 회원 정보를 인증 주체로 변환
+     */
     private MemberPrincipal toPrincipal(Member member, Map<String, Object> attributes) {
         return new MemberPrincipal(
                 member.getMemberId(),

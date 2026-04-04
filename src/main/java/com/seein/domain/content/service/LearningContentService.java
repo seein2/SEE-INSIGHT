@@ -42,6 +42,9 @@ public class LearningContentService {
     private final LearningContentFallbackFactory fallbackFactory;
     private final ObjectMapper objectMapper;
 
+    /**
+     * 학습 피드 카드 목록 조회
+     */
     public List<LearningContentCardResponse> getFeedCards(StudyLanguage studyLanguage, LearningStyle learningStyle) {
         ExplanationLanguage explanationLanguage = ExplanationLanguage.KOREAN;
         PageRequest pageRequest = PageRequest.of(0, FEED_LIMIT, Sort.by(
@@ -85,6 +88,9 @@ public class LearningContentService {
         return merged;
     }
 
+    /**
+     * 일일 콘텐츠 조회 또는 생성
+     */
     @Transactional
     public LearningContent getOrCreateDailyContent(
             StudyLanguage studyLanguage,
@@ -110,6 +116,9 @@ public class LearningContentService {
         return learningContentRepository.save(generated);
     }
 
+    /**
+     * 미리보기 콘텐츠 조회
+     */
     public LearningContentCardResponse getPreviewContent(
             StudyLanguage studyLanguage,
             ExplanationLanguage explanationLanguage,
@@ -126,6 +135,9 @@ public class LearningContentService {
         return LearningContentCardResponse.from(content);
     }
 
+    /**
+     * 학습 콘텐츠 생성
+     */
     private LearningContent generateContent(
             StudyLanguage studyLanguage,
             ExplanationLanguage explanationLanguage,
@@ -176,6 +188,9 @@ public class LearningContentService {
         }
     }
 
+    /**
+     * 마크다운 코드 블록 제거
+     */
     private String stripMarkdownFence(String rawContent) {
         if (rawContent == null || rawContent.isBlank()) {
             throw new BusinessException(ErrorCode.LEARNING_CONTENT_GENERATION_FAILED);
@@ -193,6 +208,9 @@ public class LearningContentService {
                 .trim();
     }
 
+    /**
+     * 필수 텍스트 추출
+     */
     private String requiredText(JsonNode contentNode, String fieldName) {
         String value = optionalText(contentNode, fieldName);
         if (value == null || value.isBlank()) {
@@ -201,6 +219,9 @@ public class LearningContentService {
         return value;
     }
 
+    /**
+     * 선택 텍스트 추출
+     */
     private String optionalText(JsonNode contentNode, String fieldName) {
         JsonNode node = contentNode.path(fieldName);
         return node.isMissingNode() || node.isNull() ? null : node.asText();

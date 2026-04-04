@@ -12,6 +12,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class LearningPromptFactory {
 
+    /**
+     * 학습 콘텐츠 프롬프트 생성
+     */
     public PromptBundle create(
             StudyLanguage studyLanguage,
             ExplanationLanguage explanationLanguage,

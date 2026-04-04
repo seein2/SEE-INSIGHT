@@ -24,6 +24,9 @@ public class RefreshTokenRepository {
     private final StringRedisTemplate stringRedisTemplate;
     private final ObjectMapper objectMapper;
 
+    /**
+     * 리프레시 토큰 세션 저장
+     */
     public void save(RefreshTokenSession session) {
         Duration ttl = Duration.between(LocalDateTime.now(), session.getExpiresAt());
         if (ttl.isZero() || ttl.isNegative()) {
@@ -33,6 +36,9 @@ public class RefreshTokenRepository {
         stringRedisTemplate.opsForValue().set(buildKey(session.getMemberId(), session.getTokenId()), writeValue(session), ttl);
     }
 
+    /**
+     * 리프레시 토큰 세션 조회
+     */
     public Optional<RefreshTokenSession> find(Integer memberId, String tokenId) {
         String rawValue = stringRedisTemplate.opsForValue().get(buildKey(memberId, tokenId));
         if (rawValue == null) {
@@ -41,18 +47,30 @@ public class RefreshTokenRepository {
         return Optional.of(readValue(rawValue));
     }
 
+    /**
+     * 리프레시 토큰 세션 삭제
+     */
     public void delete(Integer memberId, String tokenId) {
         stringRedisTemplate.delete(buildKey(memberId, tokenId));
     }
 
+    /**
+     * 리프레시 토큰 세션 삭제
+     */
     public void delete(RefreshTokenSession session) {
         delete(session.getMemberId(), session.getTokenId());
     }
 
+    /**
+     * 리프레시 토큰 저장 키 생성
+     */
     private String buildKey(Integer memberId, String tokenId) {
         return KEY_PREFIX + memberId + ":" + tokenId;
     }
 
+    /**
+     * 리프레시 토큰 세션 직렬화
+     */
     private String writeValue(RefreshTokenSession session) {
         try {
             return objectMapper.writeValueAsString(session);
@@ -61,6 +79,9 @@ public class RefreshTokenRepository {
         }
     }
 
+    /**
+     * 리프레시 토큰 세션 역직렬화
+     */
     private RefreshTokenSession readValue(String rawValue) {
         try {
             return objectMapper.readValue(rawValue, RefreshTokenSession.class);

@@ -29,6 +29,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     private final String redirectUri = "/";
 
+    /**
+     * OAuth2 로그인 성공 처리
+     */
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         MemberPrincipal oAuth2User = (MemberPrincipal) authentication.getPrincipal();

@@ -16,6 +16,9 @@ public class GlobalResponseDto<T> {
     private final String message;
     private final T data;
 
+    /**
+     * 공통 응답 생성
+     */
     private GlobalResponseDto(int status, String message, T data) {
         this.status = status;
         this.message = message;

@@ -22,6 +22,9 @@ public class OAuth2FailureHandler extends SimpleUrlAuthenticationFailureHandler 
     @Value("${spring.security.oauth2.failure-redirect-uri:http://localhost:3000/auth/error}")
     private String failureRedirectUri;
 
+    /**
+     * OAuth2 로그인 실패 처리
+     */
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
                                         AuthenticationException exception) throws IOException, ServletException {

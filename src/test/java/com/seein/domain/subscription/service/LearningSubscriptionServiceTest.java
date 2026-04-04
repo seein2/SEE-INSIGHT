@@ -136,6 +136,9 @@ class LearningSubscriptionServiceTest {
         assertThat(response.getDeliveryTime()).isEqualTo("19:00");
     }
 
+    /**
+     * 테스트용 구독 요청 생성
+     */
     private SubscriptionCreateRequest createSubscriptionRequest(
             StudyLanguage studyLanguage,
             ExplanationLanguage explanationLanguage,
@@ -152,6 +155,9 @@ class LearningSubscriptionServiceTest {
         return request;
     }
 
+    /**
+     * 테스트용 미리보기 요청 생성
+     */
     private SubscriptionPreviewRequest createPreviewRequest(
             StudyLanguage studyLanguage,
             ExplanationLanguage explanationLanguage,

@@ -23,6 +23,9 @@ public class PerplexityClient {
     private final RestClient restClient;
     private final ObjectMapper objectMapper;
 
+    /**
+     * Perplexity 클라이언트 생성
+     */
     public PerplexityClient(PerplexityProperties properties, ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
         this.restClient = RestClient.builder()

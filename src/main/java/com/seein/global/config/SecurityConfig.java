@@ -40,6 +40,9 @@ public class SecurityConfig {
     private final OAuth2FailureHandler oAuth2FailureHandler;
     private final RefreshTokenLogoutHandler refreshTokenLogoutHandler;
 
+    /**
+     * 보안 필터 체인 구성
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http

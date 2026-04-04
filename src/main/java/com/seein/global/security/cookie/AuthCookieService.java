@@ -22,16 +22,25 @@ public class AuthCookieService {
 
     private final JwtProperties jwtProperties;
 
+    /**
+     * 인증 쿠키 추가
+     */
     public void addAuthCookies(HttpServletResponse response, AuthTokens authTokens, boolean secureRequest) {
         addCookie(response, ACCESS_TOKEN_COOKIE_NAME, authTokens.getAccessToken(), jwtProperties.getAccessExpiration(), secureRequest);
         addCookie(response, REFRESH_TOKEN_COOKIE_NAME, authTokens.getRefreshToken(), jwtProperties.getRefreshExpiration(), secureRequest);
     }
 
+    /**
+     * 인증 쿠키 삭제
+     */
     public void clearAuthCookies(HttpServletResponse response, boolean secureRequest) {
         expireCookie(response, ACCESS_TOKEN_COOKIE_NAME, secureRequest);
         expireCookie(response, REFRESH_TOKEN_COOKIE_NAME, secureRequest);
     }
 
+    /**
+     * 쿠키 추가
+     */
     private void addCookie(HttpServletResponse response, String cookieName, String token, long expirationMillis, boolean secureRequest) {
         ResponseCookie cookie = ResponseCookie.from(cookieName, token)
                 .httpOnly(true)
@@ -43,6 +52,9 @@ public class AuthCookieService {
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
+    /**
+     * 쿠키 만료 처리
+     */
     private void expireCookie(HttpServletResponse response, String cookieName, boolean secureRequest) {
         ResponseCookie cookie = ResponseCookie.from(cookieName, "")
                 .httpOnly(true)

@@ -38,6 +38,9 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "토큰 재발급 성공"),
             @ApiResponse(responseCode = "401", description = "유효하지 않은 Refresh Token")
     })
+    /**
+     * 토큰 재발급
+     */
     @PostMapping("/refresh")
     public GlobalResponseDto<String> refresh(@CookieValue(name = AuthCookieService.REFRESH_TOKEN_COOKIE_NAME, required = false) String refreshToken, HttpServletRequest request, HttpServletResponse response) {
         authCookieService.addAuthCookies(response, authTokenService.refresh(refreshToken), request.isSecure());

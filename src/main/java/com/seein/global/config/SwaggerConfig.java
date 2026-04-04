@@ -18,6 +18,9 @@ public class SwaggerConfig {
 
     private static final String SECURITY_SCHEME_NAME = "Bearer Authentication";
 
+    /**
+     * OpenAPI 문서 생성
+     */
     @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()

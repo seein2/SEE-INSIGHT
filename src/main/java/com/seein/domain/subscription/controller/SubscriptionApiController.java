@@ -61,6 +61,9 @@ public class SubscriptionApiController {
             @ApiResponse(responseCode = "401", description = "인증 필요"),
             @ApiResponse(responseCode = "409", description = "동일한 구독이 이미 존재하거나 구독 한도를 초과함")
     })
+    /**
+     * 학습 구독 생성
+     */
     @PostMapping
     public GlobalResponseDto<SubscriptionResponse> subscribe(
             @AuthenticationPrincipal MemberPrincipal principal,

@@ -66,6 +66,9 @@ public class LearningSubscription extends BaseTimeEntity {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
+    /**
+     * 학습 구독 생성
+     */
     public static LearningSubscription create(
             Member member,
             StudyLanguage studyLanguage,
@@ -85,6 +88,9 @@ public class LearningSubscription extends BaseTimeEntity {
         return subscription;
     }
 
+    /**
+     * 구독 설정 변경
+     */
     public void updateSettings(
             StudyLanguage studyLanguage,
             ExplanationLanguage explanationLanguage,
@@ -99,10 +105,16 @@ public class LearningSubscription extends BaseTimeEntity {
         this.deliveryTime = deliveryTime;
     }
 
+    /**
+     * 구독 활성화
+     */
     public void activate() {
         this.isActive = true;
     }
 
+    /**
+     * 구독 비활성화
+     */
     public void deactivate() {
         this.isActive = false;
     }

@@ -23,6 +23,9 @@ public class HomeController {
 
     private final HomeFeedService homeFeedService;
 
+    /**
+     * 홈 페이지 렌더링
+     */
     @GetMapping("/")
     public String home(
             @RequestParam(required = false) StudyLanguage studyLanguage,
@@ -46,6 +49,9 @@ public class HomeController {
         return "home";
     }
 
+    /**
+     * 로그인 페이지 렌더링
+     */
     @GetMapping("/login")
     public String login(Model model) {
         model.addAttribute("googleLoginUrl", "/oauth2/authorization/google");

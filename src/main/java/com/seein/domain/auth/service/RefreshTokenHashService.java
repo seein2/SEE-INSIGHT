@@ -13,6 +13,9 @@ import java.util.HexFormat;
 @Service
 public class RefreshTokenHashService {
 
+    /**
+     * 토큰 해시 생성
+     */
     public String hash(String token) {
         try {
             MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");

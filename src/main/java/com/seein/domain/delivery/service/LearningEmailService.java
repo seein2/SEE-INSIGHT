@@ -25,6 +25,9 @@ public class LearningEmailService {
     private final JavaMailSender mailSender;
     private final SpringTemplateEngine templateEngine;
 
+    /**
+     * 학습 이메일 발송
+     */
     public void sendLearningEmail(LearningSubscription subscription, LearningContent learningContent) throws MessagingException {
         SubscriptionResponse subscriptionResponse = SubscriptionResponse.from(subscription);
         LearningContentCardResponse contentResponse = LearningContentCardResponse.from(learningContent);

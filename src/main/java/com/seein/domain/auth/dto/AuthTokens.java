@@ -15,6 +15,9 @@ public class AuthTokens {
     private final String refreshToken;
     private final String refreshTokenId;
 
+    /**
+     * 인증 토큰 생성
+     */
     public static AuthTokens of(String accessToken, String refreshToken, String refreshTokenId) {
         return new AuthTokens(accessToken, refreshToken, refreshTokenId);
     }

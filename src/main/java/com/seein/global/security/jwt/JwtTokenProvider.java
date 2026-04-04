@@ -34,6 +34,9 @@ public class JwtTokenProvider {
 
     private SecretKey secretKey;
 
+    /**
+     * JWT 서명 키 초기화
+     */
     @PostConstruct
     protected void init() {
         this.secretKey = Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes(StandardCharsets.UTF_8));
@@ -87,14 +90,23 @@ public class JwtTokenProvider {
         return getClaims(token).getSubject();
     }
 
+    /**
+     * 토큰에서 회원 ID 조회
+     */
     public Integer getMemberIdFromToken(String token) {
         return getClaims(token).get(MEMBER_ID_CLAIM, Integer.class);
     }
 
+    /**
+     * 토큰에서 토큰 ID 조회
+     */
     public String getTokenId(String token) {
         return getClaims(token).getId();
     }
 
+    /**
+     * 검증된 리프레시 토큰 클레임 조회
+     */
     public Claims getValidatedRefreshClaims(String token) {
         Claims claims = getClaims(token);
         if (!REFRESH_TOKEN_TYPE.equals(claims.get(TOKEN_TYPE_CLAIM, String.class))) {
@@ -136,6 +148,9 @@ public class JwtTokenProvider {
         return false;
     }
 
+    /**
+     * 액세스 토큰 검증
+     */
     public boolean validateAccessToken(String token) {
         try {
             Claims claims = getClaims(token);
@@ -146,6 +161,9 @@ public class JwtTokenProvider {
         }
     }
 
+    /**
+     * 리프레시 토큰 검증
+     */
     public boolean validateRefreshToken(String token) {
         try {
             Claims claims = getClaims(token);
@@ -165,6 +183,9 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 
+    /**
+     * 토큰 클레임 조회
+     */
     private Claims getClaims(String token) {
         try {
             return Jwts.parser()
@@ -179,6 +200,9 @@ public class JwtTokenProvider {
         }
     }
 
+    /**
+     * 만료 허용 토큰 클레임 조회
+     */
     private Claims getClaimsAllowExpired(String token) {
         try {
             return Jwts.parser()

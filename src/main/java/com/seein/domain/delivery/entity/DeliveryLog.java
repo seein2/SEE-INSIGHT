@@ -47,6 +47,9 @@ public class DeliveryLog {
     @Column(name = "fail_reason", columnDefinition = "text")
     private String failReason;
 
+    /**
+     * 성공 발송 로그 생성
+     */
     public static DeliveryLog createSuccess(LearningSubscription subscription, LearningContent learningContent, LocalDate issueDate) {
         DeliveryLog log = new DeliveryLog();
         log.subscription = subscription;
@@ -57,6 +60,9 @@ public class DeliveryLog {
         return log;
     }
 
+    /**
+     * 실패 발송 로그 생성
+     */
     public static DeliveryLog createFailure(LearningSubscription subscription, LearningContent learningContent, LocalDate issueDate, String failReason) {
         DeliveryLog log = new DeliveryLog();
         log.subscription = subscription;

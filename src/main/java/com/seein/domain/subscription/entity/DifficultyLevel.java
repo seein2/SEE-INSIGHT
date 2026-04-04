@@ -16,10 +16,16 @@ public enum DifficultyLevel {
         this.description = description;
     }
 
+    /**
+     * 라벨 조회
+     */
     public String getLabel() {
         return label;
     }
 
+    /**
+     * 설명 조회
+     */
     public String getDescription() {
         return description;
     }

@@ -17,14 +17,23 @@ public class JwtProperties {
     private long accessExpiration;
     private long refreshExpiration;
 
+    /**
+     * 시크릿 키 설정
+     */
     public void setSecret(String secret) {
         this.secret = secret;
     }
 
+    /**
+     * 액세스 토큰 만료 시간 설정
+     */
     public void setAccessExpiration(long accessExpiration) {
         this.accessExpiration = accessExpiration;
     }
 
+    /**
+     * 리프레시 토큰 만료 시간 설정
+     */
     public void setRefreshExpiration(long refreshExpiration) {
         this.refreshExpiration = refreshExpiration;
     }

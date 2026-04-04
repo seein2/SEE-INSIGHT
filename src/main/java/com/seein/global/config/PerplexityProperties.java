@@ -16,10 +16,16 @@ public class PerplexityProperties {
     private String apiKey;
     private String baseUrl;
 
+    /**
+     * API 키 설정
+     */
     public void setApiKey(String apiKey) {
         this.apiKey = apiKey;
     }
 
+    /**
+     * 기본 URL 설정
+     */
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
     }

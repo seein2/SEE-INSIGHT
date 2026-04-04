@@ -170,11 +170,17 @@ public class SubscriptionService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.SUBSCRIPTION_NOT_FOUND));
     }
 
+    /**
+     * 회원 조회
+     */
     private Member findMemberById(Integer memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
     }
 
+    /**
+     * 구독 한도 검증
+     */
     private void validateSubscriptionLimit(Member member) {
         Membership membership = member.getMembership();
         if (membership == Membership.PREMIUM) {
@@ -187,6 +193,9 @@ public class SubscriptionService {
         }
     }
 
+    /**
+     * 중복 구독 검증
+     */
     private void validateDuplicateSubscription(
             Integer memberId,
             com.seein.domain.subscription.entity.StudyLanguage studyLanguage,
@@ -210,6 +219,9 @@ public class SubscriptionService {
         }
     }
 
+    /**
+     * 수신 시간 포맷팅
+     */
     private String formatTime(LocalTime deliveryTime) {
         return deliveryTime.format(TIME_FORMATTER);
     }

@@ -115,6 +115,9 @@ class LearningDeliverySchedulerTest {
         verify(learningEmailService, never()).sendLearningEmail(any(), any());
     }
 
+    /**
+     * 테스트용 학습 구독 생성
+     */
     private LearningSubscription createSubscription(LocalTime deliveryTime) {
         Member member = Member.create("test@example.com", "테스터", "google");
         LearningSubscription subscription = LearningSubscription.create(

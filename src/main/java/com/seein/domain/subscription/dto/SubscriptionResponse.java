@@ -31,6 +31,9 @@ public class SubscriptionResponse {
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
+    /**
+     * 구독 응답 변환
+     */
     public static SubscriptionResponse from(LearningSubscription subscription) {
         return new SubscriptionResponse(
                 subscription.getSubscriptionId(),

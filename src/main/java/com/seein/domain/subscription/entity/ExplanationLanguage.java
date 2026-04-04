@@ -15,10 +15,16 @@ public enum ExplanationLanguage {
         this.languageCode = languageCode;
     }
 
+    /**
+     * 라벨 조회
+     */
     public String getLabel() {
         return label;
     }
 
+    /**
+     * 언어 코드 조회
+     */
     public String getLanguageCode() {
         return languageCode;
     }

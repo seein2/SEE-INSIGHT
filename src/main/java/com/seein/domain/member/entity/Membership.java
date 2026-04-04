@@ -9,10 +9,16 @@ public enum Membership {
     NORMAL,
     PREMIUM;
 
+    /**
+     * 구독 한도 조회
+     */
     public int getSubscriptionLimit() {
         return this == PREMIUM ? Integer.MAX_VALUE : 1;
     }
 
+    /**
+     * 라벨 조회
+     */
     public String getLabel() {
         return this == PREMIUM ? "Premium" : "Normal";
     }

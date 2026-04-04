@@ -17,6 +17,9 @@ import java.util.List;
 @Component
 public class LearningContentFallbackFactory {
 
+    /**
+     * 일일 콘텐츠 생성
+     */
     public LearningContent createDailyContent(
             StudyLanguage studyLanguage,
             ExplanationLanguage explanationLanguage,
@@ -41,6 +44,9 @@ public class LearningContentFallbackFactory {
         );
     }
 
+    /**
+     * 기본 학습 피드 콘텐츠 생성
+     */
     public List<LearningContent> createFeedContents(StudyLanguage studyLanguage, ExplanationLanguage explanationLanguage) {
         LocalDate publishedDate = LocalDate.now();
         List<LearningContent> contents = new ArrayList<>();
@@ -53,6 +59,9 @@ public class LearningContentFallbackFactory {
         return contents;
     }
 
+    /**
+     * 제목 생성
+     */
     private String buildTitle(StudyLanguage studyLanguage, LearningStyle learningStyle, DifficultyLevel difficultyLevel) {
         String topic = switch (learningStyle) {
             case PRACTICAL_READING -> "오늘의 짧은 읽기";
@@ -63,6 +72,9 @@ public class LearningContentFallbackFactory {
         return studyLanguage.getLabel() + " " + topic + " · " + difficultyLevel.getLabel();
     }
 
+    /**
+     * 요약 생성
+     */
     private String buildSummary(ExplanationLanguage explanationLanguage, LearningStyle learningStyle, DifficultyLevel difficultyLevel) {
         String korean = switch (learningStyle) {
             case PRACTICAL_READING -> difficultyLevel.getLabel() + " 수준에 맞춘 짧은 실전 문장을 읽고 핵심 흐름을 익히는 카드입니다.";
@@ -79,6 +91,9 @@ public class LearningContentFallbackFactory {
         return inExplanationLanguage(explanationLanguage, korean, english);
     }
 
+    /**
+     * 원문 생성
+     */
     private String buildSourceText(StudyLanguage studyLanguage, LearningStyle learningStyle) {
         return switch (studyLanguage) {
             case ENGLISH -> switch (learningStyle) {
@@ -102,6 +117,9 @@ public class LearningContentFallbackFactory {
         };
     }
 
+    /**
+     * 해설 생성
+     */
     private String buildExplanation(ExplanationLanguage explanationLanguage, LearningStyle learningStyle, DifficultyLevel difficultyLevel) {
         String korean = switch (learningStyle) {
             case PRACTICAL_READING -> "짧은 정보성 문장을 읽으면서 핵심 동사와 문장 흐름을 확인하세요. " + difficultyLevel.getLabel() + " 단계에서는 부담 없이 전체 의미를 먼저 잡는 것이 중요합니다.";
@@ -118,6 +136,9 @@ public class LearningContentFallbackFactory {
         return inExplanationLanguage(explanationLanguage, korean, english);
     }
 
+    /**
+     * 첫 번째 표현 생성
+     */
     private String buildExpressionOne(StudyLanguage studyLanguage, LearningStyle learningStyle) {
         return switch (studyLanguage) {
             case ENGLISH -> switch (learningStyle) {
@@ -141,6 +162,9 @@ public class LearningContentFallbackFactory {
         };
     }
 
+    /**
+     * 두 번째 표현 생성
+     */
     private String buildExpressionTwo(StudyLanguage studyLanguage, LearningStyle learningStyle) {
         return switch (studyLanguage) {
             case ENGLISH -> switch (learningStyle) {
@@ -164,6 +188,9 @@ public class LearningContentFallbackFactory {
         };
     }
 
+    /**
+     * 복습 문제 생성
+     */
     private String buildQuiz(ExplanationLanguage explanationLanguage, LearningStyle learningStyle) {
         String korean = switch (learningStyle) {
             case PRACTICAL_READING -> "오늘 문장에서 핵심 행동을 나타내는 동사는 무엇인가요?";
@@ -180,6 +207,9 @@ public class LearningContentFallbackFactory {
         return inExplanationLanguage(explanationLanguage, korean, english);
     }
 
+    /**
+     * 해설 언어별 문구 반환
+     */
     private String inExplanationLanguage(ExplanationLanguage explanationLanguage, String korean, String english) {
         return explanationLanguage == ExplanationLanguage.KOREAN ? korean : english;
     }

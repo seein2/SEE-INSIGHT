@@ -25,46 +25,73 @@ public class MemberPrincipal implements UserDetails, OAuth2User {
     private final String membershipRole;
     private final Map<String, Object> attributes;
 
+    /**
+     * OAuth2 속성 반환
+     */
     @Override
     public Map<String, Object> getAttributes() {
         return attributes;
     }
 
+    /**
+     * 권한 목록 반환
+     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + membershipRole));
     }
 
+    /**
+     * 비밀번호 반환
+     */
     @Override
     public String getPassword() {
         return null; // OAuth2 로그인이므로 비밀번호 없음
     }
 
+    /**
+     * 사용자명 반환
+     */
     @Override
     public String getUsername() {
         return email;
     }
 
+    /**
+     * 이름 반환
+     */
     @Override
     public String getName() {
         return email;
     }
 
+    /**
+     * 계정 만료 여부 반환
+     */
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
 
+    /**
+     * 계정 잠금 여부 반환
+     */
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
 
+    /**
+     * 자격 증명 만료 여부 반환
+     */
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
+    /**
+     * 활성 여부 반환
+     */
     @Override
     public boolean isEnabled() {
         return true;

@@ -19,6 +19,9 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
 
     private final AuthMemberService authMemberService;
 
+    /**
+     * OAuth2 사용자 정보 로드
+     */
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
