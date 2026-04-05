@@ -26,11 +26,11 @@ public class LearningContentPreGenerationScheduler {
 
     private static final List<HomePreset> HOME_PRESETS = List.of(
             new HomePreset(LearningStyle.BALANCED, DifficultyLevel.INTERMEDIATE),
+            new HomePreset(LearningStyle.BALANCED, DifficultyLevel.BEGINNER),
             new HomePreset(LearningStyle.PRACTICAL_READING, DifficultyLevel.BEGINNER),
-            new HomePreset(LearningStyle.DAILY_CONVERSATION, DifficultyLevel.BEGINNER),
-            new HomePreset(LearningStyle.TODAYS_EXPRESSION, DifficultyLevel.INTERMEDIATE),
             new HomePreset(LearningStyle.PRACTICAL_READING, DifficultyLevel.ADVANCED),
-            new HomePreset(LearningStyle.BALANCED, DifficultyLevel.BEGINNER)
+            new HomePreset(LearningStyle.DAILY_CONVERSATION, DifficultyLevel.BEGINNER),
+            new HomePreset(LearningStyle.TODAYS_EXPRESSION, DifficultyLevel.INTERMEDIATE)
     );
 
     private final LearningContentService learningContentService;
@@ -44,9 +44,13 @@ public class LearningContentPreGenerationScheduler {
         preGenerateDailyLearningContent(LocalDate.now());
     }
 
+    /*
+     * 홈 피드용 프리셋과 활성 구독 조합을 모두 모아서 일일 콘텐츠를 선생성한다.
+     */
     void preGenerateDailyLearningContent(LocalDate publishedDate) {
         LinkedHashSet<GenerationTarget> targets = new LinkedHashSet<>();
 
+        // 홈 피드용 프리셋 조합 추가
         for (StudyLanguage studyLanguage : StudyLanguage.values()) {
             for (HomePreset preset : HOME_PRESETS) {
                 targets.add(new GenerationTarget(
@@ -58,6 +62,7 @@ public class LearningContentPreGenerationScheduler {
             }
         }
 
+        // 활성 구독 조합 추가
         for (LearningSubscription subscription : subscriptionRepository.findActiveSubscriptions()) {
             targets.add(new GenerationTarget(
                     subscription.getStudyLanguage(),
@@ -67,6 +72,7 @@ public class LearningContentPreGenerationScheduler {
             ));
         }
 
+        // 일일 콘텐츠 선생성
         for (GenerationTarget target : targets) {
             try {
                 learningContentService.getOrCreateDailyContent(
@@ -87,6 +93,9 @@ public class LearningContentPreGenerationScheduler {
     private record HomePreset(LearningStyle learningStyle, DifficultyLevel difficultyLevel) {
     }
 
+    /*
+     * 생성 조합을 레코드
+     */
     private record GenerationTarget(
             StudyLanguage studyLanguage,
             ExplanationLanguage explanationLanguage,

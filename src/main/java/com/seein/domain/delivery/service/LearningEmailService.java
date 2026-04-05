@@ -48,7 +48,6 @@ public class LearningEmailService {
         helper.setText(html, true);
 
         mailSender.send(message);
-        log.info("학습 이메일 발송 성공 - subscriptionId={}, email={}",
-                subscription.getSubscriptionId(), subscription.getMember().getEmail());
+        log.info("학습 이메일 발송 성공 - subscriptionId={}, email={}", subscription.getSubscriptionId(), subscription.getMember().getEmail());
     }
 }

@@ -20,8 +20,7 @@ public class LearningContentTemplateFactory {
     /**
      * 요약 생성
      */
-    public String createSummary(ExplanationLanguage explanationLanguage, LearningStyle learningStyle,
-                                DifficultyLevel difficultyLevel, String title) {
+    public String createSummary(ExplanationLanguage explanationLanguage, LearningStyle learningStyle, DifficultyLevel difficultyLevel, String title) {
         String korean = switch (learningStyle) {
             case PRACTICAL_READING -> "'" + title + "'를 바탕으로 " + difficultyLevel.getLabel()
                     + " 단계에서 읽기 흐름과 핵심 표현을 빠르게 익히는 카드입니다.";
@@ -68,7 +67,7 @@ public class LearningContentTemplateFactory {
     }
 
     /**
-     * 복습 문제 생성
+     * 문제 생성
      */
     public String createQuiz(ExplanationLanguage explanationLanguage, LearningStyle learningStyle, String title) {
         String korean = switch (learningStyle) {
@@ -97,6 +96,7 @@ public class LearningContentTemplateFactory {
         List<String> candidates = new ArrayList<>();
         String normalized = sourceText.replaceAll("\\s+", " ").trim();
 
+        // 문장 단위로 나눈 뒤, 각 문장을 구두점으로 세분화하여 표현 후보를 추출
         for (String sentence : normalized.split("[.!?。！？]")) {
             for (String segment : sentence.split("[,;:、，]")) {
                 String candidate = sanitizeExpression(segment);
@@ -155,6 +155,9 @@ public class LearningContentTemplateFactory {
         };
     }
 
+    /*
+     * 설명 언어에 따라 한국어 또는 영어 텍스트 반환
+     */
     private String inExplanationLanguage(ExplanationLanguage explanationLanguage, String korean, String english) {
         return explanationLanguage == ExplanationLanguage.KOREAN ? korean : english;
     }

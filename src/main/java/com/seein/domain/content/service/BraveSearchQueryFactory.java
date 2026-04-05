@@ -16,8 +16,7 @@ public class BraveSearchQueryFactory {
     /**
      * 학습 설정별 Brave 검색어 생성
      */
-    public SearchQuery create(StudyLanguage studyLanguage, LearningStyle learningStyle, DifficultyLevel difficultyLevel,
-                              LocalDate publishedDate) {
+    public SearchQuery create(StudyLanguage studyLanguage, LearningStyle learningStyle, DifficultyLevel difficultyLevel, LocalDate publishedDate) {
         String query = switch (studyLanguage) {
             case ENGLISH -> englishQuery(learningStyle, difficultyLevel);
             case JAPANESE -> japaneseQuery(learningStyle, difficultyLevel);

@@ -49,14 +49,11 @@ public class LearningDeliveryScheduler {
 
         for (LearningSubscription subscription : dueSubscriptions) {
             try {
-                if (deliveryLogRepository.existsBySubscriptionSubscriptionIdAndStatusAndIssueDate(
-                        subscription.getSubscriptionId(),
-                        DeliveryStatus.SUCCESS,
-                        issueDate
-                )) {
+                if (deliveryLogRepository.existsBySubscriptionSubscriptionIdAndStatusAndIssueDate(subscription.getSubscriptionId(), DeliveryStatus.SUCCESS, issueDate)) {
                     continue;
                 }
 
+                // 캐시 키 생성: 구독 설정과 발송 날짜를 조합하여 고유한 키 생성
                 String cacheKey = String.join("|",
                         subscription.getStudyLanguage().name(),
                         subscription.getExplanationLanguage().name(),
