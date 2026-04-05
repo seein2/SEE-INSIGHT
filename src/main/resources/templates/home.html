@@ -75,9 +75,12 @@
         <blockquote class="source-quote" th:text="${feed.featuredContent.sourceText}">원문</blockquote>
         <p class="featured-explanation" th:text="${feed.featuredContent.explanationText}">해설</p>
 
-        <div class="point-list">
-            <span class="point-chip" th:text="${feed.featuredContent.expressionOne}">표현 1</span>
-            <span class="point-chip" th:text="${feed.featuredContent.expressionTwo}">표현 2</span>
+        <div class="point-list"
+             th:if="${feed.featuredContent.expressionOne != null or feed.featuredContent.expressionTwo != null}">
+            <span class="point-chip" th:if="${feed.featuredContent.expressionOne != null}"
+                  th:text="${feed.featuredContent.expressionOne}">표현 1</span>
+            <span class="point-chip" th:if="${feed.featuredContent.expressionTwo != null}"
+                  th:text="${feed.featuredContent.expressionTwo}">표현 2</span>
         </div>
 
         <div class="card-actions">
@@ -103,9 +106,9 @@
             <p class="feed-source" th:text="${card.sourceText}">원문</p>
             <p class="feed-explanation" th:text="${card.explanationText}">해설</p>
 
-            <div class="point-list compact">
-                <span class="point-chip" th:text="${card.expressionOne}">표현 1</span>
-                <span class="point-chip" th:text="${card.expressionTwo}">표현 2</span>
+            <div class="point-list compact" th:if="${card.expressionOne != null or card.expressionTwo != null}">
+                <span class="point-chip" th:if="${card.expressionOne != null}" th:text="${card.expressionOne}">표현 1</span>
+                <span class="point-chip" th:if="${card.expressionTwo != null}" th:text="${card.expressionTwo}">표현 2</span>
             </div>
 
             <div class="card-actions">

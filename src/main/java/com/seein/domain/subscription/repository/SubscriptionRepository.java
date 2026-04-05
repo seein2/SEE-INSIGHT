@@ -53,4 +53,17 @@ public interface SubscriptionRepository extends JpaRepository<LearningSubscripti
             ORDER BY s.subscriptionId ASC
             """)
     List<LearningSubscription> findDeliverableSubscriptions(LocalTime deliveryTime);
+
+    /**
+     * 활성 구독 전체 조회
+     */
+    @Query("""
+            SELECT s
+            FROM LearningSubscription s
+            JOIN s.member m
+            WHERE s.isActive = true
+              AND m.deletedAt IS NULL
+            ORDER BY s.subscriptionId ASC
+            """)
+    List<LearningSubscription> findActiveSubscriptions();
 }

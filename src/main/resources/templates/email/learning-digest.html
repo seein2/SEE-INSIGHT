@@ -27,8 +27,8 @@
             <div style="margin-top:20px;padding:18px;border-radius:18px;background:#fff7ef;border:1px solid #efd6bc;">
                 <p style="margin:0 0 10px;font-size:13px;font-weight:700;color:#8a6a4f;">핵심 표현</p>
                 <ul style="margin:0;padding-left:18px;color:#44525d;line-height:1.8;">
-                    <li th:text="${content.expressionOne}">표현 1</li>
-                    <li th:text="${content.expressionTwo}">표현 2</li>
+                    <li th:if="${content.expressionOne != null}" th:text="${content.expressionOne}">표현 1</li>
+                    <li th:if="${content.expressionTwo != null}" th:text="${content.expressionTwo}">표현 2</li>
                 </ul>
             </div>
 
