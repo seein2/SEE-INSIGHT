@@ -4,7 +4,7 @@
 
 ## 1. 프로젝트 개요
 
-Perplexity API를 활용한 뉴스 자동 요약 및 이메일 발송 서비스.
+Brave Search API를 활용한 뉴스 기반 학습 콘텐츠 생성 및 이메일 발송 서비스.
 
 - **Language**: Java 21
 - **Framework**: Spring Boot 3.5.9
@@ -293,4 +293,4 @@ docs: 문서 수정
 chore: 빌드, 설정 변경
 ```
 
-예시: `feat(member): 회원 탈퇴 기능 추가`
+예시: `feat: 회원 탈퇴 기능 추가`

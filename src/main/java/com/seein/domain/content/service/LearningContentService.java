@@ -1,7 +1,5 @@
 package com.seein.domain.content.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seein.domain.content.dto.LearningContentCardResponse;
 import com.seein.domain.content.entity.LearningContent;
 import com.seein.domain.content.repository.LearningContentRepository;
@@ -9,9 +7,6 @@ import com.seein.domain.subscription.entity.DifficultyLevel;
 import com.seein.domain.subscription.entity.ExplanationLanguage;
 import com.seein.domain.subscription.entity.LearningStyle;
 import com.seein.domain.subscription.entity.StudyLanguage;
-import com.seein.global.config.PerplexityClient;
-import com.seein.global.exception.BusinessException;
-import com.seein.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -20,8 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,10 +30,8 @@ public class LearningContentService {
     private static final int FEED_LIMIT = 6;
 
     private final LearningContentRepository learningContentRepository;
-    private final PerplexityClient perplexityClient;
-    private final LearningPromptFactory learningPromptFactory;
+    private final LearningContentGenerator learningContentGenerator;
     private final LearningContentFallbackFactory fallbackFactory;
-    private final ObjectMapper objectMapper;
 
     /**
      * 학습 피드 카드 목록 조회
@@ -56,36 +47,7 @@ public class LearningContentService {
                 ? learningContentRepository.findByStudyLanguageAndExplanationLanguage(studyLanguage, explanationLanguage, pageRequest)
                 : learningContentRepository.findByStudyLanguageAndExplanationLanguageAndLearningStyle(studyLanguage, explanationLanguage, learningStyle, pageRequest)
         ).stream().map(LearningContentCardResponse::from).toList();
-
-        if (cards.size() >= FEED_LIMIT) {
-            return cards;
-        }
-
-        List<LearningContentCardResponse> fallbackCards = fallbackFactory.createFeedContents(studyLanguage, explanationLanguage)
-                .stream()
-                .filter(content -> learningStyle == null || content.getLearningStyle() == learningStyle)
-                .map(LearningContentCardResponse::from)
-                .toList();
-
-        LinkedHashSet<String> deduplicatedTitles = new LinkedHashSet<>();
-        List<LearningContentCardResponse> merged = new ArrayList<>();
-
-        for (LearningContentCardResponse card : cards) {
-            if (deduplicatedTitles.add(card.getTitle())) {
-                merged.add(card);
-            }
-        }
-
-        for (LearningContentCardResponse card : fallbackCards) {
-            if (merged.size() >= FEED_LIMIT) {
-                break;
-            }
-            if (deduplicatedTitles.add(card.getTitle())) {
-                merged.add(card);
-            }
-        }
-
-        return merged;
+        return cards;
     }
 
     /**
@@ -146,33 +108,11 @@ public class LearningContentService {
             LocalDate publishedDate
     ) {
         try {
-            LearningPromptFactory.PromptBundle prompt = learningPromptFactory.create(
-                    studyLanguage,
-                    explanationLanguage,
-                    learningStyle,
-                    difficultyLevel
-            );
-            String responseJson = perplexityClient.generateLearningContent(
-                    prompt.systemPrompt(),
-                    prompt.userPrompt(),
-                    prompt.searchLanguageCode()
-            );
-            String contentJson = stripMarkdownFence(perplexityClient.extractContentFromResponse(responseJson));
-            JsonNode contentNode = objectMapper.readTree(contentJson);
-
-            return LearningContent.create(
+            return learningContentGenerator.generate(
                     studyLanguage,
                     explanationLanguage,
                     learningStyle,
                     difficultyLevel,
-                    requiredText(contentNode, "title"),
-                    requiredText(contentNode, "summary"),
-                    requiredText(contentNode, "sourceText"),
-                    requiredText(contentNode, "explanationText"),
-                    optionalText(contentNode, "expressionOne"),
-                    optionalText(contentNode, "expressionTwo"),
-                    optionalText(contentNode, "quizText"),
-                    perplexityClient.extractFirstCitation(responseJson),
                     publishedDate
             );
         } catch (Exception e) {
@@ -186,44 +126,5 @@ public class LearningContentService {
                     publishedDate
             );
         }
-    }
-
-    /**
-     * 마크다운 코드 블록 제거
-     */
-    private String stripMarkdownFence(String rawContent) {
-        if (rawContent == null || rawContent.isBlank()) {
-            throw new BusinessException(ErrorCode.LEARNING_CONTENT_GENERATION_FAILED);
-        }
-
-        String trimmed = rawContent.trim();
-        if (!trimmed.startsWith("```")) {
-            return trimmed;
-        }
-
-        return trimmed
-                .replaceFirst("^```json\\s*", "")
-                .replaceFirst("^```\\s*", "")
-                .replaceFirst("\\s*```$", "")
-                .trim();
-    }
-
-    /**
-     * 필수 텍스트 추출
-     */
-    private String requiredText(JsonNode contentNode, String fieldName) {
-        String value = optionalText(contentNode, fieldName);
-        if (value == null || value.isBlank()) {
-            throw new BusinessException(ErrorCode.LEARNING_CONTENT_GENERATION_FAILED, fieldName + " 값이 비어 있습니다.");
-        }
-        return value;
-    }
-
-    /**
-     * 선택 텍스트 추출
-     */
-    private String optionalText(JsonNode contentNode, String fieldName) {
-        JsonNode node = contentNode.path(fieldName);
-        return node.isMissingNode() || node.isNull() ? null : node.asText();
     }
 }

@@ -5,16 +5,17 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
- * Perplexity API 설정 프로퍼티
- * application-local.yaml의 perplexity 섹션과 바인딩
+ * Brave Search API 설정 프로퍼티
+ * application-local.yaml의 brave 섹션과 바인딩
  */
 @Getter
 @Component
-@ConfigurationProperties(prefix = "perplexity")
-public class PerplexityProperties {
+@ConfigurationProperties(prefix = "brave")
+public class BraveProperties {
 
     private String apiKey;
     private String baseUrl;
+    private String apiVersion;
 
     /**
      * API 키 설정
@@ -28,5 +29,12 @@ public class PerplexityProperties {
      */
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
+    }
+
+    /**
+     * API 버전 헤더 설정
+     */
+    public void setApiVersion(String apiVersion) {
+        this.apiVersion = apiVersion;
     }
 }
