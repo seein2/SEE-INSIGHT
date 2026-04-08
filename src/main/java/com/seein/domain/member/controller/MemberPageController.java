@@ -28,6 +28,6 @@ public class MemberPageController {
     public String me(@AuthenticationPrincipal MemberPrincipal principal, Model model) {
         MyPageResponse myPage = memberService.getMyPage(principal.getMemberId());
         model.addAttribute("myPage", myPage);
-        return "my/index";
+        return "my/me";
     }
 }
