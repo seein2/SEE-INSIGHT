@@ -72,17 +72,18 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("닉네임 변경 성공")
-    void updateNickname_success() {
+    @DisplayName("회원정보 변경 성공")
+    void updateMemberInfo_success() {
         // given
         Member member = Member.create("test@example.com", "기존닉네임", "google");
         given(memberRepository.findById(1)).willReturn(Optional.of(member));
 
         // when
-        String result = memberService.updateNickname(1, "새닉네임");
+        String result = memberService.updateMemberInfo(1, "새닉네임");
 
         // then
         assertThat(result).isEqualTo("새닉네임");
+        assertThat(member.getEmail()).isEqualTo("test@example.com");
         assertThat(member.getNickname()).isEqualTo("새닉네임");
     }
 
