@@ -527,6 +527,17 @@ button {
     line-height: 1.15;
 }
 
+.auth-alert {
+    margin-top: 18px;
+    padding: 14px 16px;
+    border-radius: 18px;
+    border: 1px solid rgba(194, 67, 47, 0.18);
+    background: rgba(194, 67, 47, 0.08);
+    color: #9d3524;
+    line-height: 1.6;
+    font-weight: 700;
+}
+
 .auth-actions {
     display: grid;
     gap: 12px;

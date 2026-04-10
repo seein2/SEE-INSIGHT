@@ -1,5 +1,6 @@
 package com.seein.global.security.handler;
 
+import com.seein.global.security.oauth2.OAuth2LoginError;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 
@@ -19,8 +22,13 @@ import java.io.IOException;
 @Component
 public class OAuth2FailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
-    @Value("${spring.security.oauth2.failure-redirect-uri:http://localhost:3000/auth/error}")
-    private String failureRedirectUri;
+    private static final String DEFAULT_FAILURE_REDIRECT_URI = "/login";
+
+    private final String failureRedirectUri;
+
+    public OAuth2FailureHandler(@Value("${spring.security.oauth2.failure-redirect-uri}") String failureRedirectUri) {
+        this.failureRedirectUri = failureRedirectUri;
+    }
 
     /**
      * OAuth2 로그인 실패 처리
@@ -28,9 +36,18 @@ public class OAuth2FailureHandler extends SimpleUrlAuthenticationFailureHandler 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
                                         AuthenticationException exception) throws IOException, ServletException {
-        log.error("OAuth2 로그인 실패: {}", exception.getMessage());
+        OAuth2LoginError loginError = OAuth2LoginError.fromException(exception);
+        String targetUrl = UriComponentsBuilder.fromUriString(resolveFailureRedirectUri())
+                .replaceQueryParam("oauthError", loginError.getCode())
+                .build()
+                .encode()
+                .toUriString();
 
-        String targetUrl = failureRedirectUri + "?error=" + exception.getMessage();
+        log.warn("OAuth2 로그인 실패: code={}, message={}", loginError.getCode(), exception.getMessage(), exception);
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
+    }
+
+    private String resolveFailureRedirectUri() {
+        return StringUtils.hasText(failureRedirectUri) ? failureRedirectUri : DEFAULT_FAILURE_REDIRECT_URI;
     }
 }

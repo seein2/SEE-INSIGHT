@@ -4,6 +4,7 @@ import com.seein.domain.home.dto.HomeFeedResponse;
 import com.seein.domain.home.service.HomeFeedService;
 import com.seein.domain.subscription.entity.LearningStyle;
 import com.seein.domain.subscription.entity.StudyLanguage;
+import com.seein.global.security.oauth2.OAuth2LoginError;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -53,9 +54,11 @@ public class HomeController {
      * 로그인 페이지 렌더링
      */
     @GetMapping("/login")
-    public String login(Model model) {
+    public String login(@RequestParam(required = false) String oauthError, Model model) {
         model.addAttribute("googleLoginUrl", "/oauth2/authorization/google");
         model.addAttribute("naverLoginUrl", "/oauth2/authorization/naver");
+        OAuth2LoginError.fromCode(oauthError)
+                .ifPresent(error -> model.addAttribute("oauthErrorMessage", error.getMessage()));
         return "login";
     }
 }

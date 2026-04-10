@@ -16,6 +16,10 @@
             로그인 후 바로 나만의 학습 피드를 설정해 보세요.
         </p>
 
+        <div class="auth-alert" role="alert" th:if="${oauthErrorMessage != null}" th:text="${oauthErrorMessage}">
+            소셜 로그인에 실패했습니다. 잠시 후 다시 시도해 주세요.
+        </div>
+
         <div class="auth-actions">
             <a class="auth-button google" th:href="${googleLoginUrl}">구글로 시작하기</a>
             <a class="auth-button naver" th:href="${naverLoginUrl}">네이버로 시작하기</a>

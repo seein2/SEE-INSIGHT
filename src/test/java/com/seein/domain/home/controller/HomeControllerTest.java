@@ -65,4 +65,33 @@ class HomeControllerTest {
         assertThat(model.getAttribute("isAuthenticated")).isEqualTo(true);
         assertThat(model.getAttribute("feed")).isInstanceOf(HomeFeedResponse.class);
     }
+
+    @Test
+    @DisplayName("허용된 OAuth2 에러 코드는 로그인 페이지 메시지로 노출된다")
+    void login_withOAuthError() {
+        // given
+        Model model = new ConcurrentModel();
+
+        // when
+        String viewName = homeController.login("oauth2_authentication_failed", model);
+
+        // then
+        assertThat(viewName).isEqualTo("login");
+        assertThat(model.getAttribute("oauthErrorMessage"))
+                .isEqualTo("소셜 로그인에 실패했습니다. 잠시 후 다시 시도해 주세요.");
+    }
+
+    @Test
+    @DisplayName("허용되지 않은 OAuth2 에러 코드는 로그인 페이지에 노출되지 않는다")
+    void login_withUnknownOAuthError() {
+        // given
+        Model model = new ConcurrentModel();
+
+        // when
+        String viewName = homeController.login("unexpected_error", model);
+
+        // then
+        assertThat(viewName).isEqualTo("login");
+        assertThat(model.getAttribute("oauthErrorMessage")).isNull();
+    }
 }

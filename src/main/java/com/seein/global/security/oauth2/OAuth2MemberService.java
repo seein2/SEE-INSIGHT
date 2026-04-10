@@ -3,6 +3,7 @@ package com.seein.global.security.oauth2;
 import com.seein.domain.auth.service.AuthMemberService;
 import com.seein.global.security.jwt.MemberPrincipal;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
  * Google 로그인 후 사용자 정보를 DB에 저장하거나 조회
  */
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class OAuth2MemberService extends DefaultOAuth2UserService {
 
@@ -30,7 +32,8 @@ public class OAuth2MemberService extends DefaultOAuth2UserService {
         try {
             return authMemberService.loadOrCreateOAuth2Member(provider, oAuth2User.getAttributes());
         } catch (IllegalArgumentException e) {
-            throw new OAuth2AuthenticationException(e.getMessage());
+            log.warn("OAuth2 사용자 정보 처리 실패: provider={}", provider, e);
+            throw OAuth2LoginError.AUTHENTICATION_FAILED.toAuthenticationException(e);
         }
     }
 }
