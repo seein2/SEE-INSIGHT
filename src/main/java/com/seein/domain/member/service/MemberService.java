@@ -17,7 +17,7 @@ import java.util.List;
 
 /**
  * 회원 서비스
- * 회원 정보 조회, 닉네임 변경, 회원 탈퇴 처리
+ * 회원 정보 조회, 회원 정보 변경, 회원 탈퇴 처리
  */
 @Service
 @RequiredArgsConstructor
@@ -36,12 +36,12 @@ public class MemberService {
     }
 
     /**
-     * 닉네임 변경
+     * 회원정보 수정
      */
     @Transactional
-    public String updateNickname(Integer memberId, String nickname) {
+    public String updateMemberInfo(Integer memberId, String nickname) {
         Member member = findMemberById(memberId);
-        member.updateNickname(nickname);
+        member.updateInfo(nickname);
         return member.getNickname();
     }
 

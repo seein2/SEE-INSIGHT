@@ -1,5 +1,6 @@
 package com.seein.domain.member.controller;
 
+import com.seein.domain.member.dto.MemberResponse;
 import com.seein.domain.member.dto.MyPageResponse;
 import com.seein.domain.member.service.MemberService;
 import com.seein.global.security.jwt.MemberPrincipal;
@@ -28,6 +29,18 @@ public class MemberPageController {
     public String me(@AuthenticationPrincipal MemberPrincipal principal, Model model) {
         MyPageResponse myPage = memberService.getMyPage(principal.getMemberId());
         model.addAttribute("myPage", myPage);
-        return "my/index";
+        return "my/me";
+    }
+
+    /**
+     * 내 정보 수정 페이지
+     */
+    @GetMapping("/me/edit")
+    public String edit(@AuthenticationPrincipal MemberPrincipal principal, Model model) {
+        MemberResponse member = memberService.getMember(principal.getMemberId());
+        model.addAttribute("member", member);
+        model.addAttribute("updateApiUrl", "/api/v1/members/me/nickname");
+        model.addAttribute("myPageUrl", "/me");
+        return "my/edit";
     }
 }

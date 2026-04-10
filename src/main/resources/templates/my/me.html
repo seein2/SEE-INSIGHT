@@ -26,8 +26,8 @@
             <dl class="profile-list">
                 <div><dt>이메일</dt><dd th:text="${myPage.email}">email@example.com</dd></div>
                 <div><dt>멤버십</dt><dd th:text="${myPage.membershipLabel}">Normal</dd></div>
-                <div><dt>로그인 제공자</dt><dd th:text="${myPage.provider}">google</dd></div>
-                <div><dt>가입일</dt><dd th:text="${#temporals.format(myPage.createdAt, 'yyyy-MM-dd HH:mm')}">2026-04-01</dd></div>
+                <div><dt>가입일</dt><dd th:text="${#temporals.format(myPage.createdAt, 'yyyy-MM-dd HH:mm')}">0000-00-00 00:00</dd></div>
+                <div><dd><a class="ghost-button" href="/me/edit">수정</a></dd></div>
             </dl>
         </article>
 

@@ -20,6 +20,6 @@ public enum Membership {
      * 라벨 조회
      */
     public String getLabel() {
-        return this == PREMIUM ? "Premium" : "Normal";
+        return this == PREMIUM ? "프리미엄" : "일반";
     }
 }

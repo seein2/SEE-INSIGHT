@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEE-INSIGHT | 회원정보 수정</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="page-shell narrow">
+    <header class="topbar">
+        <a href="/" class="brand-link">
+            <span class="brand-kicker">Edit Profile</span>
+            <strong>닉네임을 수정하고 계정 표시 이름을 관리합니다.</strong>
+        </a>
+        <div class="topbar-actions">
+            <a class="ghost-button" href="/">홈</a>
+            <a class="ghost-button" th:href="${myPageUrl}">마이</a>
+        </div>
+    </header>
+
+    <section class="profile-card form-card"
+             data-member-edit
+             th:attr="data-update-api=${updateApiUrl}, data-redirect-url=${myPageUrl}">
+        <div class="settings-panel-header">
+            <div>
+                <p class="eyebrow">Account Settings</p>
+                <h1>회원정보 수정</h1>
+            </div>
+        </div>
+
+        <p class="hero-description">
+            현재 계정의 표시 닉네임을 변경할 수 있습니다. 이메일은 OAuth 로그인 계정 기준으로 유지됩니다.
+        </p>
+
+        <p class="inline-message form-message" id="memberEditMessage" aria-live="polite"></p>
+
+        <form class="stack-form" id="memberEditForm" novalidate>
+            <label class="form-field">
+                <span class="form-label">이메일</span>
+                <input class="form-input" type="email" th:value="${member.email}" disabled>
+            </label>
+
+            <label class="form-field">
+                <span class="form-label">닉네임</span>
+                <input class="form-input"
+                       id="nickname"
+                       name="nickname"
+                       type="text"
+                       th:value="${member.nickname}"
+                       minlength="2"
+                       maxlength="20"
+                       autocomplete="nickname"
+                       required>
+            </label>
+
+            <div class="card-actions">
+                <a class="ghost-button" th:href="${myPageUrl}">취소</a>
+                <button class="primary-button" id="memberEditSubmitButton" type="submit">저장</button>
+            </div>
+        </form>
+    </section>
+</main>
+
+<script th:src="@{/js/member-edit.js}"></script>
+</body>
+</html>
