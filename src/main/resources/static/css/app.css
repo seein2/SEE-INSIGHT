@@ -308,6 +308,61 @@ button {
     padding: 28px;
 }
 
+.form-card {
+    display: grid;
+    gap: 18px;
+}
+
+.stack-form {
+    display: grid;
+    gap: 16px;
+}
+
+.form-field {
+    display: grid;
+    gap: 8px;
+}
+
+.form-label {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--ink);
+}
+
+.form-input {
+    width: 100%;
+    min-height: 54px;
+    padding: 14px 16px;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.82);
+    color: var(--text);
+    font: inherit;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: rgba(200, 111, 59, 0.55);
+    box-shadow: 0 0 0 4px rgba(200, 111, 59, 0.12);
+}
+
+.form-input:disabled {
+    color: var(--muted);
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.form-message {
+    min-height: 24px;
+}
+
+.form-message.is-success {
+    color: #2f7d4f;
+}
+
+.form-message.is-error {
+    color: #c2432f;
+}
+
 .wizard-step {
     display: none;
 }
