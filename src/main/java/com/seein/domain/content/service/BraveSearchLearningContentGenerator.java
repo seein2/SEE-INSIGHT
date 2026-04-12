@@ -75,6 +75,7 @@ public class BraveSearchLearningContentGenerator implements LearningContentGener
             return result;
         }
 
+        // 첫 번째 검색에서 유효한 결과가 없으면, 두 번째 검색으로 신선도 기준을 완화하여 다시 시도
         result = firstUsable(braveSearchClient.searchWeb(query, searchLanguageCode, fallbackFreshness));
         if (result != null) {
             return result;

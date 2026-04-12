@@ -54,13 +54,7 @@ public class LearningContentService {
      * 일일 콘텐츠 조회 또는 생성
      */
     @Transactional
-    public LearningContent getOrCreateDailyContent(
-            StudyLanguage studyLanguage,
-            ExplanationLanguage explanationLanguage,
-            LearningStyle learningStyle,
-            DifficultyLevel difficultyLevel,
-            LocalDate publishedDate
-    ) {
+    public LearningContent getOrCreateDailyContent(StudyLanguage studyLanguage, ExplanationLanguage explanationLanguage, LearningStyle learningStyle, DifficultyLevel difficultyLevel, LocalDate publishedDate) {
         Optional<LearningContent> existingContent = learningContentRepository
                 .findByStudyLanguageAndExplanationLanguageAndLearningStyleAndDifficultyLevelAndPublishedDate(
                         studyLanguage,
@@ -81,12 +75,7 @@ public class LearningContentService {
     /**
      * 미리보기 콘텐츠 조회
      */
-    public LearningContentCardResponse getPreviewContent(
-            StudyLanguage studyLanguage,
-            ExplanationLanguage explanationLanguage,
-            LearningStyle learningStyle,
-            DifficultyLevel difficultyLevel
-    ) {
+    public LearningContentCardResponse getPreviewContent(StudyLanguage studyLanguage, ExplanationLanguage explanationLanguage, LearningStyle learningStyle, DifficultyLevel difficultyLevel) {
         LearningContent content = getOrCreateDailyContent(
                 studyLanguage,
                 explanationLanguage,
@@ -100,13 +89,7 @@ public class LearningContentService {
     /**
      * 학습 콘텐츠 생성
      */
-    private LearningContent generateContent(
-            StudyLanguage studyLanguage,
-            ExplanationLanguage explanationLanguage,
-            LearningStyle learningStyle,
-            DifficultyLevel difficultyLevel,
-            LocalDate publishedDate
-    ) {
+    private LearningContent generateContent(StudyLanguage studyLanguage, ExplanationLanguage explanationLanguage, LearningStyle learningStyle, DifficultyLevel difficultyLevel, LocalDate publishedDate) {
         try {
             return learningContentGenerator.generate(
                     studyLanguage,
@@ -116,8 +99,7 @@ public class LearningContentService {
                     publishedDate
             );
         } catch (Exception e) {
-            log.warn("학습 콘텐츠 생성 실패, 기본 콘텐츠로 대체합니다. studyLanguage={}, style={}, difficulty={}, error={}",
-                    studyLanguage, learningStyle, difficultyLevel, e.getMessage());
+            log.warn("학습 콘텐츠 생성 실패, 기본 콘텐츠로 대체합니다. studyLanguage={}, style={}, difficulty={}, error={}", studyLanguage, learningStyle, difficultyLevel, e.getMessage());
             return fallbackFactory.createDailyContent(
                     studyLanguage,
                     explanationLanguage,

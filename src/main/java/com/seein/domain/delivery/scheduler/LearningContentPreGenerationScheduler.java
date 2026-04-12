@@ -90,6 +90,9 @@ public class LearningContentPreGenerationScheduler {
         }
     }
 
+    /*
+     * 홈 피드용 프리셋 조합 레코드
+     */
     private record HomePreset(LearningStyle learningStyle, DifficultyLevel difficultyLevel) {
     }
 
