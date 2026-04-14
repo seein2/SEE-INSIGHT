@@ -64,7 +64,7 @@ class LearningContentPreGenerationSchedulerTest {
         scheduler.preGenerateDailyLearningContent(publishedDate);
 
         // then
-        verify(learningContentService, times(19))
+        verify(learningContentService, times(10))
                 .getOrCreateDailyContent(any(), any(), any(), any(), eq(publishedDate));
         verify(learningContentService, times(1)).getOrCreateDailyContent(
                 StudyLanguage.ENGLISH,

@@ -6,3 +6,26 @@ spring:
 
 server:
   port: 8080
+
+content:
+  source-quality:
+    trusted-domains:
+      - bbc.com
+      - reuters.com
+      - apnews.com
+      - npr.org
+      - nhk.or.jp
+      - japantimes.co.jp
+      - asahi.com
+      - mainichi.jp
+      - xinhuanet.com
+      - chinadaily.com.cn
+      - people.com.cn
+    blocked-domains:
+      - facebook.com
+      - instagram.com
+      - x.com
+      - twitter.com
+      - youtube.com
+      - tiktok.com
+      - pinterest.com

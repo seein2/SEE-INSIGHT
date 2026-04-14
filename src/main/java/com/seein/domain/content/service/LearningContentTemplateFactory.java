@@ -3,12 +3,8 @@ package com.seein.domain.content.service;
 import com.seein.domain.subscription.entity.DifficultyLevel;
 import com.seein.domain.subscription.entity.ExplanationLanguage;
 import com.seein.domain.subscription.entity.LearningStyle;
-import com.seein.domain.subscription.entity.StudyLanguage;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 /**
@@ -39,29 +35,25 @@ public class LearningContentTemplateFactory {
     }
 
     /**
-     * 해설 생성
+     * 학습 포인트 생성
      */
     public String createExplanation(ExplanationLanguage explanationLanguage, LearningStyle learningStyle,
-                                    DifficultyLevel difficultyLevel, String title) {
+                                    DifficultyLevel difficultyLevel, String title, String sourceText) {
+        String safeSourceText = sourceText == null ? "" : sourceText;
+        String sourcePreview = safeSourceText.length() > 90 ? safeSourceText.substring(0, 90).trim() + "..." : safeSourceText;
         String korean = switch (learningStyle) {
-            case PRACTICAL_READING -> "'" + title + "'에서는 핵심 동사와 주어 흐름을 먼저 파악하세요. "
-                    + difficultyLevel.getLabel() + " 단계에서는 세부 해석보다 전체 의미를 빠르게 잡는 연습이 중요합니다.";
-            case DAILY_CONVERSATION -> "'" + title + "'와 연결된 문장은 통째로 익히는 편이 효율적입니다. "
-                    + "짧게 소리 내어 읽고, 주어와 상황만 바꿔 반복해 보세요.";
-            case TODAYS_EXPRESSION -> "표현 학습은 뜻만 외우지 말고 어떤 장면에서 쓰이는지까지 기억해야 오래 남습니다. "
-                    + "'" + title + "'의 맥락과 함께 묶어서 암기하세요.";
-            case BALANCED -> "'" + title + "'를 읽은 뒤 핵심 표현 두 개를 먼저 고르고, 마지막에 복습 질문으로 내용을 다시 꺼내 보세요. "
-                    + "읽기와 회화를 함께 연결하는 데 유리합니다.";
+            case PRACTICAL_READING -> "이 콘텐츠는 실제 뉴스 문맥에서 가져온 짧은 원문입니다. 먼저 누가 무엇을 했는지 잡고, "
+                    + "'" + sourcePreview + "'의 핵심 정보를 한 문장으로 다시 말해 보세요.";
+            case DAILY_CONVERSATION -> "이 문장은 실제 상황에서 통째로 기억하기 좋습니다. 주어와 장소만 바꿔 소리 내어 반복해 보세요.";
+            case TODAYS_EXPRESSION -> "표현은 뜻보다 사용 장면이 중요합니다. '" + sourcePreview
+                    + "'에서 표현이 어떤 분위기와 의도로 쓰였는지 함께 기억하세요.";
+            case BALANCED -> "짧은 원문을 읽고 핵심 의미를 잡은 뒤, 눈에 띄는 표현 하나를 골라 직접 문장으로 바꿔 보세요.";
         };
         String english = switch (learningStyle) {
-            case PRACTICAL_READING -> "Start with the main verbs and the overall flow of " + title
-                    + ". At this level, quick comprehension matters more than perfect translation.";
-            case DAILY_CONVERSATION -> "Treat the phrases from " + title
-                    + " as reusable chunks. Read them aloud, then reuse them in a new situation.";
-            case TODAYS_EXPRESSION -> "Expressions last longer when you remember the situation as well as the meaning. "
-                    + "Keep the context of " + title + " with the phrase.";
-            case BALANCED -> "Read " + title
-                    + ", pick two phrases, and finish with a short recall question. That sequence improves retention.";
+            case PRACTICAL_READING -> "This short excerpt comes from a real news context. Find who did what, then restate the core point in one sentence.";
+            case DAILY_CONVERSATION -> "Treat this sentence as a reusable chunk. Read it aloud and swap the subject or situation.";
+            case TODAYS_EXPRESSION -> "Expressions stick when you remember the situation. Notice how the phrase works in this context: " + sourcePreview;
+            case BALANCED -> "Read the excerpt, capture the main meaning, then reuse one phrase in your own sentence.";
         };
         return inExplanationLanguage(explanationLanguage, korean, english);
     }
@@ -83,76 +75,6 @@ public class LearningContentTemplateFactory {
             case BALANCED -> "Write one short sentence using a key phrase from the topic of " + title + ".";
         };
         return inExplanationLanguage(explanationLanguage, korean, english);
-    }
-
-    /**
-     * 원문에서 표현 2개 추출
-     */
-    public ExpressionPair extractExpressions(StudyLanguage studyLanguage, String sourceText) {
-        if (!StringUtils.hasText(sourceText)) {
-            return new ExpressionPair(null, null);
-        }
-
-        List<String> candidates = new ArrayList<>();
-        String normalized = sourceText.replaceAll("\\s+", " ").trim();
-
-        // 문장 단위로 나눈 뒤, 각 문장을 구두점으로 세분화하여 표현 후보를 추출
-        for (String sentence : normalized.split("[.!?。！？]")) {
-            for (String segment : sentence.split("[,;:、，]")) {
-                String candidate = sanitizeExpression(segment);
-                if (isValidExpression(studyLanguage, candidate) && !candidates.contains(candidate)) {
-                    candidates.add(candidate);
-                }
-            }
-        }
-
-        if (candidates.size() < 2 && studyLanguage == StudyLanguage.ENGLISH) {
-            candidates.addAll(extractEnglishWordWindows(normalized, candidates));
-        }
-
-        String expressionOne = candidates.size() > 0 ? candidates.get(0) : null;
-        String expressionTwo = candidates.size() > 1 ? candidates.get(1) : null;
-        return new ExpressionPair(expressionOne, expressionTwo);
-    }
-
-    private List<String> extractEnglishWordWindows(String sourceText, List<String> existing) {
-        List<String> expressions = new ArrayList<>();
-        String cleaned = sourceText.replaceAll("[^A-Za-z0-9' ]", " ").replaceAll("\\s+", " ").trim();
-        if (!StringUtils.hasText(cleaned)) {
-            return expressions;
-        }
-
-        String[] words = cleaned.split(" ");
-        for (int i = 0; i <= words.length - 3; i++) {
-            String candidate = String.join(" ", words[i], words[i + 1], words[i + 2]).trim();
-            if (candidate.length() >= 8 && candidate.length() <= 40
-                    && !existing.contains(candidate) && !expressions.contains(candidate)) {
-                expressions.add(candidate);
-            }
-            if (expressions.size() >= 2) {
-                break;
-            }
-        }
-        return expressions;
-    }
-
-    private String sanitizeExpression(String candidate) {
-        return candidate
-                .replaceAll("\\s+", " ")
-                .replaceAll("^[\\-\\s]+", "")
-                .replaceAll("[\\-\\s]+$", "")
-                .trim();
-    }
-
-    private boolean isValidExpression(StudyLanguage studyLanguage, String candidate) {
-        if (!StringUtils.hasText(candidate)) {
-            return false;
-        }
-
-        return switch (studyLanguage) {
-            case ENGLISH -> candidate.length() >= 8 && candidate.length() <= 50 && candidate.contains(" ");
-            case JAPANESE, CHINESE -> candidate.length() >= 4 && candidate.length() <= 24;
-        };
     }
 
     /*

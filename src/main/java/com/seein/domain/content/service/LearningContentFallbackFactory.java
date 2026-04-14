@@ -1,6 +1,7 @@
 package com.seein.domain.content.service;
 
 import com.seein.domain.content.entity.LearningContent;
+import com.seein.domain.content.entity.ContentSourceType;
 import com.seein.domain.subscription.entity.DifficultyLevel;
 import com.seein.domain.subscription.entity.ExplanationLanguage;
 import com.seein.domain.subscription.entity.LearningStyle;
@@ -18,6 +19,7 @@ import java.time.LocalDate;
 public class LearningContentFallbackFactory {
 
     private final LearningContentTemplateFactory templateFactory;
+    private final LearningContentExpressionExtractor expressionExtractor;
 
     /**
      * 일일 콘텐츠 생성
@@ -31,9 +33,9 @@ public class LearningContentFallbackFactory {
     ) {
         String title = buildTitle(studyLanguage, learningStyle, difficultyLevel);
         String sourceText = buildSourceText(studyLanguage, learningStyle);
-        LearningContentTemplateFactory.ExpressionPair expressions = templateFactory.extractExpressions(studyLanguage, sourceText);
+        LearningContentTemplateFactory.ExpressionPair expressions = expressionExtractor.extractExpressions(studyLanguage, sourceText);
 
-        return LearningContent.create(
+        return LearningContent.createWithMetadata(
                 studyLanguage,
                 explanationLanguage,
                 learningStyle,
@@ -41,11 +43,18 @@ public class LearningContentFallbackFactory {
                 title,
                 templateFactory.createSummary(explanationLanguage, learningStyle, difficultyLevel, title),
                 sourceText,
-                templateFactory.createExplanation(explanationLanguage, learningStyle, difficultyLevel, title),
+                templateFactory.createExplanation(explanationLanguage, learningStyle, difficultyLevel, title, sourceText),
                 expressions.expressionOne(),
                 expressions.expressionTwo(),
                 templateFactory.createQuiz(explanationLanguage, learningStyle, title),
                 null,
+                ContentSourceType.FALLBACK,
+                "SEE-INSIGHT",
+                null,
+                null,
+                null,
+                sourceText,
+                "fallback-v2",
                 publishedDate
         );
     }
