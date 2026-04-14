@@ -15,7 +15,6 @@ public class BraveProperties {
 
     private String apiKey;
     private String baseUrl;
-    private String apiVersion;
 
     /**
      * API 키 설정
@@ -31,10 +30,4 @@ public class BraveProperties {
         this.baseUrl = baseUrl;
     }
 
-    /**
-     * API 버전 헤더 설정
-     */
-    public void setApiVersion(String apiVersion) {
-        this.apiVersion = apiVersion;
-    }
 }
