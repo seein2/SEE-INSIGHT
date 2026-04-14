@@ -33,6 +33,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class LearningSubscriptionServiceTest {
@@ -103,6 +104,66 @@ class LearningSubscriptionServiceTest {
         assertThat(response.getStudyLanguage()).isEqualTo("ENGLISH");
         assertThat(response.getLearningStyle()).isEqualTo("DAILY_CONVERSATION");
         assertThat(response.getPreviewContent().getTitle()).isEqualTo("오늘의 회화");
+    }
+
+    @Test
+    @DisplayName("미리보기 요청에 난이도가 없으면 초급으로 기본 저장값을 사용한다")
+    void preview_defaultsDifficultyToBeginner() {
+        // given
+        Member member = Member.create("test@example.com", "테스터", "google");
+        SubscriptionPreviewRequest request = createPreviewRequest(
+                StudyLanguage.ENGLISH,
+                ExplanationLanguage.KOREAN,
+                LearningStyle.BALANCED,
+                null,
+                LocalTime.of(8, 0)
+        );
+        LearningContentCardResponse preview = new LearningContentCardResponse(
+                1, "오늘의 균형 학습", "요약", "원문", "학습 포인트", null, null, "질문",
+                "https://example.com", "ENGLISH", "영어", "KOREAN", "한국어",
+                "BALANCED", "균형 학습", "BEGINNER", "초급", LocalDate.now()
+        );
+        given(memberRepository.findById(1)).willReturn(Optional.of(member));
+        given(learningContentService.getPreviewContent(
+                StudyLanguage.ENGLISH,
+                ExplanationLanguage.KOREAN,
+                LearningStyle.BALANCED,
+                DifficultyLevel.BEGINNER
+        )).willReturn(preview);
+
+        // when
+        SubscriptionPreviewResponse response = subscriptionService.preview(1, request);
+
+        // then
+        assertThat(response.getDifficultyLevel()).isEqualTo("BEGINNER");
+        assertThat(response.getDifficultyLevelLabel()).isEqualTo("초급");
+    }
+
+    @Test
+    @DisplayName("구독 생성 요청에 난이도가 없으면 초급으로 저장한다")
+    void subscribe_defaultsDifficultyToBeginner() {
+        // given
+        Member member = Member.create("test@example.com", "테스터", "google");
+        ReflectionTestUtils.setField(member, "memberId", 1);
+        SubscriptionCreateRequest request = createSubscriptionRequest(
+                StudyLanguage.ENGLISH,
+                ExplanationLanguage.KOREAN,
+                LearningStyle.BALANCED,
+                null,
+                LocalTime.of(8, 0)
+        );
+        given(memberRepository.findById(1)).willReturn(Optional.of(member));
+        given(subscriptionRepository.countByMemberMemberId(1)).willReturn(0L);
+        given(subscriptionRepository.findByMemberMemberIdOrderByCreatedAtDesc(1)).willReturn(List.of());
+
+        // when
+        SubscriptionResponse response = subscriptionService.subscribe(1, request);
+
+        // then
+        assertThat(response.getDifficultyLevel()).isEqualTo("BEGINNER");
+        verify(subscriptionRepository).save(org.mockito.ArgumentMatchers.argThat(
+                subscription -> subscription.getDifficultyLevel() == DifficultyLevel.BEGINNER
+        ));
     }
 
     @Test

@@ -8,6 +8,7 @@ import com.seein.domain.subscription.dto.SubscriptionPreviewRequest;
 import com.seein.domain.subscription.dto.SubscriptionPreviewResponse;
 import com.seein.domain.subscription.dto.SubscriptionResponse;
 import com.seein.domain.subscription.dto.SubscriptionUpdateRequest;
+import com.seein.domain.subscription.entity.DifficultyLevel;
 import com.seein.domain.subscription.entity.LearningSubscription;
 import com.seein.domain.subscription.repository.SubscriptionRepository;
 import com.seein.domain.member.entity.Member;
@@ -33,6 +34,7 @@ import java.util.Objects;
 public class SubscriptionService {
 
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
+    private static final DifficultyLevel DEFAULT_DIFFICULTY_LEVEL = DifficultyLevel.BEGINNER;
 
     private final SubscriptionRepository subscriptionRepository;
     private final MemberRepository memberRepository;
@@ -54,12 +56,13 @@ public class SubscriptionService {
     @Transactional
     public SubscriptionResponse subscribe(Integer memberId, SubscriptionCreateRequest request) {
         Member member = findMemberById(memberId);
+        var difficultyLevel = resolveDifficultyLevel(request.getDifficultyLevel());
         validateSubscriptionLimit(member);
         validateDuplicateSubscription(memberId,
                 request.getStudyLanguage(),
                 request.getExplanationLanguage(),
                 request.getLearningStyle(),
-                request.getDifficultyLevel(),
+                difficultyLevel,
                 request.getDeliveryTime(),
                 null
         );
@@ -69,7 +72,7 @@ public class SubscriptionService {
                 request.getStudyLanguage(),
                 request.getExplanationLanguage(),
                 request.getLearningStyle(),
-                request.getDifficultyLevel(),
+                difficultyLevel,
                 request.getDeliveryTime()
         );
         subscriptionRepository.save(subscription);
@@ -90,11 +93,12 @@ public class SubscriptionService {
     @Transactional
     public SubscriptionPreviewResponse preview(Integer memberId, SubscriptionPreviewRequest request) {
         findMemberById(memberId);
+        var difficultyLevel = resolveDifficultyLevel(request.getDifficultyLevel());
         LearningContentCardResponse previewContent = learningContentService.getPreviewContent(
                 request.getStudyLanguage(),
                 request.getExplanationLanguage(),
                 request.getLearningStyle(),
-                request.getDifficultyLevel()
+                difficultyLevel
         );
 
         return new SubscriptionPreviewResponse(
@@ -104,8 +108,8 @@ public class SubscriptionService {
                 request.getExplanationLanguage().getLabel(),
                 request.getLearningStyle().name(),
                 request.getLearningStyle().getLabel(),
-                request.getDifficultyLevel().name(),
-                request.getDifficultyLevel().getLabel(),
+                difficultyLevel.name(),
+                difficultyLevel.getLabel(),
                 formatTime(request.getDeliveryTime()),
                 "매일 " + formatTime(request.getDeliveryTime()),
                 previewContent
@@ -176,6 +180,10 @@ public class SubscriptionService {
     private Member findMemberById(Integer memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+    }
+
+    private DifficultyLevel resolveDifficultyLevel(DifficultyLevel difficultyLevel) {
+        return difficultyLevel != null ? difficultyLevel : DEFAULT_DIFFICULTY_LEVEL;
     }
 
     /**

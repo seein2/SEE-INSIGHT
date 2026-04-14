@@ -20,7 +20,6 @@ document.addEventListener("DOMContentLoaded", () => {
         studyLanguage: root.dataset.prefillStudyLanguage,
         explanationLanguage: root.dataset.prefillExplanationLanguage,
         learningStyle: root.dataset.prefillLearningStyle,
-        difficultyLevel: root.dataset.prefillDifficultyLevel,
         deliveryTime: root.dataset.prefillDeliveryTime,
         isActive: true
     };
@@ -49,11 +48,11 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         prevButton.classList.toggle("hidden", state.step === 1);
-        nextButton.classList.toggle("hidden", state.step === 6);
-        saveButton.classList.toggle("hidden", state.step !== 6);
+        nextButton.classList.toggle("hidden", state.step === steps.length);
+        saveButton.classList.toggle("hidden", state.step !== steps.length);
         saveButton.textContent = state.mode === "edit" ? "설정 저장" : "구독 저장";
 
-        if (state.step === 6) {
+        if (state.step === steps.length) {
             loadPreview();
         }
     }
@@ -63,7 +62,6 @@ document.addEventListener("DOMContentLoaded", () => {
             studyLanguage: state.studyLanguage,
             explanationLanguage: state.explanationLanguage,
             learningStyle: state.learningStyle,
-            difficultyLevel: state.difficultyLevel,
             deliveryTime: state.deliveryTime
         };
     }
@@ -92,26 +90,53 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         const content = preview.previewContent;
-        previewCard.innerHTML = `
-            <p class="eyebrow">${content.learningStyleLabel}</p>
-            <h3>${content.title}</h3>
-            <p class="feed-summary">${content.summary}</p>
-            <p class="feed-source">${content.sourceText}</p>
-            <p class="feed-explanation">${content.explanationText}</p>
-            <div class="point-list compact">
-                <span class="point-chip">${content.expressionOne ?? ""}</span>
-                <span class="point-chip">${content.expressionTwo ?? ""}</span>
-            </div>
-            <div class="profile-card" style="margin-top:16px;padding:18px;">
-                <p class="eyebrow">짧은 복습 문제</p>
-                <p class="feed-explanation">${content.quizText ?? ""}</p>
-            </div>
-        `;
+        previewCard.textContent = "";
+        appendTextElement(previewCard, "p", "eyebrow", content.learningStyleLabel);
+        appendTextElement(previewCard, "h3", null, content.title);
+        appendTextElement(previewCard, "p", "feed-summary", content.summary);
+        appendTextElement(previewCard, "p", "source-meta", formatSourceMeta(content));
+        appendTextElement(previewCard, "p", "feed-source", content.sourceText);
+        appendTextElement(previewCard, "p", "eyebrow", "학습 포인트");
+        appendTextElement(previewCard, "p", "feed-explanation", content.explanationText);
+
+        const expressions = [content.expressionOne, content.expressionTwo].filter(Boolean);
+        if (expressions.length > 0) {
+            const pointList = document.createElement("div");
+            pointList.className = "point-list compact";
+            expressions.forEach((expression) => appendTextElement(pointList, "span", "point-chip", expression));
+            previewCard.append(pointList);
+        }
+
+        const quizCard = document.createElement("div");
+        quizCard.className = "profile-card";
+        quizCard.style.marginTop = "16px";
+        quizCard.style.padding = "18px";
+        appendTextElement(quizCard, "p", "eyebrow", "짧은 복습 문제");
+        appendTextElement(quizCard, "p", "feed-explanation", content.quizText ?? "");
+        previewCard.append(quizCard);
+    }
+
+    function formatSourceMeta(content) {
+        const parts = [content.sourceName, content.sourceHost].filter(Boolean);
+        return parts.length > 0 ? `출처: ${parts.join(" · ")}` : "";
+    }
+
+    function appendTextElement(parent, tagName, className, text) {
+        if (!text) {
+            return null;
+        }
+        const element = document.createElement(tagName);
+        if (className) {
+            element.className = className;
+        }
+        element.textContent = text;
+        parent.append(element);
+        return element;
     }
 
     async function loadPreview() {
         clearMessage();
-        previewCard.innerHTML = `<p class="helper-text">미리보기를 불러오는 중입니다.</p>`;
+        renderPreviewMessage("미리보기를 불러오는 중입니다.");
 
         try {
             const preview = await requestJson(root.dataset.previewApi, {
@@ -121,8 +146,13 @@ document.addEventListener("DOMContentLoaded", () => {
             renderPreview(preview);
         } catch (error) {
             showMessage(error.message);
-            previewCard.innerHTML = `<p class="helper-text">미리보기를 불러오지 못했습니다.</p>`;
+            renderPreviewMessage("미리보기를 불러오지 못했습니다.");
         }
+    }
+
+    function renderPreviewMessage(message) {
+        previewCard.textContent = "";
+        appendTextElement(previewCard, "p", "helper-text", message);
     }
 
     function loadSubscriptionToForm(card) {
@@ -131,10 +161,9 @@ document.addEventListener("DOMContentLoaded", () => {
         state.studyLanguage = card.dataset.studyLanguage;
         state.explanationLanguage = card.dataset.explanationLanguage;
         state.learningStyle = card.dataset.learningStyle;
-        state.difficultyLevel = card.dataset.difficultyLevel;
         state.deliveryTime = card.dataset.deliveryTime;
         state.isActive = card.dataset.isActive === "true";
-        state.step = location.hash === "#preview" ? 6 : 1;
+        state.step = location.hash === "#preview" ? steps.length : 1;
         updateSelections();
         updateStep();
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -215,7 +244,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     nextButton.addEventListener("click", () => {
-        if (state.step < 6) {
+        if (state.step < steps.length) {
             state.step += 1;
             updateStep();
         }

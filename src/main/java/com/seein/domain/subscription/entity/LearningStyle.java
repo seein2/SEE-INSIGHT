@@ -4,10 +4,10 @@ package com.seein.domain.subscription.entity;
  * 학습 스타일 Enum
  */
 public enum LearningStyle {
-    PRACTICAL_READING("실전 읽기", "짧은 기사와 실제 문장 중심"),
-    DAILY_CONVERSATION("일상 회화", "바로 써먹는 회화 표현 중심"),
-    TODAYS_EXPRESSION("오늘의 표현", "관용구와 핵심 표현 중심"),
-    BALANCED("균형형", "읽기·회화·표현을 고르게 학습");
+    PRACTICAL_READING("뉴스 읽기", "현지 뉴스와 짧은 기사 중심"),
+    DAILY_CONVERSATION("일상 회화", "레거시 설정: 신규 구독 선택에서는 숨김"),
+    TODAYS_EXPRESSION("오늘의 표현", "오래 쓰이는 표현과 실제 문맥 중심"),
+    BALANCED("균형 학습", "읽기·표현·복습을 부담 없이 연결");
 
     private final String label;
     private final String description;
@@ -29,5 +29,12 @@ public enum LearningStyle {
      */
     public String getDescription() {
         return description;
+    }
+
+    /**
+     * 신규 사용자에게 노출할 학습 스타일 여부
+     */
+    public boolean isSelectable() {
+        return this != DAILY_CONVERSATION;
     }
 }
