@@ -125,7 +125,7 @@ public class LearningContentQualityScorer {
     private int styleFitScore(LearningContentCandidate candidate, LearningStyle learningStyle, String sourceText) {
         String haystack = (candidate.title() + " " + sourceText + " " + candidate.contentType()).toLowerCase(Locale.ROOT);
         return switch (learningStyle) {
-            case PRACTICAL_READING -> candidate.sourceType() == ContentSourceType.NEWS
+            case NEWS_READING -> candidate.sourceType() == ContentSourceType.NEWS
                     || haystack.contains("news")
                     || haystack.contains("article") ? 20 : 10;
             case TODAYS_EXPRESSION -> haystack.contains("expression")

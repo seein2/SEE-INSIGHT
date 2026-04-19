@@ -37,7 +37,7 @@ class LearningContentQualityScorerTest {
         LearningContentQualityScorer.ScoredCandidate scored = qualityScorer.score(
                 List.of(candidate),
                 StudyLanguage.ENGLISH,
-                LearningStyle.PRACTICAL_READING
+                LearningStyle.NEWS_READING
         ).get(0);
 
         // then
@@ -129,7 +129,7 @@ class LearningContentQualityScorerTest {
         List<LearningContentQualityScorer.ScoredCandidate> scored = qualityScorer.score(
                 List.of(first, second),
                 StudyLanguage.ENGLISH,
-                LearningStyle.PRACTICAL_READING
+                LearningStyle.NEWS_READING
         );
 
         // then

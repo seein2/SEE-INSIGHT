@@ -181,7 +181,7 @@ class LearningSubscriptionServiceTest {
         );
         ReflectionTestUtils.setField(subscription, "subscriptionId", 1);
         SubscriptionUpdateRequest request = new SubscriptionUpdateRequest();
-        ReflectionTestUtils.setField(request, "learningStyle", LearningStyle.PRACTICAL_READING);
+        ReflectionTestUtils.setField(request, "learningStyle", LearningStyle.NEWS_READING);
         ReflectionTestUtils.setField(request, "difficultyLevel", DifficultyLevel.INTERMEDIATE);
         ReflectionTestUtils.setField(request, "deliveryTime", LocalTime.of(19, 0));
 
@@ -192,7 +192,7 @@ class LearningSubscriptionServiceTest {
         SubscriptionResponse response = subscriptionService.updateSubscription(1, 1, request);
 
         // then
-        assertThat(response.getLearningStyle()).isEqualTo("PRACTICAL_READING");
+        assertThat(response.getLearningStyle()).isEqualTo("NEWS_READING");
         assertThat(response.getDifficultyLevel()).isEqualTo("INTERMEDIATE");
         assertThat(response.getDeliveryTime()).isEqualTo("19:00");
     }

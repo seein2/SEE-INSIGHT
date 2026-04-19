@@ -21,7 +21,7 @@ class BraveSearchQueryFactoryTest {
         // when
         BraveSearchQueryFactory.SearchQuery query = queryFactory.create(
                 StudyLanguage.ENGLISH,
-                LearningStyle.PRACTICAL_READING,
+                LearningStyle.NEWS_READING,
                 DifficultyLevel.BEGINNER,
                 LocalDate.now()
         );

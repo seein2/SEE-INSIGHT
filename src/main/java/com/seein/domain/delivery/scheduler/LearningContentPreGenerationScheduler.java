@@ -25,7 +25,7 @@ import java.util.List;
 public class LearningContentPreGenerationScheduler {
 
     private static final List<HomePreset> HOME_PRESETS = List.of(
-            new HomePreset(LearningStyle.PRACTICAL_READING, DifficultyLevel.BEGINNER),
+            new HomePreset(LearningStyle.NEWS_READING, DifficultyLevel.BEGINNER),
             new HomePreset(LearningStyle.TODAYS_EXPRESSION, DifficultyLevel.BEGINNER),
             new HomePreset(LearningStyle.BALANCED, DifficultyLevel.BEGINNER)
     );
