@@ -27,14 +27,7 @@ public class LearningContentCardAssembler {
     /**
      * 점수화된 후보를 학습 콘텐츠로 변환
      */
-    public LearningContent assemble(
-            LearningContentQualityScorer.ScoredCandidate scoredCandidate,
-            StudyLanguage studyLanguage,
-            ExplanationLanguage explanationLanguage,
-            LearningStyle learningStyle,
-            DifficultyLevel difficultyLevel,
-            LocalDate publishedDate
-    ) {
+    public LearningContent assemble(LearningContentQualityScorer.ScoredCandidate scoredCandidate, StudyLanguage studyLanguage, ExplanationLanguage explanationLanguage, LearningStyle learningStyle, DifficultyLevel difficultyLevel, LocalDate publishedDate) {
         LearningContentCandidate candidate = scoredCandidate.candidate();
         String title = textSanitizer.sanitizeTitle(candidate.title());
         String sourceText = textSanitizer.sanitizeSourceText(candidate.snippets());
