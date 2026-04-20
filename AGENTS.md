@@ -240,9 +240,6 @@ public class MemberService {
 
     /**
      * 회원 정보 조회
-     * @param memberId 회원 ID
-     * @return 회원 응답 DTO
-     * @throws BusinessException 회원이 존재하지 않을 경우
      */
     public MemberResponse getMember(Integer memberId) {
         // 복잡한 로직에는 인라인 한글 주석
