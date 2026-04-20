@@ -74,7 +74,7 @@ class LearningContentQualityScorerTest {
     }
 
     @Test
-    @DisplayName("언어 불일치와 스타일 부적합 후보는 기준 점수 미만으로 reject된다")
+    @DisplayName("언어 불일치 후보는 점수 합산 전에 reject된다")
     void score_rejectsLanguageMismatchAndPoorStyleFit() {
         // given
         LearningContentCandidate candidate = createCandidate(
@@ -97,7 +97,152 @@ class LearningContentQualityScorerTest {
 
         // then
         assertThat(scored.accepted()).isFalse();
+        assertThat(scored.rejectReason()).isEqualTo("language_mismatch");
+        assertThat(scored.score()).isZero();
+    }
+
+    @Test
+    @DisplayName("명시 언어가 대상 학습 언어와 다르면 높은 품질 후보도 reject된다")
+    void score_rejectsDeclaredLanguageMismatchEvenWhenCandidateLooksHighQuality() {
+        // given
+        LearningContentCandidate candidate = createCandidate(
+                ContentSourceType.NEWS,
+                "NHK news article",
+                "https://www.nhk.or.jp/news/example",
+                "nhk.or.jp",
+                "ja",
+                List.of("今日は政府が新しい交通政策を発表し、学校周辺の安全対策や通勤時間帯の混雑緩和について詳しく説明しました。地域の住民からは期待と不安の声が上がっています。"),
+                "1 day ago",
+                "article"
+        );
+
+        // when
+        LearningContentQualityScorer.ScoredCandidate scored = qualityScorer.score(
+                List.of(candidate),
+                StudyLanguage.ENGLISH,
+                LearningStyle.NEWS_READING
+        ).get(0);
+
+        // then
+        assertThat(scored.accepted()).isFalse();
+        assertThat(scored.rejectReason()).isEqualTo("language_mismatch");
+        assertThat(scored.score()).isZero();
+    }
+
+    @Test
+    @DisplayName("언어 필드가 없어도 중국어 본문은 일본어 후보로 인정하지 않는다")
+    void score_rejectsChineseTextAsJapaneseWhenLanguageIsMissing() {
+        // given
+        LearningContentCandidate candidate = createCandidate(
+                ContentSourceType.NEWS,
+                "China Daily article",
+                "https://www.chinadaily.com.cn/example",
+                "chinadaily.com.cn",
+                null,
+                List.of("中国政府今天公布新的城市交通计划，重点改善学校周边安全和公共汽车线路服务，居民表示将继续关注政策实施效果。"),
+                "1 day ago",
+                "article"
+        );
+
+        // when
+        LearningContentQualityScorer.ScoredCandidate scored = qualityScorer.score(
+                List.of(candidate),
+                StudyLanguage.JAPANESE,
+                LearningStyle.NEWS_READING
+        ).get(0);
+
+        // then
+        assertThat(scored.accepted()).isFalse();
+        assertThat(scored.rejectReason()).isEqualTo("language_mismatch");
+        assertThat(scored.score()).isZero();
+    }
+
+    @Test
+    @DisplayName("언어 필드가 없어도 일본어 본문은 중국어 후보로 인정하지 않는다")
+    void score_rejectsJapaneseTextAsChineseWhenLanguageIsMissing() {
+        // given
+        LearningContentCandidate candidate = createCandidate(
+                ContentSourceType.NEWS,
+                "Japanese local news",
+                "https://www.asahi.com/example",
+                "asahi.com",
+                null,
+                List.of("今日は各地で雨が降り、駅の周辺では傘を持った人が多く見られました。通勤時間帯には交通機関の遅れもありました。"),
+                "1 day ago",
+                "article"
+        );
+
+        // when
+        LearningContentQualityScorer.ScoredCandidate scored = qualityScorer.score(
+                List.of(candidate),
+                StudyLanguage.CHINESE,
+                LearningStyle.NEWS_READING
+        ).get(0);
+
+        // then
+        assertThat(scored.accepted()).isFalse();
+        assertThat(scored.rejectReason()).isEqualTo("language_mismatch");
+        assertThat(scored.score()).isZero();
+    }
+
+    @Test
+    @DisplayName("언어 필드가 없을 때 일부 영어 단어만으로 영어 후보로 인정하지 않는다")
+    void score_rejectsMostlyJapaneseTextAsEnglishWhenLanguageIsMissing() {
+        // given
+        LearningContentCandidate candidate = createCandidate(
+                ContentSourceType.NEWS,
+                "BBC article update",
+                "https://example.com/mixed",
+                "example.com",
+                null,
+                List.of("今日は政府が新しい計画を発表し、学校周辺の安全対策や交通機関の改善について詳しく説明しました。BBC article update."),
+                "1 day ago",
+                "article"
+        );
+
+        // when
+        LearningContentQualityScorer.ScoredCandidate scored = qualityScorer.score(
+                List.of(candidate),
+                StudyLanguage.ENGLISH,
+                LearningStyle.NEWS_READING
+        ).get(0);
+
+        // then
+        assertThat(scored.accepted()).isFalse();
+        assertThat(scored.rejectReason()).isEqualTo("language_mismatch");
+        assertThat(scored.score()).isZero();
+    }
+
+    @Test
+    @DisplayName("snippet 풍부함은 raw snippet 전체가 아니라 실제 사용 원문 길이를 기준으로 계산한다")
+    void score_usesSanitizedSourceTextLengthForSnippetRichness() {
+        // given
+        LearningContentCandidate candidate = createCandidate(
+                ContentSourceType.WEB,
+                "Simple update",
+                "https://example.com/simple",
+                "example.com",
+                "en",
+                List.of(
+                        "Daily habits help readers practice steady English with one clear example today.",
+                        "This extra snippet is intentionally much longer than the selected source text. "
+                                + "It should not inflate the richness score because the sanitizer uses the first usable source text."
+                ),
+                null,
+                "post"
+        );
+
+        // when
+        LearningContentQualityScorer.ScoredCandidate scored = qualityScorer.score(
+                List.of(candidate),
+                StudyLanguage.ENGLISH,
+                LearningStyle.BALANCED
+        ).get(0);
+
+        // then
+        assertThat(scored.accepted()).isFalse();
         assertThat(scored.rejectReason()).isEqualTo("score_below_threshold");
+        assertThat(scored.score()).isLessThan(LearningContentQualityScorer.MIN_ACCEPTED_SCORE);
     }
 
     @Test
@@ -136,6 +281,44 @@ class LearningContentQualityScorerTest {
         int firstScore = scoreByUrl(scored, "https://www.bbc.com/news/one");
         int secondScore = scoreByUrl(scored, "https://www.bbc.com/news/two");
         assertThat(secondScore).isLessThan(firstScore);
+    }
+
+    @Test
+    @DisplayName("중복 도메인 패널티는 검색 결과 순서가 아니라 원점수가 높은 후보부터 적용한다")
+    void score_appliesDuplicateHostPenaltyAfterBaseScoreOrdering() {
+        // given
+        LearningContentCandidate lowerQualityFirst = createCandidate(
+                ContentSourceType.NEWS,
+                "Lower quality article",
+                "https://www.bbc.com/news/lower",
+                "bbc.com",
+                "en",
+                List.of("The first report explains a transport plan for local readers in simple English, with clear details for commuters today."),
+                null,
+                "article"
+        );
+        LearningContentCandidate higherQualitySecond = createCandidate(
+                ContentSourceType.NEWS,
+                "Higher quality article",
+                "https://www.bbc.com/news/higher",
+                "bbc.com",
+                "en",
+                List.of("The stronger report explains a transport policy change for local readers in simple English, with context about schools, bus routes, city budgets, public safety, and commuting patterns this week."),
+                "1 day ago",
+                "article"
+        );
+
+        // when
+        List<LearningContentQualityScorer.ScoredCandidate> scored = qualityScorer.score(
+                List.of(lowerQualityFirst, higherQualitySecond),
+                StudyLanguage.ENGLISH,
+                LearningStyle.NEWS_READING
+        );
+
+        // then
+        int lowerScore = scoreByUrl(scored, "https://www.bbc.com/news/lower");
+        int higherScore = scoreByUrl(scored, "https://www.bbc.com/news/higher");
+        assertThat(higherScore).isGreaterThan(lowerScore);
     }
 
     private int scoreByUrl(List<LearningContentQualityScorer.ScoredCandidate> scoredCandidates, String url) {

@@ -37,6 +37,9 @@ public class LearningContentQualityScorer {
      */
     public static final int MIN_ACCEPTED_SCORE = 60;
 
+    private static final int EXACT_LANGUAGE_SCORE = 25;
+    private static final int INFERRED_LANGUAGE_SCORE = 18;
+
     private final ContentSourceQualityProperties sourceQualityProperties;
     private final LearningContentTextSanitizer textSanitizer;
 
@@ -48,10 +51,16 @@ public class LearningContentQualityScorer {
      */
     public List<ScoredCandidate> score(List<LearningContentCandidate> candidates, StudyLanguage studyLanguage, LearningStyle learningStyle) {
 
-         // hostCounts는 도메인별 등장 횟수를 세고, duplicatePenalty()에서 감점에 사용한다.
+        // 원점수 기준으로 먼저 정렬한 뒤 도메인 중복 감점을 적용해야 검색 결과 입력 순서가 점수를 왜곡하지 않는다.
+        List<ScoreDraft> scoreDrafts = candidates.stream()
+                .map(candidate -> scoreCandidate(candidate, studyLanguage, learningStyle))
+                .sorted(Comparator.comparingInt(ScoreDraft::score).reversed())
+                .toList();
+
+        // hostCounts는 도메인별 등장 횟수를 세고, duplicatePenalty()에서 감점에 사용한다.
         Map<String, Integer> hostCounts = new HashMap<>();
-        List<ScoredCandidate> scoredCandidates = candidates.stream()
-                .map(candidate -> scoreCandidate(candidate, studyLanguage, learningStyle, hostCounts))
+        List<ScoredCandidate> scoredCandidates = scoreDrafts.stream()
+                .map(scoreDraft -> applyDuplicatePenalty(scoreDraft, hostCounts))
                 .sorted(Comparator.comparingInt(ScoredCandidate::score).reversed())
                 .toList();
 
@@ -72,65 +81,72 @@ public class LearningContentQualityScorer {
      * 1. 출처 도메인 정규화
      * 2. 차단 도메인 즉시 reject
      * 3. snippet 정제 후 사용할 수 없는 원문이면 reject
-     * 4. 언어/출처/snippet/스타일/최신성 점수 합산
-     * 5. 같은 도메인 반복 패널티 차감
-     * 6. 기준 점수 미만이면 rejectReason 지정
+     * 4. 언어 불일치 후보 reject
+     * 5. 언어/출처/snippet/스타일/최신성 원점수 합산
+     * 6. 같은 도메인 반복 패널티와 기준 점수 판정은 applyDuplicatePenalty()에서 처리
      */
-    private ScoredCandidate scoreCandidate(LearningContentCandidate candidate, StudyLanguage studyLanguage, LearningStyle learningStyle, Map<String, Integer> hostCounts) {
+    private ScoreDraft scoreCandidate(LearningContentCandidate candidate, StudyLanguage studyLanguage, LearningStyle learningStyle) {
         // sourceHost가 없으면 URL에서 host를 뽑아낸다. 예: https://www.bbc.com/news -> bbc.com
         String host = normalizeHost(candidate.sourceHost());
         if (!StringUtils.hasText(host)) {
             host = normalizeHost(candidate.url());
         }
 
-         // SNS/동영상/이미지 중심 도메인은 학습용 원문으로 부적합하다고 보고 바로 탈락시킨다. ex) x.com, youtube.com, instagram.com 등
+        // SNS/동영상/이미지 중심 도메인은 학습용 원문으로 부적합하다고 보고 바로 탈락시킨다. ex) x.com, youtube.com, instagram.com 등
         if (sourceQualityProperties.isBlocked(host)) {
-            return new ScoredCandidate(candidate, 0, "blocked_domain");
+            return new ScoreDraft(candidate, host, 0, "blocked_domain");
         }
 
         // Brave description/extra_snippets/LLM Context snippet을 정제해서 실제 sourceText 후보를 만든다. (HTML 태그, entity, 너무 짧은 문장, 깨진 snippet은 여기서 걸러진다.)
         String sourceText = textSanitizer.sanitizeSourceText(candidate.snippets());
         if (!textSanitizer.isUsableSourceText(sourceText)) {
-            return new ScoredCandidate(candidate, 0, "unusable_snippet");
+            return new ScoreDraft(candidate, host, 0, "unusable_snippet");
+        }
+
+        int languageScore = languageScore(candidate, studyLanguage, sourceText);
+        if (languageScore == 0) {
+            return new ScoreDraft(candidate, host, 0, "language_mismatch");
         }
 
         // "쓸 수는 있는 후보"에 점수를 더하는 단계다. 총점은 100점 만점에 가깝고, 이후 중복 도메인 패널티가 차감된다.
-        int score = 0;
-        score += languageScore(candidate, studyLanguage, sourceText);
+        int score = languageScore;
         score += sourceScore(host);
-        score += snippetRichnessScore(candidate);
+        score += snippetRichnessScore(sourceText);
         score += styleFitScore(candidate, learningStyle, sourceText);
         score += freshnessScore(candidate, learningStyle);
 
-        int duplicatePenalty = duplicatePenalty(host, hostCounts);
-        score = Math.max(0, score - duplicatePenalty);
+        return new ScoreDraft(candidate, host, score, null);
+    }
+
+    private ScoredCandidate applyDuplicatePenalty(ScoreDraft scoreDraft, Map<String, Integer> hostCounts) {
+        if (scoreDraft.rejectReason() != null) {
+            return new ScoredCandidate(scoreDraft.candidate(), scoreDraft.score(), scoreDraft.rejectReason());
+        }
+
+        int duplicatePenalty = duplicatePenalty(scoreDraft.host(), hostCounts);
+        int score = Math.max(0, scoreDraft.score() - duplicatePenalty);
         String rejectReason = score >= MIN_ACCEPTED_SCORE ? null : "score_below_threshold";
-        return new ScoredCandidate(candidate, score, rejectReason);
+        return new ScoredCandidate(scoreDraft.candidate(), score, rejectReason);
     }
 
     /*
      * 학습하려는 언어와 후보 콘텐츠의 언어가 맞는지 확인한다.
      *
-     * 1순위: Brave 응답의 language 필드가 있으면 그 값을 사용한다.
-     * 2순위: language 필드가 없거나 맞지 않으면 sourceText 문자 패턴으로 대략 판정한다.
+     * 1순위: Brave 응답의 language 필드가 명확하면 그 값을 사용한다.
+     * 2순위: language 필드가 없거나 unknown이면 sourceText 문자 비율로 대략 판정한다.
      *
      * 예:
-     * - 영어: 알파벳 단어가 있는지
-     * - 일본어: 히라가나/가타카나/한자가 있는지
-     * - 중국어: CJK 한자가 있는지
+     * - 영어: 라틴 단어가 충분하고 전체 문자 중 라틴 비중이 높은지
+     * - 일본어: 히라가나/가타카나가 충분히 포함되어 있는지
+     * - 중국어: CJK 한자가 충분하고 일본어 kana가 섞이지 않았는지
      */
     private int languageScore(LearningContentCandidate candidate, StudyLanguage studyLanguage, String sourceText) {
         String language = candidate.language();
-        if (StringUtils.hasText(language)
-                && language.toLowerCase(Locale.ROOT).startsWith(studyLanguage.getContentLanguageCode())) {
-            return 25;
+        if (StringUtils.hasText(language) && !isUnknownLanguage(language)) {
+            return languageMatches(language, studyLanguage) ? EXACT_LANGUAGE_SCORE : 0;
         }
 
-        return switch (studyLanguage) {
-            case ENGLISH -> sourceText.matches(".*[A-Za-z]{3,}.*") ? 18 : 0;
-            case JAPANESE -> sourceText.matches(".*[ぁ-んァ-ヶ一-龯].*") ? 18 : 0;
-            case CHINESE -> sourceText.matches(".*[\\u4E00-\\u9FFF].*") ? 18 : 0;
-        };
+        return inferredLanguageMatches(sourceText, studyLanguage) ? INFERRED_LANGUAGE_SCORE : 0;
     }
 
     /*
@@ -148,21 +164,18 @@ public class LearningContentQualityScorer {
     }
 
     /*
-     * 후보가 가진 snippet이 학습 콘텐츠를 만들 만큼 충분한지 본다.
-     * description 하나만 짧게 있는 후보보다, extra_snippets나 LLM Context로 본문 조각이 많은 후보를 높게 평가한다.
+     * 실제 학습 카드에 들어갈 sourceText가 학습 콘텐츠를 만들 만큼 충분한지 본다.
+     * raw snippet 전체가 아니라 sanitizer가 선택한 원문 기준으로 평가한다.
      */
-    private int snippetRichnessScore(LearningContentCandidate candidate) {
-        int totalLength = candidate.snippets().stream()
-                .filter(StringUtils::hasText)
-                .mapToInt(String::length)
-                .sum();
-        if (totalLength >= 400) {
+    private int snippetRichnessScore(String sourceText) {
+        int sourceTextLength = sourceText.length();
+        if (sourceTextLength >= 260) {
             return 20;
         }
-        if (totalLength >= 180) {
+        if (sourceTextLength >= 160) {
             return 16;
         }
-        if (totalLength >= 80) {
+        if (sourceTextLength >= 80) {
             return 10;
         }
         return 4;
@@ -236,6 +249,145 @@ public class LearningContentQualityScorer {
     }
 
     /*
+     * Brave가 준 명시 언어 값이 사용자의 학습 언어와 일치하는지 확인한다.
+     * en-US, ja_JP처럼 하위 태그가 붙은 값도 같은 언어로 본다.
+     */
+    private boolean languageMatches(String language, StudyLanguage studyLanguage) {
+        String normalizedLanguage = normalizeLanguage(language);
+        return switch (studyLanguage) {
+            case ENGLISH -> normalizedLanguage.startsWith("en")
+                    || normalizedLanguage.equals("english");
+            case JAPANESE -> normalizedLanguage.startsWith("ja")
+                    || normalizedLanguage.equals("jp")
+                    || normalizedLanguage.equals("japanese");
+            case CHINESE -> normalizedLanguage.startsWith("zh")
+                    || normalizedLanguage.startsWith("cn")
+                    || normalizedLanguage.equals("chinese");
+        };
+    }
+
+    /*
+     * Brave 언어 값이 불명확해서 sourceText 기반 추정으로 넘어가도 되는지 확인한다.
+     * unknown/und/mul 같은 값은 언어 불일치로 바로 탈락시키지 않는다.
+     */
+    private boolean isUnknownLanguage(String language) {
+        String normalizedLanguage = normalizeLanguage(language);
+        return normalizedLanguage.equals("unknown")
+                || normalizedLanguage.equals("und")
+                || normalizedLanguage.equals("mul")
+                || normalizedLanguage.equals("none");
+    }
+
+    /*
+     * 언어 코드 비교가 흔들리지 않도록 대소문자와 구분자 형식을 맞춘다.
+     */
+    private String normalizeLanguage(String language) {
+        return language.toLowerCase(Locale.ROOT)
+                .replace('_', '-')
+                .trim();
+    }
+
+    /*
+     * 명시 언어가 없을 때 sourceText의 문자 비율로 대상 언어 여부를 추정한다.
+     * 단일 문자 포함 여부만 보면 혼합 언어 문서가 잘못 통과할 수 있어 비율 조건을 함께 본다.
+     */
+    private boolean inferredLanguageMatches(String sourceText, StudyLanguage studyLanguage) {
+        int letterCount = countLetters(sourceText);
+        if (letterCount == 0) {
+            return false;
+        }
+
+        int latinLetterCount = countLatinLetters(sourceText);
+        int kanaCount = countKana(sourceText);
+        int cjkCount = countCjkIdeographs(sourceText);
+
+        return switch (studyLanguage) {
+            case ENGLISH -> countLatinWords(sourceText) >= 4
+                    && latinLetterCount * 100 >= letterCount * 60;
+            case JAPANESE -> kanaCount >= 3
+                    && kanaCount * 100 >= letterCount * 10;
+            case CHINESE -> cjkCount >= 8
+                    && cjkCount * 100 >= letterCount * 50
+                    && kanaCount == 0;
+        };
+    }
+
+    /*
+     * 언어별 문자 비율 계산에 사용할 전체 문자 수를 센다.
+     */
+    private int countLetters(String text) {
+        int count = 0;
+        for (int index = 0; index < text.length(); ) {
+            int codePoint = text.codePointAt(index);
+            if (Character.isLetter(codePoint)) {
+                count++;
+            }
+            index += Character.charCount(codePoint);
+        }
+        return count;
+    }
+
+    /*
+     * 영어 비율 계산에 사용할 라틴 알파벳 수를 센다.
+     */
+    private int countLatinLetters(String text) {
+        int count = 0;
+        for (int index = 0; index < text.length(); ) {
+            int codePoint = text.codePointAt(index);
+            if ((codePoint >= 'A' && codePoint <= 'Z') || (codePoint >= 'a' && codePoint <= 'z')) {
+                count++;
+            }
+            index += Character.charCount(codePoint);
+        }
+        return count;
+    }
+
+    /*
+     * 일본어 판정에 사용할 히라가나/가타카나 문자 수를 센다.
+     */
+    private int countKana(String text) {
+        int count = 0;
+        for (int index = 0; index < text.length(); ) {
+            int codePoint = text.codePointAt(index);
+            if ((codePoint >= 0x3040 && codePoint <= 0x30FF)
+                    || (codePoint >= 0x31F0 && codePoint <= 0x31FF)) {
+                count++;
+            }
+            index += Character.charCount(codePoint);
+        }
+        return count;
+    }
+
+    /*
+     * 중국어 판정에 사용할 CJK 통합 한자 수를 센다.
+     */
+    private int countCjkIdeographs(String text) {
+        int count = 0;
+        for (int index = 0; index < text.length(); ) {
+            int codePoint = text.codePointAt(index);
+            if (codePoint >= 0x4E00 && codePoint <= 0x9FFF) {
+                count++;
+            }
+            index += Character.charCount(codePoint);
+        }
+        return count;
+    }
+
+    /*
+     * 영어 판정에서 짧은 약어가 아닌 실제 단어가 충분한지 확인하기 위해 라틴 단어 수를 센다.
+     */
+    private int countLatinWords(String text) {
+        String[] words = text.split("[^A-Za-z]+");
+        int count = 0;
+        for (String word : words) {
+            if (word.length() >= 3) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /*
      * URL 또는 host 문자열을 비교하기 쉬운 형태로 바꾼다.
      *
      * 예:
@@ -264,5 +416,8 @@ public class LearningContentQualityScorer {
         public boolean accepted() {
             return rejectReason == null;
         }
+    }
+
+    private record ScoreDraft(LearningContentCandidate candidate, String host, int score, String rejectReason) {
     }
 }
