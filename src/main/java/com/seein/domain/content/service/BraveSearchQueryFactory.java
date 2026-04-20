@@ -43,36 +43,52 @@ public class BraveSearchQueryFactory {
 
     private String englishQuery(LearningStyle learningStyle, DifficultyLevel difficultyLevel) {
         return switch (learningStyle) {
-            case NEWS_READING -> "short local news article English learners " + difficultyKeyword(difficultyLevel);
-            case DAILY_CONVERSATION -> "common English daily conversation phrase example";
-            case TODAYS_EXPRESSION -> "useful English expression idiom example meaning";
-            case BALANCED -> "English article practical phrase short learning";
+            case NEWS_READING -> englishDifficultyKeyword(difficultyLevel) + " English learners short local news article simple words";
+            case DAILY_CONVERSATION -> englishDifficultyKeyword(difficultyLevel) + " English daily conversation phrase short example";
+            case TODAYS_EXPRESSION -> englishDifficultyKeyword(difficultyLevel) + " English common expression phrase simple meaning example";
+            case BALANCED -> englishDifficultyKeyword(difficultyLevel) + " English short reading practical phrase simple learning";
         };
     }
 
     private String japaneseQuery(LearningStyle learningStyle, DifficultyLevel difficultyLevel) {
         return switch (learningStyle) {
-            case NEWS_READING -> "日本 ニュース 短い 記事 " + difficultyKeyword(difficultyLevel);
-            case DAILY_CONVERSATION -> "日本語 日常会話 フレーズ 例文";
-            case TODAYS_EXPRESSION -> "日本語 よく使う 表現 例文 意味";
-            case BALANCED -> "日本語 記事 表現 学習";
+            case NEWS_READING -> "やさしい日本語 ニュース 短い 記事 " + japaneseDifficultyKeyword(difficultyLevel);
+            case DAILY_CONVERSATION -> "日本語 日常会話 短い 例文 " + japaneseDifficultyKeyword(difficultyLevel);
+            case TODAYS_EXPRESSION -> "日本語 よく使う 表現 短い 例文 意味 " + japaneseDifficultyKeyword(difficultyLevel);
+            case BALANCED -> "日本語 やさしい 短文 表現 学習 " + japaneseDifficultyKeyword(difficultyLevel);
         };
     }
 
     private String chineseQuery(LearningStyle learningStyle, DifficultyLevel difficultyLevel) {
         return switch (learningStyle) {
-            case NEWS_READING -> "中国 新闻 短 文 文章 " + difficultyKeyword(difficultyLevel);
-            case DAILY_CONVERSATION -> "中文 日常 会话 例句";
-            case TODAYS_EXPRESSION -> "中文 常用 表达 例句 意思";
-            case BALANCED -> "中文 文章 表达 学习";
+            case NEWS_READING -> "简单中文 新闻 短文 " + chineseDifficultyKeyword(difficultyLevel);
+            case DAILY_CONVERSATION -> "中文 日常会话 简单 例句 " + chineseDifficultyKeyword(difficultyLevel);
+            case TODAYS_EXPRESSION -> "中文 常用表达 简单 例句 意思 " + chineseDifficultyKeyword(difficultyLevel);
+            case BALANCED -> "简单中文 短文 表达 学习 " + chineseDifficultyKeyword(difficultyLevel);
         };
     }
 
-    private String difficultyKeyword(DifficultyLevel difficultyLevel) {
+    private String englishDifficultyKeyword(DifficultyLevel difficultyLevel) {
         return switch (difficultyLevel) {
-            case BEGINNER -> "beginner";
-            case INTERMEDIATE -> "intermediate";
+            case BEGINNER -> "A1 absolute beginner";
+            case INTERMEDIATE -> "B1 intermediate";
             case ADVANCED -> "advanced";
+        };
+    }
+
+    private String japaneseDifficultyKeyword(DifficultyLevel difficultyLevel) {
+        return switch (difficultyLevel) {
+            case BEGINNER -> "初級 N5 初心者";
+            case INTERMEDIATE -> "中級 N3";
+            case ADVANCED -> "上級 自然な表現";
+        };
+    }
+
+    private String chineseDifficultyKeyword(DifficultyLevel difficultyLevel) {
+        return switch (difficultyLevel) {
+            case BEGINNER -> "零基础 HSK 1 初学者 拼音";
+            case INTERMEDIATE -> "HSK 3 中级";
+            case ADVANCED -> "HSK 5 高级 自然表达";
         };
     }
 

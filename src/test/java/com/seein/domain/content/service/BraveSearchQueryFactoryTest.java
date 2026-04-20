@@ -34,6 +34,7 @@ class BraveSearchQueryFactoryTest {
         assertThat(query.primaryFreshness()).isEqualTo("pd");
         assertThat(query.fallbackFreshness()).isEqualTo("pw");
         assertThat(query.useLlmContext()).isFalse();
+        assertThat(query.query()).contains("A1 absolute beginner", "simple words");
     }
 
     @Test
@@ -55,6 +56,7 @@ class BraveSearchQueryFactoryTest {
         assertThat(query.primaryFreshness()).isNull();
         assertThat(query.fallbackFreshness()).isNull();
         assertThat(query.useLlmContext()).isTrue();
+        assertThat(query.query()).contains("初級", "N5", "初心者");
     }
 
     @Test
@@ -76,5 +78,6 @@ class BraveSearchQueryFactoryTest {
         assertThat(query.primaryFreshness()).isEqualTo("pw");
         assertThat(query.fallbackFreshness()).isEqualTo("pm");
         assertThat(query.useLlmContext()).isTrue();
+        assertThat(query.query()).contains("零基础", "HSK 1", "初学者", "拼音");
     }
 }
