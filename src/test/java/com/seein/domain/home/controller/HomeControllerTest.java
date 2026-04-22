@@ -55,7 +55,7 @@ class HomeControllerTest {
                 AuthorityUtils.createAuthorityList("ROLE_NORMAL")
         );
         given(homeFeedService.getHomeFeed(StudyLanguage.JAPANESE, LearningStyle.BALANCED))
-                .willReturn(new HomeFeedResponse("JAPANESE", "일본어", "BALANCED", "균형형", null, java.util.List.of()));
+                .willReturn(new HomeFeedResponse("JAPANESE", "일본어", "BALANCED", "균형 학습", null, java.util.List.of()));
 
         // when
         String viewName = homeController.home(StudyLanguage.JAPANESE, LearningStyle.BALANCED, model, authentication);

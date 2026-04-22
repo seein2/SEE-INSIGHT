@@ -1,15 +1,16 @@
 package com.seein.domain.content.service;
 
+import com.seein.domain.content.entity.ContentSourceType;
 import com.seein.domain.content.entity.LearningContent;
 import com.seein.domain.subscription.entity.DifficultyLevel;
 import com.seein.domain.subscription.entity.ExplanationLanguage;
 import com.seein.domain.subscription.entity.LearningStyle;
 import com.seein.domain.subscription.entity.StudyLanguage;
-import com.seein.global.config.BraveSearchClient;
 import com.seein.global.exception.BusinessException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -24,35 +25,69 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 class BraveSearchLearningContentGeneratorTest {
 
-    @Mock
-    private BraveSearchClient braveSearchClient;
+    @InjectMocks
+    private BraveSearchLearningContentGenerator generator;
 
     @Mock
     private BraveSearchQueryFactory braveSearchQueryFactory;
 
+    @Mock
+    private LearningContentCandidateCollector candidateCollector;
+
+    @Mock
+    private LearningContentQualityScorer qualityScorer;
+
+    @Mock
+    private LearningContentCardAssembler cardAssembler;
+
     @Test
-    @DisplayName("Brave 검색 결과를 학습 콘텐츠 엔티티로 변환한다")
+    @DisplayName("점수 기준을 통과한 후보를 학습 콘텐츠로 조립한다")
     void generate_success() {
         // given
-        BraveSearchLearningContentGenerator generator = new BraveSearchLearningContentGenerator(
-                braveSearchClient,
-                braveSearchQueryFactory,
-                new LearningContentTemplateFactory()
-        );
         LocalDate publishedDate = LocalDate.of(2026, 4, 1);
+        BraveSearchQueryFactory.SearchQuery searchQuery = createSearchQuery();
+        LearningContentCandidate candidate = createCandidate("https://example.com/article");
+        LearningContentQualityScorer.ScoredCandidate scoredCandidate =
+                new LearningContentQualityScorer.ScoredCandidate(candidate, 82, null);
+        LearningContent assembledContent = LearningContent.createWithMetadata(
+                StudyLanguage.ENGLISH,
+                ExplanationLanguage.KOREAN,
+                LearningStyle.BALANCED,
+                DifficultyLevel.BEGINNER,
+                "Daily habits",
+                "요약",
+                "A small daily habit often matters more than a perfect long plan.",
+                "학습 포인트",
+                "daily habit often matters",
+                null,
+                "질문",
+                "https://example.com/article",
+                ContentSourceType.WEB,
+                "Example News",
+                "example.com",
+                "2 days ago",
+                82,
+                "raw",
+                "brave-v2",
+                publishedDate
+        );
         given(braveSearchQueryFactory.create(
                 StudyLanguage.ENGLISH,
                 LearningStyle.BALANCED,
                 DifficultyLevel.BEGINNER,
                 publishedDate
-        )).willReturn(new BraveSearchQueryFactory.SearchQuery("query", "pd", "pw"));
-        given(braveSearchClient.searchWeb("query", "en", "pd")).willReturn(List.of(
-                new BraveSearchClient.SearchResult(
-                        "Daily habits | Example News",
-                        "A small daily habit often matters more than a perfect long plan.",
-                        "https://example.com/article"
-                )
-        ));
+        )).willReturn(searchQuery);
+        given(candidateCollector.collect(searchQuery)).willReturn(List.of(candidate));
+        given(qualityScorer.score(List.of(candidate), StudyLanguage.ENGLISH, LearningStyle.BALANCED))
+                .willReturn(List.of(scoredCandidate));
+        given(cardAssembler.assemble(
+                scoredCandidate,
+                StudyLanguage.ENGLISH,
+                ExplanationLanguage.KOREAN,
+                LearningStyle.BALANCED,
+                DifficultyLevel.BEGINNER,
+                publishedDate
+        )).willReturn(assembledContent);
 
         // when
         LearningContent content = generator.generate(
@@ -64,69 +99,35 @@ class BraveSearchLearningContentGeneratorTest {
         );
 
         // then
-        assertThat(content.getTitle()).isEqualTo("Daily habits");
-        assertThat(content.getSourceText()).contains("small daily habit");
-        assertThat(content.getSourceLink()).isEqualTo("https://example.com/article");
-        assertThat(content.getSummary()).contains("Daily habits");
-        assertThat(content.getExpressionOne()).isNotBlank();
-    }
-
-    @Test
-    @DisplayName("당일 검색 결과가 없으면 더 넓은 freshness로 한 번 더 조회한다")
-    void generate_retryWithFallbackFreshness() {
-        // given
-        BraveSearchLearningContentGenerator generator = new BraveSearchLearningContentGenerator(
-                braveSearchClient,
-                braveSearchQueryFactory,
-                new LearningContentTemplateFactory()
-        );
-        LocalDate publishedDate = LocalDate.of(2026, 4, 1);
-        given(braveSearchQueryFactory.create(
-                StudyLanguage.ENGLISH,
-                LearningStyle.PRACTICAL_READING,
-                DifficultyLevel.INTERMEDIATE,
-                publishedDate
-        )).willReturn(new BraveSearchQueryFactory.SearchQuery("query", "pd", "pw"));
-        given(braveSearchClient.searchWeb("query", "en", "pd")).willReturn(List.of());
-        given(braveSearchClient.searchWeb("query", "en", "pw")).willReturn(List.of(
-                new BraveSearchClient.SearchResult("Reading practice", "Recent short article for learners.", "https://example.com")
-        ));
-
-        // when
-        LearningContent content = generator.generate(
+        assertThat(content).isSameAs(assembledContent);
+        assertThat(content.getQualityScore()).isEqualTo(82);
+        verify(candidateCollector).collect(searchQuery);
+        verify(cardAssembler).assemble(
+                scoredCandidate,
                 StudyLanguage.ENGLISH,
                 ExplanationLanguage.KOREAN,
-                LearningStyle.PRACTICAL_READING,
-                DifficultyLevel.INTERMEDIATE,
+                LearningStyle.BALANCED,
+                DifficultyLevel.BEGINNER,
                 publishedDate
         );
-
-        // then
-        assertThat(content.getTitle()).isEqualTo("Reading practice");
-        verify(braveSearchClient).searchWeb("query", "en", "pd");
-        verify(braveSearchClient).searchWeb("query", "en", "pw");
     }
 
     @Test
-    @DisplayName("유효한 Brave 검색 결과가 없으면 생성 실패 예외를 던진다")
-    void generate_failWhenNoUsableResults() {
+    @DisplayName("품질 기준을 통과한 후보가 없으면 생성 실패 예외를 던진다")
+    void generate_failWhenNoAcceptedCandidate() {
         // given
-        BraveSearchLearningContentGenerator generator = new BraveSearchLearningContentGenerator(
-                braveSearchClient,
-                braveSearchQueryFactory,
-                new LearningContentTemplateFactory()
-        );
         LocalDate publishedDate = LocalDate.of(2026, 4, 1);
+        BraveSearchQueryFactory.SearchQuery searchQuery = createSearchQuery();
+        LearningContentCandidate candidate = createCandidate("https://example.com/bad");
         given(braveSearchQueryFactory.create(
                 StudyLanguage.JAPANESE,
                 LearningStyle.TODAYS_EXPRESSION,
                 DifficultyLevel.ADVANCED,
                 publishedDate
-        )).willReturn(new BraveSearchQueryFactory.SearchQuery("query", "pd", "pw"));
-        given(braveSearchClient.searchWeb("query", "ja", "pd")).willReturn(List.of(
-                new BraveSearchClient.SearchResult(null, "설명만 있음", "https://example.com")
-        ));
-        given(braveSearchClient.searchWeb("query", "ja", "pw")).willReturn(List.of());
+        )).willReturn(searchQuery);
+        given(candidateCollector.collect(searchQuery)).willReturn(List.of(candidate));
+        given(qualityScorer.score(List.of(candidate), StudyLanguage.JAPANESE, LearningStyle.TODAYS_EXPRESSION))
+                .willReturn(List.of(new LearningContentQualityScorer.ScoredCandidate(candidate, 40, "score_below_threshold")));
 
         // when & then
         assertThatThrownBy(() -> generator.generate(
@@ -136,5 +137,35 @@ class BraveSearchLearningContentGeneratorTest {
                 DifficultyLevel.ADVANCED,
                 publishedDate
         )).isInstanceOf(BusinessException.class);
+    }
+
+    private BraveSearchQueryFactory.SearchQuery createSearchQuery() {
+        return new BraveSearchQueryFactory.SearchQuery(
+                "query",
+                "US",
+                "en",
+                "en-US",
+                ContentSourceType.WEB,
+                "pw",
+                "pm",
+                true,
+                8
+        );
+    }
+
+    private LearningContentCandidate createCandidate(String url) {
+        return new LearningContentCandidate(
+                ContentSourceType.WEB,
+                "Daily habits",
+                url,
+                "A small daily habit often matters more than a perfect long plan.",
+                List.of("A small daily habit often matters more than a perfect long plan."),
+                "2 days ago",
+                "en",
+                "Example News",
+                "example.com",
+                "article",
+                false
+        );
     }
 }

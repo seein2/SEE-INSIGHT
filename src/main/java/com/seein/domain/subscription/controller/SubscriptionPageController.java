@@ -4,7 +4,6 @@ import com.seein.domain.member.dto.MyPageResponse;
 import com.seein.domain.member.service.MemberService;
 import com.seein.domain.subscription.service.SubscriptionService;
 import com.seein.domain.subscription.dto.SubscriptionResponse;
-import com.seein.domain.subscription.entity.DifficultyLevel;
 import com.seein.domain.subscription.entity.ExplanationLanguage;
 import com.seein.domain.subscription.entity.LearningStyle;
 import com.seein.domain.subscription.entity.StudyLanguage;
@@ -17,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalTime;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -49,12 +49,12 @@ public class SubscriptionPageController {
         model.addAttribute("myPage", myPage);
         model.addAttribute("studyLanguages", StudyLanguage.values());
         model.addAttribute("explanationLanguages", ExplanationLanguage.values());
-        model.addAttribute("learningStyles", LearningStyle.values());
-        model.addAttribute("difficultyLevels", DifficultyLevel.values());
+        model.addAttribute("learningStyles", Arrays.stream(LearningStyle.values())
+                .filter(LearningStyle::isSelectable)
+                .toList());
         model.addAttribute("prefillStudyLanguage", studyLanguage != null ? studyLanguage : StudyLanguage.ENGLISH);
         model.addAttribute("prefillExplanationLanguage", ExplanationLanguage.KOREAN);
         model.addAttribute("prefillLearningStyle", learningStyle != null ? learningStyle : LearningStyle.BALANCED);
-        model.addAttribute("prefillDifficultyLevel", DifficultyLevel.BEGINNER);
         model.addAttribute("prefillDeliveryTime", LocalTime.of(8, 0));
         model.addAttribute("editSubscriptionId", editSubscriptionId);
         return "subscriptions/wizard";

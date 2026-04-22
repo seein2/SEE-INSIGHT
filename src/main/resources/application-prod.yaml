@@ -80,7 +80,6 @@ jwt:
 brave:
   api-key: ${BRAVE_API_KEY}
   base-url: ${BRAVE_BASE_URL:https://api.search.brave.com}
-  api-version: ${BRAVE_API_VERSION:2023-01-01}
 
 # Logging
 logging:

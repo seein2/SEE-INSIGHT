@@ -46,7 +46,7 @@ class HomeFeedServiceTest {
                 "KOREAN",
                 "한국어",
                 "BALANCED",
-                "균형형",
+                "균형 학습",
                 "BEGINNER",
                 "초급",
                 LocalDate.now()

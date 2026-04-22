@@ -14,6 +14,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Arrays;
+
 /**
  * 홈 페이지 컨트롤러
  */
@@ -43,7 +45,9 @@ public class HomeController {
         model.addAttribute("isAuthenticated", authenticated);
         model.addAttribute("feed", feed);
         model.addAttribute("studyLanguages", StudyLanguage.values());
-        model.addAttribute("learningStyles", LearningStyle.values());
+        model.addAttribute("learningStyles", Arrays.stream(LearningStyle.values())
+                .filter(LearningStyle::isSelectable)
+                .toList());
         model.addAttribute("loginPageUrl", "/login");
         model.addAttribute("profileUrl", "/me");
         model.addAttribute("subscriptionsUrl", "/subscriptions");

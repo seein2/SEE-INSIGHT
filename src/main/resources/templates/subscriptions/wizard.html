@@ -40,7 +40,6 @@
                  th:attr="data-prefill-study-language=${prefillStudyLanguage},
                           data-prefill-explanation-language=${prefillExplanationLanguage},
                           data-prefill-learning-style=${prefillLearningStyle},
-                          data-prefill-difficulty-level=${prefillDifficultyLevel},
                           data-prefill-delivery-time=${prefillDeliveryTime},
                           data-edit-subscription-id=${editSubscriptionId}">
             <div class="wizard-header">
@@ -54,7 +53,6 @@
                     <span class="step-dot" data-step-dot="3">3</span>
                     <span class="step-dot" data-step-dot="4">4</span>
                     <span class="step-dot" data-step-dot="5">5</span>
-                    <span class="step-dot" data-step-dot="6">6</span>
                 </div>
             </div>
 
@@ -99,20 +97,6 @@
             </section>
 
             <section class="wizard-step" data-step="4">
-                <h3>난이도를 선택해 주세요</h3>
-                <div class="choice-grid">
-                    <button th:each="difficulty : ${difficultyLevels}"
-                            type="button"
-                            class="choice-card"
-                            data-field="difficultyLevel"
-                            th:attr="data-value=${difficulty}">
-                        <strong th:text="${difficulty.label}">초급</strong>
-                        <span th:text="${difficulty.description}">설명</span>
-                    </button>
-                </div>
-            </section>
-
-            <section class="wizard-step" data-step="5">
                 <h3>언제 이메일을 받고 싶으신가요?</h3>
                 <div class="time-picker">
                     <button class="choice-card time-option" data-field="deliveryTime" data-value="07:00" type="button">오전 7시</button>
@@ -123,7 +107,7 @@
                 <p class="helper-text">MVP에서는 매일 발송으로 고정되고 시간만 선택합니다.</p>
             </section>
 
-            <section class="wizard-step" data-step="6" id="preview">
+            <section class="wizard-step" data-step="5" id="preview">
                 <div class="preview-header">
                     <div>
                         <h3>미리보기 확인</h3>
@@ -135,8 +119,7 @@
                 <dl class="preview-summary">
                     <div><dt>학습 언어</dt><dd data-summary="studyLanguageLabel">영어</dd></div>
                     <div><dt>해설 언어</dt><dd data-summary="explanationLanguageLabel">한국어</dd></div>
-                    <div><dt>학습 스타일</dt><dd data-summary="learningStyleLabel">균형형</dd></div>
-                    <div><dt>난이도</dt><dd data-summary="difficultyLevelLabel">초급</dd></div>
+                    <div><dt>학습 스타일</dt><dd data-summary="learningStyleLabel">균형 학습</dd></div>
                     <div><dt>수신 시간</dt><dd data-summary="scheduleLabel">매일 08:00</dd></div>
                 </dl>
 
@@ -171,14 +154,13 @@
                                   data-study-language=${subscription.studyLanguage},
                                   data-explanation-language=${subscription.explanationLanguage},
                                   data-learning-style=${subscription.learningStyle},
-                                  data-difficulty-level=${subscription.difficultyLevel},
                                   data-delivery-time=${subscription.deliveryTime},
                                   data-is-active=${subscription.isActive}">
                     <div class="card-top">
                         <span class="tag" th:text="${subscription.studyLanguageLabel}">영어</span>
                         <span class="tag subtle" th:text="${subscription.learningStyleLabel}">일상 회화</span>
                     </div>
-                    <h3 th:text="${subscription.learningStyleLabel + ' · ' + subscription.difficultyLevelLabel}">일상 회화 · 초급</h3>
+                    <h3 th:text="${subscription.learningStyleLabel}">균형 학습</h3>
                     <p class="feed-summary">
                         해설: <span th:text="${subscription.explanationLanguageLabel}">한국어</span>
                         · 시간: <span th:text="${subscription.scheduleLabel}">매일 08:00</span>

@@ -27,7 +27,6 @@ public class SubscriptionPreviewRequest {
     @NotNull(message = "학습 스타일은 필수입니다.")
     private LearningStyle learningStyle;
 
-    @NotNull(message = "난이도는 필수입니다.")
     private DifficultyLevel difficultyLevel;
 
     @NotNull(message = "수신 시간은 필수입니다.")

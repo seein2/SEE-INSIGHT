@@ -25,12 +25,9 @@ import java.util.List;
 public class LearningContentPreGenerationScheduler {
 
     private static final List<HomePreset> HOME_PRESETS = List.of(
-            new HomePreset(LearningStyle.BALANCED, DifficultyLevel.INTERMEDIATE),
-            new HomePreset(LearningStyle.BALANCED, DifficultyLevel.BEGINNER),
-            new HomePreset(LearningStyle.PRACTICAL_READING, DifficultyLevel.BEGINNER),
-            new HomePreset(LearningStyle.PRACTICAL_READING, DifficultyLevel.ADVANCED),
-            new HomePreset(LearningStyle.DAILY_CONVERSATION, DifficultyLevel.BEGINNER),
-            new HomePreset(LearningStyle.TODAYS_EXPRESSION, DifficultyLevel.INTERMEDIATE)
+            new HomePreset(LearningStyle.NEWS_READING, DifficultyLevel.BEGINNER),
+            new HomePreset(LearningStyle.TODAYS_EXPRESSION, DifficultyLevel.BEGINNER),
+            new HomePreset(LearningStyle.BALANCED, DifficultyLevel.BEGINNER)
     );
 
     private final LearningContentService learningContentService;
@@ -90,6 +87,9 @@ public class LearningContentPreGenerationScheduler {
         }
     }
 
+    /*
+     * 홈 피드용 프리셋 조합 레코드
+     */
     private record HomePreset(LearningStyle learningStyle, DifficultyLevel difficultyLevel) {
     }
 

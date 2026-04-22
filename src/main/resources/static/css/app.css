@@ -245,6 +245,14 @@ button {
     color: var(--muted);
 }
 
+.source-meta {
+    margin: 8px 0 12px;
+    color: #6a7c89;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.5;
+}
+
 .source-quote,
 .feed-source {
     margin: 18px 0;
@@ -254,6 +262,10 @@ button {
     border: 1px solid #d6e3eb;
     font-size: 18px;
     line-height: 1.75;
+}
+
+.learning-point-label {
+    margin-top: 16px;
 }
 
 .point-chip {

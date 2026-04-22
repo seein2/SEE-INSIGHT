@@ -82,6 +82,28 @@ public class LearningContent extends BaseTimeEntity {
     @Column(name = "source_link", length = 2048)
     private String sourceLink;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "content_source_type", length = 30)
+    private ContentSourceType contentSourceType;
+
+    @Column(name = "source_name", length = 120)
+    private String sourceName;
+
+    @Column(name = "source_host", length = 255)
+    private String sourceHost;
+
+    @Column(name = "source_page_age", length = 120)
+    private String sourcePageAge;
+
+    @Column(name = "quality_score")
+    private Integer qualityScore;
+
+    @Column(name = "raw_snippets", columnDefinition = "text")
+    private String rawSnippets;
+
+    @Column(name = "generation_version", length = 30)
+    private String generationVersion;
+
     @Column(name = "published_date", nullable = false)
     private LocalDate publishedDate;
 
@@ -103,6 +125,55 @@ public class LearningContent extends BaseTimeEntity {
             String sourceLink,
             LocalDate publishedDate
     ) {
+        return createWithMetadata(
+                studyLanguage,
+                explanationLanguage,
+                learningStyle,
+                difficultyLevel,
+                title,
+                summary,
+                sourceText,
+                explanationText,
+                expressionOne,
+                expressionTwo,
+                quizText,
+                sourceLink,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                publishedDate
+        );
+    }
+
+    /**
+     * 학습 콘텐츠 생성 (원천 메타데이터 포함)
+     */
+    public static LearningContent createWithMetadata(
+            StudyLanguage studyLanguage,
+            ExplanationLanguage explanationLanguage,
+            LearningStyle learningStyle,
+            DifficultyLevel difficultyLevel,
+            String title,
+            String summary,
+            String sourceText,
+            String explanationText,
+            String expressionOne,
+            String expressionTwo,
+            String quizText,
+            String sourceLink,
+            ContentSourceType contentSourceType,
+            String sourceName,
+            String sourceHost,
+            String sourcePageAge,
+            Integer qualityScore,
+            String rawSnippets,
+            String generationVersion,
+            LocalDate publishedDate
+    ) {
         LearningContent content = new LearningContent();
         content.studyLanguage = studyLanguage;
         content.explanationLanguage = explanationLanguage;
@@ -116,6 +187,13 @@ public class LearningContent extends BaseTimeEntity {
         content.expressionTwo = expressionTwo;
         content.quizText = quizText;
         content.sourceLink = sourceLink;
+        content.contentSourceType = contentSourceType;
+        content.sourceName = sourceName;
+        content.sourceHost = sourceHost;
+        content.sourcePageAge = sourcePageAge;
+        content.qualityScore = qualityScore;
+        content.rawSnippets = rawSnippets;
+        content.generationVersion = generationVersion;
         content.publishedDate = publishedDate;
         return content;
     }
