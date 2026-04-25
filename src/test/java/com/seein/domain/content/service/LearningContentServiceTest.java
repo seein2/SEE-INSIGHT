@@ -43,6 +43,9 @@ class LearningContentServiceTest {
     @Mock
     private LearningContentFallbackFactory fallbackFactory;
 
+    @Mock
+    private LearningContentTemplateFactory templateFactory;
+
     @Test
     @DisplayName("홈 피드 조회는 저장된 콘텐츠만 반환하고 런타임 fallback을 병합하지 않는다")
     void getFeedCards_returnsOnlyStoredContents() {
@@ -59,6 +62,15 @@ class LearningContentServiceTest {
                 eq(ExplanationLanguage.KOREAN),
                 any(PageRequest.class)
         )).willReturn(new PageImpl<>(java.util.List.of(content)));
+        given(templateFactory.createExplanation(
+                ExplanationLanguage.KOREAN,
+                LearningStyle.BALANCED,
+                DifficultyLevel.BEGINNER
+        )).willReturn("계산된 학습 포인트");
+        given(templateFactory.createQuiz(
+                ExplanationLanguage.KOREAN,
+                LearningStyle.BALANCED
+        )).willReturn("계산된 복습");
 
         // when
         java.util.List<LearningContentCardResponse> cards = learningContentService.getFeedCards(StudyLanguage.ENGLISH, null);
@@ -66,6 +78,8 @@ class LearningContentServiceTest {
         // then
         assertThat(cards).hasSize(1);
         assertThat(cards.get(0).getTitle()).isEqualTo("학습 제목");
+        assertThat(cards.get(0).getExplanationText()).isEqualTo("계산된 학습 포인트");
+        assertThat(cards.get(0).getQuizText()).isEqualTo("계산된 복습");
         verify(fallbackFactory, never()).createDailyContent(any(), any(), any(), any(), any());
     }
 
@@ -132,12 +146,9 @@ class LearningContentServiceTest {
                 learningStyle,
                 difficultyLevel,
                 "학습 제목",
-                "요약",
                 "원문",
-                "해설",
                 "표현1",
                 "표현2",
-                "질문",
                 "https://example.com",
                 publishedDate
         );

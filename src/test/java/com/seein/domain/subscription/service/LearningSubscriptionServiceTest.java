@@ -85,7 +85,7 @@ class LearningSubscriptionServiceTest {
                 LocalTime.of(8, 0)
         );
         LearningContentCardResponse preview = new LearningContentCardResponse(
-                1, "오늘의 회화", "요약", "원문", "해설", "표현1", "표현2", "질문",
+                1, "오늘의 회화", "원문", "해설", "표현1", "표현2", "질문",
                 "https://example.com", "ENGLISH", "영어", "KOREAN", "한국어",
                 "DAILY_CONVERSATION", "일상 회화", "BEGINNER", "초급", LocalDate.now()
         );
@@ -119,7 +119,7 @@ class LearningSubscriptionServiceTest {
                 LocalTime.of(8, 0)
         );
         LearningContentCardResponse preview = new LearningContentCardResponse(
-                1, "오늘의 균형 학습", "요약", "원문", "학습 포인트", null, null, "질문",
+                1, "오늘의 균형 학습", "원문", "학습 포인트", null, null, "질문",
                 "https://example.com", "ENGLISH", "영어", "KOREAN", "한국어",
                 "BALANCED", "균형 학습", "BEGINNER", "초급", LocalDate.now()
         );

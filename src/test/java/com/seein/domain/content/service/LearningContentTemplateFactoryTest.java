@@ -13,21 +13,6 @@ class LearningContentTemplateFactoryTest {
     private final LearningContentTemplateFactory templateFactory = new LearningContentTemplateFactory();
 
     @Test
-    @DisplayName("요약은 제목 반복 없이 학습 목표를 짧게 전달한다")
-    void createSummary_returnsLearningGoalWithoutTitle() {
-        // when
-        String summary = templateFactory.createSummary(
-                ExplanationLanguage.KOREAN,
-                LearningStyle.NEWS_READING,
-                DifficultyLevel.BEGINNER
-        );
-
-        // then
-        assertThat(summary).contains("짧은 원문");
-        assertThat(summary).doesNotContain("카드", "'");
-    }
-
-    @Test
     @DisplayName("학습 포인트는 본문을 읽을 때 바로 따라 할 행동을 안내한다")
     void createExplanation_returnsConcreteReadingAction() {
         // when
@@ -58,16 +43,16 @@ class LearningContentTemplateFactoryTest {
 
     @Test
     @DisplayName("영어 설명에는 한국어 난이도 라벨이 섞이지 않는다")
-    void createSummary_englishDoesNotContainKoreanDifficultyLabel() {
+    void createExplanation_englishDoesNotContainKoreanDifficultyLabel() {
         // when
-        String summary = templateFactory.createSummary(
+        String explanation = templateFactory.createExplanation(
                 ExplanationLanguage.ENGLISH,
                 LearningStyle.NEWS_READING,
                 DifficultyLevel.BEGINNER
         );
 
         // then
-        assertThat(summary).contains("short excerpt");
-        assertThat(summary).doesNotContain("초급");
+        assertThat(explanation).contains("person", "action", "time");
+        assertThat(explanation).doesNotContain("초급");
     }
 }

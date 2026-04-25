@@ -62,12 +62,9 @@ class LearningDeliverySchedulerTest {
                 LearningStyle.BALANCED,
                 DifficultyLevel.BEGINNER,
                 "제목",
-                "요약",
                 "원문",
-                "해설",
                 "표현1",
                 "표현2",
-                "질문",
                 "https://example.com",
                 issueDateTime.toLocalDate()
         );

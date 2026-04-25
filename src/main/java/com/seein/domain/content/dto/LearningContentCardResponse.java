@@ -1,6 +1,7 @@
 package com.seein.domain.content.dto;
 
 import com.seein.domain.content.entity.LearningContent;
+import com.seein.domain.content.service.LearningContentTemplateFactory;
 import lombok.Getter;
 
 import java.time.LocalDate;
@@ -13,7 +14,6 @@ public class LearningContentCardResponse {
 
     private final Integer contentId;
     private final String title;
-    private final String summary;
     private final String sourceText;
     private final String explanationText;
     private final String expressionOne;
@@ -37,7 +37,6 @@ public class LearningContentCardResponse {
     public LearningContentCardResponse(
             Integer contentId,
             String title,
-            String summary,
             String sourceText,
             String explanationText,
             String expressionOne,
@@ -57,7 +56,6 @@ public class LearningContentCardResponse {
         this(
                 contentId,
                 title,
-                summary,
                 sourceText,
                 explanationText,
                 expressionOne,
@@ -83,7 +81,6 @@ public class LearningContentCardResponse {
     public LearningContentCardResponse(
             Integer contentId,
             String title,
-            String summary,
             String sourceText,
             String explanationText,
             String expressionOne,
@@ -106,7 +103,6 @@ public class LearningContentCardResponse {
     ) {
         this.contentId = contentId;
         this.title = title;
-        this.summary = summary;
         this.sourceText = sourceText;
         this.explanationText = explanationText;
         this.expressionOne = expressionOne;
@@ -131,16 +127,22 @@ public class LearningContentCardResponse {
     /**
      * 학습 콘텐츠 카드 응답 변환
      */
-    public static LearningContentCardResponse from(LearningContent content) {
+    public static LearningContentCardResponse from(LearningContent content, LearningContentTemplateFactory templateFactory) {
         return new LearningContentCardResponse(
                 content.getContentId(),
                 content.getTitle(),
-                content.getSummary(),
                 content.getSourceText(),
-                content.getExplanationText(),
+                templateFactory.createExplanation(
+                        content.getExplanationLanguage(),
+                        content.getLearningStyle(),
+                        content.getDifficultyLevel()
+                ),
                 content.getExpressionOne(),
                 content.getExpressionTwo(),
-                content.getQuizText(),
+                templateFactory.createQuiz(
+                        content.getExplanationLanguage(),
+                        content.getLearningStyle()
+                ),
                 content.getSourceLink(),
                 content.getStudyLanguage().name(),
                 content.getStudyLanguage().getLabel(),

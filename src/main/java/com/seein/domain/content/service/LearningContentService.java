@@ -32,6 +32,7 @@ public class LearningContentService {
     private final LearningContentRepository learningContentRepository;
     private final LearningContentGenerator learningContentGenerator;
     private final LearningContentFallbackFactory fallbackFactory;
+    private final LearningContentTemplateFactory templateFactory;
 
     /**
      * 학습 피드 카드 목록 조회
@@ -46,7 +47,9 @@ public class LearningContentService {
         List<LearningContentCardResponse> cards = (learningStyle == null
                 ? learningContentRepository.findByStudyLanguageAndExplanationLanguage(studyLanguage, explanationLanguage, pageRequest)
                 : learningContentRepository.findByStudyLanguageAndExplanationLanguageAndLearningStyle(studyLanguage, explanationLanguage, learningStyle, pageRequest)
-        ).stream().map(LearningContentCardResponse::from).toList();
+        ).stream()
+                .map(content -> LearningContentCardResponse.from(content, templateFactory))
+                .toList();
         return cards;
     }
 
@@ -83,7 +86,7 @@ public class LearningContentService {
                 difficultyLevel,
                 LocalDate.now()
         );
-        return LearningContentCardResponse.from(content);
+        return LearningContentCardResponse.from(content, templateFactory);
     }
 
     /**

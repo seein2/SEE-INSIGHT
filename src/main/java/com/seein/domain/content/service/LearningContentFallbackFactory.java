@@ -18,7 +18,6 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class LearningContentFallbackFactory {
 
-    private final LearningContentTemplateFactory templateFactory;
     private final LearningContentExpressionExtractor expressionExtractor;
 
     /**
@@ -41,12 +40,9 @@ public class LearningContentFallbackFactory {
                 learningStyle,
                 difficultyLevel,
                 title,
-                templateFactory.createSummary(explanationLanguage, learningStyle, difficultyLevel),
                 sourceText,
-                templateFactory.createExplanation(explanationLanguage, learningStyle, difficultyLevel),
                 expressions.expressionOne(),
                 expressions.expressionTwo(),
-                templateFactory.createQuiz(explanationLanguage, learningStyle),
                 null,
                 ContentSourceType.FALLBACK,
                 "SEE-INSIGHT",

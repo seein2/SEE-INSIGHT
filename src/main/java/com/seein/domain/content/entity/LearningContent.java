@@ -61,23 +61,14 @@ public class LearningContent extends BaseTimeEntity {
     @Column(name = "title", nullable = false, length = 255)
     private String title;
 
-    @Column(name = "summary", columnDefinition = "text", nullable = false)
-    private String summary;
-
     @Column(name = "source_text", columnDefinition = "text", nullable = false)
     private String sourceText;
-
-    @Column(name = "explanation_text", columnDefinition = "text", nullable = false)
-    private String explanationText;
 
     @Column(name = "expression_one", length = 255)
     private String expressionOne;
 
     @Column(name = "expression_two", length = 255)
     private String expressionTwo;
-
-    @Column(name = "quiz_text", columnDefinition = "text")
-    private String quizText;
 
     @Column(name = "source_link", length = 2048)
     private String sourceLink;
@@ -116,12 +107,9 @@ public class LearningContent extends BaseTimeEntity {
             LearningStyle learningStyle,
             DifficultyLevel difficultyLevel,
             String title,
-            String summary,
             String sourceText,
-            String explanationText,
             String expressionOne,
             String expressionTwo,
-            String quizText,
             String sourceLink,
             LocalDate publishedDate
     ) {
@@ -131,12 +119,9 @@ public class LearningContent extends BaseTimeEntity {
                 learningStyle,
                 difficultyLevel,
                 title,
-                summary,
                 sourceText,
-                explanationText,
                 expressionOne,
                 expressionTwo,
-                quizText,
                 sourceLink,
                 null,
                 null,
@@ -158,12 +143,9 @@ public class LearningContent extends BaseTimeEntity {
             LearningStyle learningStyle,
             DifficultyLevel difficultyLevel,
             String title,
-            String summary,
             String sourceText,
-            String explanationText,
             String expressionOne,
             String expressionTwo,
-            String quizText,
             String sourceLink,
             ContentSourceType contentSourceType,
             String sourceName,
@@ -180,12 +162,9 @@ public class LearningContent extends BaseTimeEntity {
         content.learningStyle = learningStyle;
         content.difficultyLevel = difficultyLevel;
         content.title = title;
-        content.summary = summary;
         content.sourceText = sourceText;
-        content.explanationText = explanationText;
         content.expressionOne = expressionOne;
         content.expressionTwo = expressionTwo;
-        content.quizText = quizText;
         content.sourceLink = sourceLink;
         content.contentSourceType = contentSourceType;
         content.sourceName = sourceName;

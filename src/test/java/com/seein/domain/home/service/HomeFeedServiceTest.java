@@ -28,13 +28,12 @@ class HomeFeedServiceTest {
     private LearningContentService learningContentService;
 
     @Test
-    @DisplayName("홈 피드는 기본 언어를 영어로 선택하고 첫 카드를 추천 카드로 노출한다")
+    @DisplayName("홈 피드는 기본 언어를 영어로 선택하고 카드 목록을 노출한다")
     void getHomeFeed_defaultLanguage() {
         // given
         LearningContentCardResponse card = new LearningContentCardResponse(
                 1,
                 "오늘의 균형 학습",
-                "요약",
                 "원문",
                 "해설",
                 "표현1",
@@ -59,7 +58,7 @@ class HomeFeedServiceTest {
         // then
         assertThat(response.getSelectedStudyLanguage()).isEqualTo("ENGLISH");
         assertThat(response.getSelectedLearningStyle()).isEqualTo("ALL");
-        assertThat(response.getFeaturedContent().getTitle()).isEqualTo("오늘의 균형 학습");
+        assertThat(response.getFeedCards()).containsExactly(card);
     }
 
     @Test

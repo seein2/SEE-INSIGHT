@@ -93,7 +93,6 @@ document.addEventListener("DOMContentLoaded", () => {
         previewCard.textContent = "";
         appendTextElement(previewCard, "p", "eyebrow", content.learningStyleLabel);
         appendTextElement(previewCard, "h3", null, content.title);
-        appendTextElement(previewCard, "p", "feed-summary", content.summary);
         appendTextElement(previewCard, "p", "source-meta", formatSourceMeta(content));
         appendTextElement(previewCard, "p", "feed-source", content.sourceText);
         appendTextElement(previewCard, "p", "eyebrow", "학습 포인트");

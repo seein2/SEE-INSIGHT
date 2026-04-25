@@ -22,7 +22,6 @@ public class LearningContentCardAssembler {
 
     private final LearningContentTextSanitizer textSanitizer;
     private final LearningContentExpressionExtractor expressionExtractor;
-    private final LearningContentTemplateFactory templateFactory;
 
     /**
      * 점수화된 후보를 학습 콘텐츠로 변환
@@ -42,12 +41,9 @@ public class LearningContentCardAssembler {
                 learningStyle,
                 difficultyLevel,
                 title,
-                templateFactory.createSummary(explanationLanguage, learningStyle, difficultyLevel),
                 sourceText,
-                templateFactory.createExplanation(explanationLanguage, learningStyle, difficultyLevel),
                 expressions.expressionOne(),
                 expressions.expressionTwo(),
-                templateFactory.createQuiz(explanationLanguage, learningStyle),
                 candidate.url(),
                 candidate.sourceType(),
                 candidate.sourceName(),

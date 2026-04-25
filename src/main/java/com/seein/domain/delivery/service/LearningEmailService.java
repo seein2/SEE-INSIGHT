@@ -2,6 +2,7 @@ package com.seein.domain.delivery.service;
 
 import com.seein.domain.content.dto.LearningContentCardResponse;
 import com.seein.domain.content.entity.LearningContent;
+import com.seein.domain.content.service.LearningContentTemplateFactory;
 import com.seein.domain.subscription.dto.SubscriptionResponse;
 import com.seein.domain.subscription.entity.LearningSubscription;
 import jakarta.mail.MessagingException;
@@ -24,13 +25,14 @@ public class LearningEmailService {
 
     private final JavaMailSender mailSender;
     private final SpringTemplateEngine templateEngine;
+    private final LearningContentTemplateFactory templateFactory;
 
     /**
      * 학습 이메일 발송
      */
     public void sendLearningEmail(LearningSubscription subscription, LearningContent learningContent) throws MessagingException {
         SubscriptionResponse subscriptionResponse = SubscriptionResponse.from(subscription);
-        LearningContentCardResponse contentResponse = LearningContentCardResponse.from(learningContent);
+        LearningContentCardResponse contentResponse = LearningContentCardResponse.from(learningContent, templateFactory);
 
         Context context = new Context();
         context.setVariable("subscription", subscriptionResponse);
