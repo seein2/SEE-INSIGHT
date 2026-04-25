@@ -15,10 +15,10 @@ public class LearningContentCardResponse {
     private final Integer contentId;
     private final String title;
     private final String sourceText;
-    private final String explanationText;
+    private final String learningPointText;
     private final String expressionOne;
     private final String expressionTwo;
-    private final String quizText;
+    private final String reviewQuestionText;
     private final String sourceLink;
     private final String studyLanguage;
     private final String studyLanguageLabel;
@@ -38,10 +38,10 @@ public class LearningContentCardResponse {
             Integer contentId,
             String title,
             String sourceText,
-            String explanationText,
+            String learningPointText,
             String expressionOne,
             String expressionTwo,
-            String quizText,
+            String reviewQuestionText,
             String sourceLink,
             String studyLanguage,
             String studyLanguageLabel,
@@ -57,10 +57,10 @@ public class LearningContentCardResponse {
                 contentId,
                 title,
                 sourceText,
-                explanationText,
+                learningPointText,
                 expressionOne,
                 expressionTwo,
-                quizText,
+                reviewQuestionText,
                 sourceLink,
                 studyLanguage,
                 studyLanguageLabel,
@@ -82,10 +82,10 @@ public class LearningContentCardResponse {
             Integer contentId,
             String title,
             String sourceText,
-            String explanationText,
+            String learningPointText,
             String expressionOne,
             String expressionTwo,
-            String quizText,
+            String reviewQuestionText,
             String sourceLink,
             String studyLanguage,
             String studyLanguageLabel,
@@ -104,10 +104,10 @@ public class LearningContentCardResponse {
         this.contentId = contentId;
         this.title = title;
         this.sourceText = sourceText;
-        this.explanationText = explanationText;
+        this.learningPointText = learningPointText;
         this.expressionOne = expressionOne;
         this.expressionTwo = expressionTwo;
-        this.quizText = quizText;
+        this.reviewQuestionText = reviewQuestionText;
         this.sourceLink = sourceLink;
         this.studyLanguage = studyLanguage;
         this.studyLanguageLabel = studyLanguageLabel;

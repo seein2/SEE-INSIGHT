@@ -36,16 +36,22 @@ public class LearningDeliveryScheduler {
     /**
      * 일일 학습 이메일 발송
      */
-    @Scheduled(cron = "0 0 * * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 * * * * *", zone = "Asia/Seoul")
     public void sendDailyLearningDigest() {
-        sendDailyLearningDigest(LocalDateTime.now().withMinute(0).withSecond(0).withNano(0));
+        sendDailyLearningDigest(LocalDateTime.now());
     }
 
     void sendDailyLearningDigest(LocalDateTime issueDateTime) {
-        LocalTime deliveryTime = issueDateTime.toLocalTime();
-        LocalDate issueDate = issueDateTime.toLocalDate();
+        LocalDateTime normalizedIssueDateTime = issueDateTime.withSecond(0).withNano(0);
+        LocalTime deliveryTime = normalizedIssueDateTime.toLocalTime();
+        LocalDate issueDate = normalizedIssueDateTime.toLocalDate();
         List<LearningSubscription> dueSubscriptions = subscriptionRepository.findDeliverableSubscriptions(deliveryTime);
         Map<String, LearningContent> contentCache = new HashMap<>();
+
+        if (dueSubscriptions.isEmpty()) {
+            log.debug("학습 이메일 발송 대상 없음 - deliveryTime={}, issueDate={}", deliveryTime, issueDate);
+            return;
+        }
 
         for (LearningSubscription subscription : dueSubscriptions) {
             try {
@@ -53,14 +59,7 @@ public class LearningDeliveryScheduler {
                     continue;
                 }
 
-                // 캐시 키 생성: 구독 설정과 발송 날짜를 조합하여 고유한 키 생성
-                String cacheKey = String.join("|",
-                        subscription.getStudyLanguage().name(),
-                        subscription.getExplanationLanguage().name(),
-                        subscription.getLearningStyle().name(),
-                        subscription.getDifficultyLevel().name(),
-                        issueDate.toString()
-                );
+                String cacheKey = createContentCacheKey(subscription, issueDate);
 
                 LearningContent learningContent = contentCache.get(cacheKey);
                 if (learningContent == null) {
@@ -79,8 +78,33 @@ public class LearningDeliveryScheduler {
             } catch (Exception e) {
                 log.error("학습 이메일 발송 실패 - subscriptionId={}, error={}",
                         subscription.getSubscriptionId(), e.getMessage(), e);
-                deliveryLogRepository.save(DeliveryLog.createFailure(subscription, null, issueDate, e.getMessage()));
+                saveFailureLog(subscription, issueDate, e);
             }
+        }
+    }
+
+    /*
+     * 같은 설정의 구독은 하루에 동일 콘텐츠를 사용하므로 배치 실행 안에서만 캐싱한다.
+     */
+    private String createContentCacheKey(LearningSubscription subscription, LocalDate issueDate) {
+        return String.join("|",
+                subscription.getStudyLanguage().name(),
+                subscription.getExplanationLanguage().name(),
+                subscription.getLearningStyle().name(),
+                subscription.getDifficultyLevel().name(),
+                issueDate.toString()
+        );
+    }
+
+    /*
+     * 실패 로그 저장 실패가 이후 구독 발송까지 중단하지 않도록 별도로 보호한다.
+     */
+    private void saveFailureLog(LearningSubscription subscription, LocalDate issueDate, Exception exception) {
+        try {
+            deliveryLogRepository.save(DeliveryLog.createFailure(subscription, null, issueDate, exception.getMessage()));
+        } catch (Exception logException) {
+            log.error("학습 이메일 실패 로그 저장 실패 - subscriptionId={}, issueDate={}, error={}",
+                    subscription.getSubscriptionId(), issueDate, logException.getMessage(), logException);
         }
     }
 }

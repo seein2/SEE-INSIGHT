@@ -79,7 +79,7 @@
             </p>
             <p class="feed-source" th:text="${card.sourceText}">원문</p>
             <p class="eyebrow learning-point-label">학습 포인트</p>
-            <p class="feed-explanation" th:text="${card.explanationText}">학습 포인트</p>
+            <p class="feed-explanation" th:text="${card.learningPointText}">학습 포인트</p>
 
             <div class="point-list compact" th:if="${card.expressionOne != null or card.expressionTwo != null}">
                 <span class="point-chip" th:if="${card.expressionOne != null}" th:text="${card.expressionOne}">표현 1</span>

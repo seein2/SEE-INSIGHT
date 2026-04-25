@@ -78,8 +78,8 @@ class LearningContentServiceTest {
         // then
         assertThat(cards).hasSize(1);
         assertThat(cards.get(0).getTitle()).isEqualTo("학습 제목");
-        assertThat(cards.get(0).getExplanationText()).isEqualTo("계산된 학습 포인트");
-        assertThat(cards.get(0).getQuizText()).isEqualTo("계산된 복습");
+        assertThat(cards.get(0).getLearningPointText()).isEqualTo("계산된 학습 포인트");
+        assertThat(cards.get(0).getReviewQuestionText()).isEqualTo("계산된 복습");
         verify(fallbackFactory, never()).createDailyContent(any(), any(), any(), any(), any());
     }
 

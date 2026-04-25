@@ -46,7 +46,7 @@ public interface SubscriptionRepository extends JpaRepository<LearningSubscripti
     @Query("""
             SELECT s
             FROM LearningSubscription s
-            JOIN s.member m
+            JOIN FETCH s.member m
             WHERE s.isActive = true
               AND m.deletedAt IS NULL
               AND s.deliveryTime = :deliveryTime

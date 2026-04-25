@@ -7,8 +7,8 @@ import com.seein.domain.subscription.dto.SubscriptionResponse;
 import com.seein.domain.subscription.entity.LearningSubscription;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -20,12 +20,24 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
  */
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class LearningEmailService {
 
     private final JavaMailSender mailSender;
     private final SpringTemplateEngine templateEngine;
     private final LearningContentTemplateFactory templateFactory;
+    private final String homeUrl;
+
+    public LearningEmailService(
+            JavaMailSender mailSender,
+            SpringTemplateEngine templateEngine,
+            LearningContentTemplateFactory templateFactory,
+            @Value("${app.base-url}") String appBaseUrl
+    ) {
+        this.mailSender = mailSender;
+        this.templateEngine = templateEngine;
+        this.templateFactory = templateFactory;
+        this.homeUrl = normalizeHomeUrl(appBaseUrl);
+    }
 
     /**
      * 학습 이메일 발송
@@ -37,6 +49,7 @@ public class LearningEmailService {
         Context context = new Context();
         context.setVariable("subscription", subscriptionResponse);
         context.setVariable("content", contentResponse);
+        context.setVariable("homeUrl", homeUrl);
         String html = templateEngine.process("email/learning-digest", context);
 
         MimeMessage message = mailSender.createMimeMessage();
@@ -51,5 +64,12 @@ public class LearningEmailService {
 
         mailSender.send(message);
         log.info("학습 이메일 발송 성공 - subscriptionId={}, email={}", subscription.getSubscriptionId(), subscription.getMember().getEmail());
+    }
+
+    /*
+     * 이메일 클라이언트는 상대 경로를 안정적으로 처리하지 못하므로 절대 URL을 전달한다.
+     */
+    private String normalizeHomeUrl(String appBaseUrl) {
+        return appBaseUrl.endsWith("/") ? appBaseUrl : appBaseUrl + "/";
     }
 }

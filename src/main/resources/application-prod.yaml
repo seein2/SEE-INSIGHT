@@ -1,3 +1,6 @@
+app:
+  base-url: ${APP_BASE_URL}
+
 spring:
   datasource:
     url: ${MYSQL_URL}

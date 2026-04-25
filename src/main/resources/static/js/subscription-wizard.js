@@ -90,13 +90,17 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         const content = preview.previewContent;
+        if (!content) {
+            renderPreviewMessage("미리보기 콘텐츠가 없습니다.");
+            return;
+        }
         previewCard.textContent = "";
         appendTextElement(previewCard, "p", "eyebrow", content.learningStyleLabel);
         appendTextElement(previewCard, "h3", null, content.title);
         appendTextElement(previewCard, "p", "source-meta", formatSourceMeta(content));
         appendTextElement(previewCard, "p", "feed-source", content.sourceText);
         appendTextElement(previewCard, "p", "eyebrow", "학습 포인트");
-        appendTextElement(previewCard, "p", "feed-explanation", content.explanationText);
+        appendTextElement(previewCard, "p", "feed-explanation", content.learningPointText);
 
         const expressions = [content.expressionOne, content.expressionTwo].filter(Boolean);
         if (expressions.length > 0) {
@@ -111,7 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
         quizCard.style.marginTop = "16px";
         quizCard.style.padding = "18px";
         appendTextElement(quizCard, "p", "eyebrow", "짧은 복습 문제");
-        appendTextElement(quizCard, "p", "feed-explanation", content.quizText ?? "");
+        appendTextElement(quizCard, "p", "feed-explanation", content.reviewQuestionText ?? "");
         previewCard.append(quizCard);
     }
 

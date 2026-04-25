@@ -30,6 +30,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -49,6 +50,20 @@ class LearningDeliverySchedulerTest {
 
     @Mock
     private DeliveryLogRepository deliveryLogRepository;
+
+    @Test
+    @DisplayName("분 단위 발송 시간은 현재 분을 보존해서 조회한다")
+    void sendDailyLearningDigest_matchesMinuteDeliveryTime() {
+        // given
+        LocalDateTime issueDateTime = LocalDateTime.of(2026, 4, 1, 16, 42, 30, 123);
+        given(subscriptionRepository.findDeliverableSubscriptions(LocalTime.of(16, 42))).willReturn(List.of());
+
+        // when
+        learningDeliveryScheduler.sendDailyLearningDigest(issueDateTime);
+
+        // then
+        verify(subscriptionRepository).findDeliverableSubscriptions(LocalTime.of(16, 42));
+    }
 
     @Test
     @DisplayName("발송 시간과 일치하는 활성 구독에 학습 메일을 보낸다")
@@ -92,6 +107,53 @@ class LearningDeliverySchedulerTest {
     }
 
     @Test
+    @DisplayName("실패 로그 저장에 실패해도 다음 구독 발송을 계속 처리한다")
+    void sendDailyLearningDigest_continueWhenFailureLogSaveFails() throws Exception {
+        // given
+        LocalDateTime issueDateTime = LocalDateTime.of(2026, 4, 1, 8, 0);
+        LearningSubscription failedSubscription = createSubscription(1, LocalTime.of(8, 0));
+        LearningSubscription nextSubscription = createSubscription(2, LocalTime.of(8, 0));
+        LearningContent content = LearningContent.create(
+                StudyLanguage.ENGLISH,
+                ExplanationLanguage.KOREAN,
+                LearningStyle.BALANCED,
+                DifficultyLevel.BEGINNER,
+                "제목",
+                "원문",
+                "표현1",
+                "표현2",
+                "https://example.com",
+                issueDateTime.toLocalDate()
+        );
+
+        given(subscriptionRepository.findDeliverableSubscriptions(LocalTime.of(8, 0)))
+                .willReturn(List.of(failedSubscription, nextSubscription));
+        given(deliveryLogRepository.existsBySubscriptionSubscriptionIdAndStatusAndIssueDate(
+                any(),
+                eq(DeliveryStatus.SUCCESS),
+                eq(issueDateTime.toLocalDate())
+        )).willReturn(false);
+        given(learningContentService.getOrCreateDailyContent(
+                StudyLanguage.ENGLISH,
+                ExplanationLanguage.KOREAN,
+                LearningStyle.BALANCED,
+                DifficultyLevel.BEGINNER,
+                issueDateTime.toLocalDate()
+        )).willThrow(new RuntimeException("content failed"))
+                .willReturn(content);
+        given(deliveryLogRepository.save(any(DeliveryLog.class)))
+                .willThrow(new RuntimeException("log failed"))
+                .willAnswer(invocation -> invocation.getArgument(0));
+
+        // when
+        learningDeliveryScheduler.sendDailyLearningDigest(issueDateTime);
+
+        // then
+        verify(learningEmailService).sendLearningEmail(nextSubscription, content);
+        verify(deliveryLogRepository, times(2)).save(any(DeliveryLog.class));
+    }
+
+    @Test
     @DisplayName("같은 날 이미 발송된 구독은 건너뛴다")
     void sendDailyLearningDigest_skipAlreadySent() throws Exception {
         // given
@@ -116,6 +178,13 @@ class LearningDeliverySchedulerTest {
      * 테스트용 학습 구독 생성
      */
     private LearningSubscription createSubscription(LocalTime deliveryTime) {
+        return createSubscription(1, deliveryTime);
+    }
+
+    /**
+     * 테스트용 학습 구독 생성
+     */
+    private LearningSubscription createSubscription(Integer subscriptionId, LocalTime deliveryTime) {
         Member member = Member.create("test@example.com", "테스터", "google");
         LearningSubscription subscription = LearningSubscription.create(
                 member,
@@ -125,7 +194,7 @@ class LearningDeliverySchedulerTest {
                 DifficultyLevel.BEGINNER,
                 deliveryTime
         );
-        ReflectionTestUtils.setField(subscription, "subscriptionId", 1);
+        ReflectionTestUtils.setField(subscription, "subscriptionId", subscriptionId);
         return subscription;
     }
 }
