@@ -27,14 +27,12 @@ public class HomeFeedService {
     public HomeFeedResponse getHomeFeed(StudyLanguage studyLanguage, LearningStyle learningStyle) {
         StudyLanguage targetLanguage = studyLanguage != null ? studyLanguage : StudyLanguage.ENGLISH;
         List<LearningContentCardResponse> feedCards = learningContentService.getFeedCards(targetLanguage, learningStyle);
-        LearningContentCardResponse featuredContent = feedCards.isEmpty() ? null : feedCards.get(0);
 
         return new HomeFeedResponse(
                 targetLanguage.name(),
                 targetLanguage.getLabel(),
                 learningStyle != null ? learningStyle.name() : "ALL",
                 learningStyle != null ? learningStyle.getLabel() : "전체",
-                featuredContent,
                 feedCards
         );
     }

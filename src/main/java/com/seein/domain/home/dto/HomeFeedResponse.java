@@ -17,6 +17,5 @@ public class HomeFeedResponse {
     private final String selectedStudyLanguageLabel;
     private final String selectedLearningStyle;
     private final String selectedLearningStyleLabel;
-    private final LearningContentCardResponse featuredContent;
     private final List<LearningContentCardResponse> feedCards;
 }

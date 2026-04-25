@@ -84,7 +84,6 @@ button {
 
 .hero-panel,
 .summary-banner,
-.featured-panel,
 .wizard-card,
 .settings-panel,
 .profile-card,
@@ -201,12 +200,6 @@ button {
     border-color: var(--ink);
 }
 
-.featured-panel {
-    padding: 28px;
-    margin-bottom: 20px;
-}
-
-.featured-header,
 .preview-header,
 .wizard-header,
 .settings-panel-header,
@@ -217,7 +210,6 @@ button {
     gap: 16px;
 }
 
-.featured-header h2,
 .wizard-header h2,
 .settings-panel-header h2,
 .profile-card h2 {
@@ -236,9 +228,7 @@ button {
     color: var(--ink);
 }
 
-.featured-summary,
 .feed-summary,
-.featured-explanation,
 .feed-explanation {
     font-size: 15px;
     line-height: 1.75;
@@ -253,7 +243,17 @@ button {
     line-height: 1.5;
 }
 
-.source-quote,
+.source-meta a {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(106, 124, 137, 0.34);
+}
+
+.source-meta a:hover {
+    color: var(--ink);
+    border-bottom-color: var(--ink);
+}
+
 .feed-source {
     margin: 18px 0;
     padding: 18px;
@@ -601,7 +601,6 @@ button {
     .hero-panel,
     .summary-banner,
     .wizard-header,
-    .featured-header,
     .preview-header {
         flex-direction: column;
         align-items: flex-start;

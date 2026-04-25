@@ -59,61 +59,23 @@
         </div>
     </section>
 
-    <section class="featured-panel" th:if="${feed.featuredContent != null}">
-        <div class="featured-header">
-            <div>
-                <p class="eyebrow">오늘의 추천</p>
-                <h2 th:text="${feed.featuredContent.title}">오늘의 문장</h2>
-            </div>
-            <div class="tag-row">
-                <span class="tag" th:text="${feed.selectedStudyLanguageLabel}">영어</span>
-                <span class="tag subtle" th:text="${feed.featuredContent.learningStyleLabel}">균형형</span>
-            </div>
-        </div>
-
-        <p class="featured-summary" th:text="${feed.featuredContent.summary}">짧은 요약</p>
-        <p class="source-meta"
-           th:if="${feed.featuredContent.sourceName != null or feed.featuredContent.sourceHost != null}"
-           th:text="${'출처: ' + (feed.featuredContent.sourceName != null ? feed.featuredContent.sourceName : feed.featuredContent.sourceHost)
-                    + (feed.featuredContent.sourceHost != null ? ' · ' + feed.featuredContent.sourceHost : '')}">
-            출처
-        </p>
-        <blockquote class="source-quote" th:text="${feed.featuredContent.sourceText}">원문</blockquote>
-        <p class="eyebrow learning-point-label">학습 포인트</p>
-        <p class="featured-explanation" th:text="${feed.featuredContent.explanationText}">학습 포인트</p>
-
-        <div class="point-list"
-             th:if="${feed.featuredContent.expressionOne != null or feed.featuredContent.expressionTwo != null}">
-            <span class="point-chip" th:if="${feed.featuredContent.expressionOne != null}"
-                  th:text="${feed.featuredContent.expressionOne}">표현 1</span>
-            <span class="point-chip" th:if="${feed.featuredContent.expressionTwo != null}"
-                  th:text="${feed.featuredContent.expressionTwo}">표현 2</span>
-        </div>
-
-        <div class="card-actions">
-            <a class="ghost-button"
-               th:if="${feed.featuredContent.sourceLink != null}"
-               th:href="${feed.featuredContent.sourceLink}"
-               target="_blank" rel="noreferrer">더보기</a>
-            <a class="primary-button"
-               th:href="@{/subscriptions(studyLanguage=${feed.featuredContent.studyLanguage}, learningStyle=${feed.featuredContent.learningStyle})}">
-                이런 스타일 이메일로 받기
-            </a>
-        </div>
-    </section>
-
     <section class="content-grid">
         <article class="feed-card" th:each="card : ${feed.feedCards}">
             <div class="card-top">
                 <span class="tag subtle" th:text="${card.learningStyleLabel}">실전 읽기</span>
             </div>
             <h3 th:text="${card.title}">카드 제목</h3>
-            <p class="feed-summary" th:text="${card.summary}">한 줄 요약</p>
             <p class="source-meta"
                th:if="${card.sourceName != null or card.sourceHost != null}"
-               th:text="${'출처: ' + (card.sourceName != null ? card.sourceName : card.sourceHost)
-                        + (card.sourceHost != null ? ' · ' + card.sourceHost : '')}">
-                출처
+               th:with="sourceLabel=${card.sourceName != null ? card.sourceName : card.sourceHost},
+                        hostLabel=${card.sourceHost != null ? ' · ' + card.sourceHost : ''}">
+                <a th:if="${card.sourceLink != null}"
+                   th:href="${card.sourceLink}"
+                   target="_blank"
+                   rel="noreferrer"
+                   th:text="${'출처: ' + sourceLabel + hostLabel}">출처</a>
+                <span th:unless="${card.sourceLink != null}"
+                      th:text="${'출처: ' + sourceLabel + hostLabel}">출처</span>
             </p>
             <p class="feed-source" th:text="${card.sourceText}">원문</p>
             <p class="eyebrow learning-point-label">학습 포인트</p>
@@ -125,10 +87,6 @@
             </div>
 
             <div class="card-actions">
-                <a class="ghost-button"
-                   th:if="${card.sourceLink != null}"
-                   th:href="${card.sourceLink}"
-                   target="_blank" rel="noreferrer">더보기</a>
                 <a class="ghost-button"
                    th:href="@{/subscriptions(studyLanguage=${card.studyLanguage}, learningStyle=${card.learningStyle})}">이런 스타일 이메일로 받기</a>
             </div>
