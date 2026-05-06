@@ -36,7 +36,7 @@ public class LearningDeliveryScheduler {
     /**
      * 일일 학습 이메일 발송
      */
-    @Scheduled(cron = "0 * * * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 0 * * * *", zone = "Asia/Seoul")
     public void sendDailyLearningDigest() {
         sendDailyLearningDigest(LocalDateTime.now());
     }
